@@ -1,0 +1,89 @@
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<!--suppress MybatisGenerateCustomPluginInspection -->
+<generatorConfiguration>
+    <properties resource="application-dev1.properties"/>
+
+    <context id="mbg" targetRuntime="MyBatis3DynamicSQL">
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="false"/>
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="${spring.datasource.driver-class-name}"
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.edu.guet.lab.model"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <javaClientGenerator type="ANNOTATEDMAPPER"
+                             targetPackage="com.edu.guet.lab.dao"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+
+
+        <!--        <table tableName="pam_file" domainObjectName="File">-->
+        <!--            <generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--        </table>-->
+        <!--        <table tableName="pam_project" domainObjectName="Project">-->
+        <!--            <generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--        </table>-->
+        <!--        <table tableName="pam_project_file" domainObjectName="ProjectFile">-->
+        <!--            <generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--        </table>-->
+        <!--        <table tableName="pam_project_fund_apply" domainObjectName="ProjectFundApply">-->
+        <!--            <generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--        </table>-->
+        <!--        <table tableName="pam_project_fund_apply_file" domainObjectName="ProjectFundApplyFile">-->
+        <!--            <generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--        </table>-->
+        <!--        <table tableName="pam_project_plan" domainObjectName="ProjectPlan">-->
+        <!--            <generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--        </table>-->
+        <!--        <table tableName="pam_project_plan_file" domainObjectName="ProjectPlanFile">-->
+        <!--            <generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--        </table>-->
+        <!--                <table tableName="tbl_notification" domainObjectName="Notification">-->
+        <!--                </table>-->
+        <!--        <table tableName="tb_district" domainObjectName="District">-->
+        <!--        </table>-->
+
+        <!--        <table tableName="tbl_user" domainObjectName="User"></table>-->
+        <!--                <table tableName="tbl_banner" domainObjectName="Banner"></table>-->
+        <!--        <table tableName="tb_district" domainObjectName="District"></table>-->
+        <!--        <table tableName="tb_district" domainObjectName="District"></table>-->
+        <!--        <table tableName="tbl_college" domainObjectName="College"></table>-->
+        <!--        <table tableName="tbl_lab_center" domainObjectName="LabCenter"></table>-->
+        <!--        <table tableName="tbl_lab" domainObjectName="Lab"></table>-->
+        <!--        <table tableName="tbl_curriculum" domainObjectName="Curriculum"></table>-->
+        <!--        <table tableName="tbl_assert" domainObjectName="Assets"></table>-->
+        <!--        <table tableName="tbl_assert_type" domainObjectName="AssertType"/>-->
+        <!--        <table tableName="tbl_attachment_file" domainObjectName="AttachmentFile"></table>-->
+        <!--        <table tableName="tbl_lesson_order" domainObjectName="TblLessonOrder"/>-->
+        <!--        <table tableName="tbl_course" domainObjectName="Course"></table>-->
+        <table tableName="tbl_course_module" domainObjectName="CourseModule"/>
+        <!--        <table tableName="tbl_course_batch" domainObjectName="CourseBatch"></table>-->
+        <!--        <table tableName="tbl_semester" domainObjectName="Semester"/>-->
+        <!--                <table tableName="tbl_lab_occupancy" domainObjectName="LabOccupancy"></table>-->
+        <!--        <table tableName="tbl_module_arrangement" domainObjectName="ModuleArrangement"></table>-->
+        <!--        <table tableName="tbl_module_report" domainObjectName="ModuleReport"></table>-->
+        <!--        <table tableName="tbl_module_attendance" domainObjectName="ModuleAttendance"></table>-->
+        <!--        <table tableName="tbl_attendance_detail" domainObjectName="AttendanceDetail"></table>-->
+        <!--        <table tableName="tbl_role" domainObjectName="Role"></table>-->
+        <!--        <table tableName="tbl_permission" domainObjectName="Permission"></table>-->
+        <!--        <table tableName="tbl_role_permission" domainObjectName="RolePermission"></table>-->
+        <!--                        <table tableName="tbl_holiday" domainObjectName="Holiday"></table>-->
+        <!--                            <table tableName="tbl_course_user" domainObjectName="CourseUser"></table>-->
+    </context>
+</generatorConfiguration>
