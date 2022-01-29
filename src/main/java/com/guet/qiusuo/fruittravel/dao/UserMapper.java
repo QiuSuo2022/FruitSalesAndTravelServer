@@ -1,23 +1,8 @@
 package com.guet.qiusuo.fruittravel.dao;
 
-import static com.guet.qiusuo.fruittravel.dao.UserDynamicSqlSupport.*;
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
-
+import com.guet.qiusuo.fruittravel.bean.vo.UserVO;
 import com.guet.qiusuo.fruittravel.model.User;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Generated;
-
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
@@ -33,8 +18,18 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Generated;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static com.guet.qiusuo.fruittravel.dao.UserDynamicSqlSupport.*;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 
 @Mapper
+@Repository
 public interface UserMapper {
     @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.196+08:00",
             comments = "Source Table: tbl_user")
@@ -311,4 +306,24 @@ public interface UserMapper {
                         .where(id, isEqualTo(record::getId))
         );
     }
+
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "UserVOResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "user_name", property = "userName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "real_name", property = "realName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "token", property = "token", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "phone", property = "phone", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "gender", property = "gender", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "avatar_url", property = "avatarUrl", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "openid", property = "openid", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "role_id", property = "roleId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "create_user_id", property = "createUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_user_id", property = "updateUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "roleName", property = "roleName", jdbcType = JdbcType.VARCHAR)
+    })
+    List<UserVO> selectUserVOs(SelectStatementProvider selectStatement);
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/hello")
 public class HelloController {
 
-
     @ApiOperation(value = "添加用户")
     @GetMapping
     public String hello() {

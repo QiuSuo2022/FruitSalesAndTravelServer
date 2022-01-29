@@ -17,6 +17,8 @@ public enum ErrorCode {
     PWD_ERROR(-1, "system.error.password"),
     ROLE_ERROR(-1, "system.error.role.notfound"),
     NO_ACCESS(401, "system.error.no_access"),
+    LOGIN_EXCEPTION(-1, "system.error.login.error"),
+    USER_NO_ROLE(-1, "system.error.user.no.role"),
     ;
 
     @Override
