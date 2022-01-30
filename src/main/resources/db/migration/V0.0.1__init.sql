@@ -201,7 +201,7 @@ create table tbl_role
 
 create table tbl_permission
 (
-    id              varchar(32)     not null comment 'uuid',
+    id              varchar(44)     not null comment 'uuid',
     name            varchar(128)    null comment '权限名称',
     api_path        varchar(255)    null comment 'API URL',
     method          varchar(32)     null comment '请求方式，GET,PUT,POST,DELETE',
@@ -219,9 +219,9 @@ create table tbl_permission
 
 create table tbl_role_permission
 (
-    id              varchar(32) not null comment 'uuid',
-    role_id         varchar(32) not null comment '角色id',
-    permission_id   varchar(32) not null comment '权限id',
+    id              varchar(44) not null comment 'uuid',
+    role_id         varchar(44) not null comment '角色id',
+    permission_id   varchar(44) not null comment '权限id',
     status          SMALLINT comment '状态,0:禁用 1:启用',
     create_time    BIGINT comment '创建时间',
     update_time    BIGINT comment '更新时间',

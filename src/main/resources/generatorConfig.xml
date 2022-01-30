@@ -33,17 +33,19 @@
         </javaClientGenerator>
 
 
-        <table tableName="tbl_user" domainObjectName="User"/>
-        <table tableName="tbl_cart" domainObjectName="Cart"/>
-        <table tableName="tbl_child_fruit" domainObjectName="ChildFruit"/>
-        <table tableName="tbl_evaluate" domainObjectName="Evaluate"/>
-        <table tableName="tbl_fruit" domainObjectName="Fruit"/>
-        <table tableName="tbl_image_file" domainObjectName="ImageFile"/>
-        <table tableName="tbl_permission" domainObjectName="Permission"/>
-        <table tableName="tbl_reservation" domainObjectName="Reservation"/>
-        <table tableName="tbl_role" domainObjectName="Role"/>
-        <table tableName="tbl_role_permission" domainObjectName="RolePermission"/>
-        <table tableName="tbl_scenic" domainObjectName="Scenic"/>
-        <table tableName="tbl_ticket" domainObjectName="Ticket"/>
+        <!--        <table tableName="tbl_user" domainObjectName="User"/>-->
+        <!--        <table tableName="tbl_cart" domainObjectName="Cart"/>-->
+        <!--        <table tableName="tbl_child_fruit" domainObjectName="ChildFruit"/>-->
+        <!--        <table tableName="tbl_evaluate" domainObjectName="Evaluate"/>-->
+        <!--        <table tableName="tbl_fruit" domainObjectName="Fruit"/>-->
+        <!--        <table tableName="tbl_image_file" domainObjectName="ImageFile"/>-->
+        <!--        <table tableName="tbl_permission" domainObjectName="Permission"/>-->
+        <!--        <table tableName="tbl_reservation" domainObjectName="Reservation"/>-->
+        <!--        <table tableName="tbl_role" domainObjectName="Role"/>-->
+        <!--        <table tableName="tbl_role_permission" domainObjectName="RolePermission"/>-->
+        <!--        <table tableName="tbl_scenic" domainObjectName="Scenic"/>-->
+        <!--        <table tableName="tbl_ticket" domainObjectName="Ticket"/>-->
+
+        <table tableName="tbl_user_role" domainObjectName="UserRole"/>
     </context>
 </generatorConfiguration>
