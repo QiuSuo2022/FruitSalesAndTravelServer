@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 public class UserRoleVO {
     String userId;
-
     String roleId;
-
     String roleName;
 }
