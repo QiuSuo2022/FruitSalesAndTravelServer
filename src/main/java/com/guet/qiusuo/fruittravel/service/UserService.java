@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.service;
 
+import com.guet.qiusuo.fruittravel.bean.vo.UserRoleVO;
 import com.guet.qiusuo.fruittravel.bean.vo.UserVO;
 import com.guet.qiusuo.fruittravel.common.SysRole;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
@@ -163,10 +164,11 @@ public class UserService {
         userVO.setCreateUserId(user.getCreateUserId());
         userVO.setUpdateUserId(user.getUpdateUserId());
 
-        List<UserVO> userRoleVOS = roleService.selectUserRoleByUserId(userList.get(0).getId());
+        List<UserRoleVO> userRoleVOS = roleService.selectUserRoleByUserId(userList.get(0).getId());
         if (userRoleVOS.size() == 0) {
             throw new SystemException(ErrorCode.USER_NO_ROLE);
         }
+        userVO.setRoleName(userRoleVOS.get(0).getRoleName());
         return userVO;
     }
 }

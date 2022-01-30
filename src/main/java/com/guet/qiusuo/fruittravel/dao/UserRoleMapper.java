@@ -1,23 +1,8 @@
 package com.guet.qiusuo.fruittravel.dao;
 
-import static com.guet.qiusuo.fruittravel.dao.UserRoleDynamicSqlSupport.*;
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
-
+import com.guet.qiusuo.fruittravel.bean.vo.UserRoleVO;
 import com.guet.qiusuo.fruittravel.model.UserRole;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Generated;
-
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
@@ -33,7 +18,17 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.Generated;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static com.guet.qiusuo.fruittravel.dao.UserRoleDynamicSqlSupport.*;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
+
+@Repository
 @Mapper
 public interface UserRoleMapper {
     @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-30T15:19:23.879+08:00",
@@ -239,4 +234,12 @@ public interface UserRoleMapper {
                         .where(id, isEqualTo(record::getId))
         );
     }
+
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "UserRolesVO", value = {
+            @Result(column = "user_id", property = "userId", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "role_id", property = "roleId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "roleName", property = "roleName", jdbcType = JdbcType.VARCHAR),
+    })
+    List<UserRoleVO> selectUserRoleVo(SelectStatementProvider selectStatement);
 }
