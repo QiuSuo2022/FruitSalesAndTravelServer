@@ -7,7 +7,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-@ControllerAdvice(basePackages = "com.edu")
+@ControllerAdvice(basePackages = "com.guet")
 public class ResponseWrappingConfig implements ResponseBodyAdvice {
 
     @Override

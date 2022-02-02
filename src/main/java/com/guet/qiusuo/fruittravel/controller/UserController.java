@@ -1,15 +1,13 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 import com.guet.qiusuo.fruittravel.bean.vo.UserVO;
+import com.guet.qiusuo.fruittravel.model.User;
 import com.guet.qiusuo.fruittravel.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author libuyan
@@ -32,5 +30,29 @@ public class UserController {
     @PostMapping("/login")
     public UserVO login(@RequestParam("code") String code) {
         return userService.login(code);
+    }
+
+    @ApiOperation(value = "添加用户")
+    @PostMapping
+    public void addUser(@RequestBody User user) {
+        userService.addUser(user);
+    }
+
+    @ApiOperation(value = "修改用户")
+    @PutMapping
+    public void updateUser(@RequestBody User user) {
+        userService.updateUser(user);
+    }
+
+    @DeleteMapping
+    @ApiOperation(value = "删除用户")
+    public void deleteUser(@RequestParam String id) {
+        userService.deleteUser(id);
+    }
+
+    @ApiOperation(value = "修改用户角色")
+    @PutMapping("/role")
+    public void updateUserRole(@RequestParam String userId, @RequestParam String roleId) {
+        userService.updateUserRole(userId, roleId);
     }
 }

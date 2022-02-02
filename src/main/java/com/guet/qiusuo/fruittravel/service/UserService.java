@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
@@ -170,5 +171,77 @@ public class UserService {
         }
         userVO.setRoleName(userRoleVOS.get(0).getRoleName());
         return userVO;
+    }
+
+
+    /**
+     * 添加用户
+     *
+     * @param user
+     */
+    public void addUser(User user) {
+        user.setId(UUID.randomUUID().toString());
+        long now = System.currentTimeMillis();
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        user.setRoleId(SysRole.USER);
+        user.setStatus(SystemConstants.USER_INFO_NOT_COMPLETE);
+        userMapper.insertSelective(user);
+        System.out.println("创建用户成功:" + user.toString());
+    }
+
+    /**
+     * 修改用户
+     *
+     * @param user
+     */
+    public void updateUser(User user) {
+        if (user.getId() == null || user.getId().trim().length() == 0) {
+            throw new SystemException(ErrorCode.ID_NOT_EXIST_ERROR);
+        }
+        List<User> userList = userMapper.select(u ->
+                u.where(UserDynamicSqlSupport.id, isEqualTo(user.getId()))
+                        .and(UserDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE)));
+        if (userList.size() == 0) {
+            throw new SystemException(ErrorCode.ID_NOT_EXIST_ERROR);
+        }
+        user.setUpdateTime(System.currentTimeMillis());
+        //如果没有进行逻辑删除 则将用户信息设置成完整
+        if (user.getStatus() != 0) {
+            user.setStatus(SystemConstants.USER_INFO_COMPLETE);
+        }
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    /**
+     * 删除用户(逻辑删除)
+     *
+     * @param userId
+     */
+    public void deleteUser(String userId) {
+        Optional<User> optionalUser = userMapper.selectByPrimaryKey(userId);
+        User user = optionalUser.orElseThrow(() -> new SystemException(ErrorCode.USER_NOT_FOUND));
+        user.setStatus(SystemConstants.STATUS_NEGATIVE);
+        user.setUpdateTime(System.currentTimeMillis());
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    /**
+     * 修改用户角色
+     *
+     * @param userId
+     * @param roleId
+     */
+    public void updateUserRole(String userId, String roleId) {
+        //鉴权，不是管理员，不能使用此功能
+/*        String userRoleId = UserContextHolder.getUser().getRoleId();
+        if (!userRoleId.equals("1")) {
+            throw new SystemException(ErrorCode.NO_PERMISSION);
+        }*/
+        Optional<User> optionalUser = userMapper.selectByPrimaryKey(userId);
+        User user = optionalUser.orElseThrow(() -> new SystemException(ErrorCode.USER_NOT_FOUND));
+        user.setRoleId(roleId);
+        user.setUpdateTime(System.currentTimeMillis());
+        userMapper.updateByPrimaryKeySelective(user);
     }
 }
