@@ -10,7 +10,7 @@ ssh root@120.76.200.109"cd /root/project/fruitSaleAndTravel && ./restart.sh"
 mvn clean package -DskipTests || exit
 
 # 上传
-scp target/yun-0.0.1-SNAPSHOT.jar root@120.76.200.109:/root/project/fruitSaleAndTravel/
+scp target/fruit-travel-0.0.1-SNAPSHOT.jar root@120.76.200.109:/root/project/fruitSaleAndTravel/
 
 # 部署
 ssh root@120.76.200.109 "cd /root/project/fruitSaleAndTravel && ./restart.sh"
