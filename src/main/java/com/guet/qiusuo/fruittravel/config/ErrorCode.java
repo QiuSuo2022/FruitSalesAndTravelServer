@@ -19,6 +19,7 @@ public enum ErrorCode {
     NO_ACCESS(401, "system.error.no_access"),
     LOGIN_EXCEPTION(-1, "system.error.login.error"),
     USER_NO_ROLE(-1, "system.error.user.no.role"),
+    X_GITEE_TOKEN_MISMATCH(-1, "system.error.gitee.token.mismatch"),
     ;
 
     @Override

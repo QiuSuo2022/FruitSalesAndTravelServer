@@ -18,7 +18,7 @@ ssh root@120.76.200.109 "cd /root/project/fruitSaleAndTravel && ./restart.sh"
 # 查看运行日志
 ssh root@120.76.200.109 "tail -f -n 300 /root/project/fruitSaleAndTravel/stdout.log"
 
-# swagger-ui 地址：http://120.76.200.109:8030/swagger-ui.html
+# swagger-ui 地址：http://120.76.200.109:8030/swagger-ui/
 
 
 
