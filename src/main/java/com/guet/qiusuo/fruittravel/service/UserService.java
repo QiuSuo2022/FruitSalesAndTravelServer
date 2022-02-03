@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.service;
 
+import com.guet.qiusuo.fruittravel.bean.request.LoginDTO;
 import com.guet.qiusuo.fruittravel.bean.vo.UserRoleVO;
 import com.guet.qiusuo.fruittravel.bean.vo.UserVO;
 import com.guet.qiusuo.fruittravel.common.SysRole;
@@ -10,6 +11,7 @@ import com.guet.qiusuo.fruittravel.dao.RoleDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserMapper;
 import com.guet.qiusuo.fruittravel.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -50,11 +52,19 @@ public class UserService {
         this.roleService = roleService;
     }
 
-    public UserVO login(String code) {
+    public UserVO login(LoginDTO loginDTO) {
+        String code = loginDTO.getCode();
+        String avatarUrl = loginDTO.getAvatarUrl();
+        String nickName = loginDTO.getNickName();
+        String gender = loginDTO.getGender();
+        if (StringUtils.isEmpty(code)) {
+            throw new SystemException(ErrorCode.PARAM_ERROR);
+        }
+
         String openId = getOpenId(code);
         List<UserVO> userList = getUserByOpenId(openId);
         if (userList.size() == 0) {
-            register(openId);
+            register(openId, avatarUrl, nickName, gender);
             userList = getUserByOpenId(openId);
         }
         if (userList.size() == 0) {
@@ -70,9 +80,12 @@ public class UserService {
         return loginUser;
     }
 
-    private void register(String openId) {
+    private void register(String openId, String avatarUrl, String userName, String gender) {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
+        user.setAvatarUrl(avatarUrl);
+        user.setUserName(userName);
+        user.setGender(gender);
         user.setOpenid(openId);
         user.setStatus(SystemConstants.USER_INFO_INCOMPLETE);
         long now = System.currentTimeMillis();

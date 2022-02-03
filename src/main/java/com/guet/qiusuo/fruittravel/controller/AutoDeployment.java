@@ -25,7 +25,7 @@ public class AutoDeployment {
     @PostMapping("/update")
     public Response autoUpdate(HttpServletRequest request) throws IOException {
         String xGiteeToken = request.getHeader("X-Gitee-Token");
-        if (!"yunservice123.".equals(xGiteeToken)) {
+        if (!"fruitSale123.".equals(xGiteeToken)) {
             throw new SystemException(ErrorCode.X_GITEE_TOKEN_MISMATCH);
         }
         Runtime run = Runtime.getRuntime();

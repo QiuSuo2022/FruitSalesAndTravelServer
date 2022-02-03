@@ -1,10 +1,10 @@
 package com.guet.qiusuo.fruittravel.controller;
 
+import com.guet.qiusuo.fruittravel.bean.request.LoginDTO;
 import com.guet.qiusuo.fruittravel.bean.vo.UserVO;
 import com.guet.qiusuo.fruittravel.model.User;
 import com.guet.qiusuo.fruittravel.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +25,9 @@ public class UserController {
     }
 
     @ApiOperation(value = "用户登录")
-    @ApiImplicitParam(name = "code", value = "登录验证码", required = true, paramType = "query", dataType = "String",
-            example = "1")
     @PostMapping("/login")
-    public UserVO login(@RequestParam("code") String code) {
-        return userService.login(code);
+    public UserVO login(@RequestBody LoginDTO loginDTO) {
+        return userService.login(loginDTO);
     }
 
     @ApiOperation(value = "添加用户")
