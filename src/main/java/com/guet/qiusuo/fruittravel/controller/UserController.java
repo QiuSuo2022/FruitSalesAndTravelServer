@@ -30,6 +30,12 @@ public class UserController {
         return userService.login(loginDTO);
     }
 
+    @ApiOperation(value = "根据token获取用户信息")
+    @GetMapping("/info")
+    public UserVO getUserInfoByToken(@RequestParam String token) {
+        return userService.getUserInfoByToken(token);
+    }
+
     @ApiOperation(value = "添加用户")
     @PostMapping
     public void addUser(@RequestBody User user) {
