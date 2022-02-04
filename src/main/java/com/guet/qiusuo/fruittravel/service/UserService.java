@@ -96,6 +96,7 @@ public class UserService {
         if (i == 0) {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
+        roleService.insertUserRole(user.getId(), SysRole.USER);
     }
 
     private List<UserVO> getUserByOpenId(String openId) {
