@@ -31,6 +31,7 @@ public class AutoDeployment {
         String requestBody = getBodyStringByReader(request);
         try {
             String genSignature256 = SHAUtil.HMACSHA256(requestBody, "fruitSale123.");
+            System.out.println(genSignature256);
             if (!genSignature256.equals(headSignature256)) {
                 throw new SystemException(ErrorCode.X_GITEE_TOKEN_MISMATCH);
             }
@@ -39,7 +40,7 @@ public class AutoDeployment {
         }
 
         Runtime run = Runtime.getRuntime();
-//        Process exec = run.exec(new String[]{"/bin/sh", "-c", "cd /root/project/fruitSaleAndTravel && ./deploy.sh"});
+        Process exec = run.exec(new String[]{"/bin/sh", "-c", "cd /root/project/fruitSaleAndTravel && ./deploy.sh"});
         return new Response<>(200, "自动部署成功", "");
     }
 
