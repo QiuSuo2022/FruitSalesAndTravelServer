@@ -26,11 +26,11 @@ public class UserAspect {
     private UserService userService;
 
     static {
-        WHITE_LIST.put("/v1/user/login", "POST");
-        WHITE_LIST.put("/v1/user/register", "POST");
-        WHITE_LIST.put("/v1/user/defaultKaptcha", "GET");
-        WHITE_LIST.put("/v1/notification/system", "GET");
-        WHITE_LIST.put("/v1/banner", "GET");
+        WHITE_LIST.put("/user/login", "POST");
+        WHITE_LIST.put("/user/register", "POST");
+        WHITE_LIST.put("/user/defaultKaptcha", "GET");
+        WHITE_LIST.put("/notification/system", "GET");
+        WHITE_LIST.put("/banner", "GET");
     }
 
     public void ignoreToken() {
