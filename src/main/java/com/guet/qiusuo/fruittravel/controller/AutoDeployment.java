@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * @Author: libuyan
- * @Date: 2020/12/8 19:05
+ * @Date: 2022/2/5 23:39
  */
 @Api(tags = "执行自动部署的脚本")
 @RestController
@@ -30,18 +30,20 @@ public class AutoDeployment {
     @PostMapping("/update")
     public Response autoUpdate(HttpServletRequest request) {
         String headSignature256 = request.getHeader("X-Hub-Signature-256");
-        System.out.println(headSignature256);
         String requestBody = getBodyStringByReader(request);
         String genSignature256 = null;
         try {
-            genSignature256 = "sha256=" + HMACSHA256(requestBody, "fruitSale123.");
-            System.out.println(genSignature256);
+            genSignature256 = "sha256=" + HMAC_SHA256(requestBody, "fruitSale123.");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        /*
+         * 判断github webhooks发送的request中携带的 'X-Hub-Signature-256' header 的值
+         * 与 将request body使用HMAC_SHA256 16进制形式加密后产生的密文 是否一致
+         */
         if (!headSignature256.equals(genSignature256)) {
-            throw new SystemException(ErrorCode.X_GITEE_TOKEN_MISMATCH);
+            throw new SystemException(ErrorCode.X_Hub_Signature_256);
         }
 
         Runtime run = Runtime.getRuntime();
@@ -84,7 +86,7 @@ public class AutoDeployment {
     }
 
     /**
-     * 生成 HMACSHA256
+     * 生成 HMAC_SHA256 16进制形式
      *
      * @param data 待处理数据
      * @param key  密钥
@@ -93,7 +95,7 @@ public class AutoDeployment {
      *
      * @throws Exception
      */
-    private static String HMACSHA256(String data, String key) throws Exception {
+    private static String HMAC_SHA256(String data, String key) throws Exception {
         Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         sha256_HMAC.init(secretKey);
