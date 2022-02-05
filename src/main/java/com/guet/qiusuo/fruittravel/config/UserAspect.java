@@ -31,6 +31,7 @@ public class UserAspect {
         WHITE_LIST.put("/user/defaultKaptcha", "GET");
         WHITE_LIST.put("/notification/system", "GET");
         WHITE_LIST.put("/banner", "GET");
+        WHITE_LIST.put("/auto_deployment/update", "POST");
     }
 
     public void ignoreToken() {

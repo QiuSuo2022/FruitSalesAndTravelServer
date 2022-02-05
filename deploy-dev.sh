@@ -30,4 +30,7 @@ ssh root@120.76.200.109 "cd /root/project/fruitSaleAndTravel && ./deploy.sh"
 
 
 # 查看运行日志
-ssh root@120.76.200.109 "tail -f -n 300 /root/git-project/yun/stdout.log"
+ssh root@120.76.200.109 "tail -f -n 300 /root/project/fruitSaleAndTravel/stdout.log"
+
+# 查看错误日志
+ssh root@120.76.200.109 "tail -f -n 300 /root/project/fruitSaleAndTravel/stderr.log"
