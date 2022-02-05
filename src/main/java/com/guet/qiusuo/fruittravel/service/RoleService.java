@@ -1,6 +1,9 @@
 package com.guet.qiusuo.fruittravel.service;
 
 import com.guet.qiusuo.fruittravel.bean.vo.UserRoleVO;
+import com.guet.qiusuo.fruittravel.common.SystemConstants;
+import com.guet.qiusuo.fruittravel.config.ErrorCode;
+import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.dao.RoleDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.RoleMapper;
 import com.guet.qiusuo.fruittravel.dao.UserRoleDynamicSqlSupport;
@@ -45,6 +48,8 @@ public class RoleService {
                 .leftJoin(RoleDynamicSqlSupport.role)
                 .on(UserRoleDynamicSqlSupport.roleId, equalTo(RoleDynamicSqlSupport.id))
                 .where(UserRoleDynamicSqlSupport.userId, isEqualTo(userId))
+                .and(UserRoleDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_NORMAL))
+                .and(RoleDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_NORMAL))
                 .build()
                 .render(RenderingStrategies.MYBATIS3));
     }
@@ -54,11 +59,15 @@ public class RoleService {
         userRole.setId(UUID.randomUUID().toString());
         userRole.setUserId(userId);
         userRole.setRoleId(roleId);
+        userRole.setStatus(SystemConstants.STATUS_NORMAL);
         long now = System.currentTimeMillis();
         userRole.setCreateTime(now);
         userRole.setUpdateTime(now);
         userRole.setCreateUserId(userId);
         userRole.setUpdateUserId(userId);
-        userRoleMapper.insert(userRole);
+        int i = userRoleMapper.insert(userRole);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
     }
 }

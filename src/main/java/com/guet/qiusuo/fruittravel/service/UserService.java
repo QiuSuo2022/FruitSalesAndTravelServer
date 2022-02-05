@@ -7,6 +7,7 @@ import com.guet.qiusuo.fruittravel.common.SysRole;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
+import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.RoleDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserMapper;
@@ -21,6 +22,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * @author libuyan
@@ -38,6 +42,8 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
  */
 @Service
 public class UserService {
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
     private UserMapper userMapper;
 
     private RoleService roleService;
@@ -97,6 +103,7 @@ public class UserService {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
         roleService.insertUserRole(user.getId(), SysRole.USER);
+        LOG.info("用户{}注册成功, Id: {}, 分配用户权限,", userName, user.getId());
     }
 
     private List<UserVO> getUserByOpenId(String openId) {
@@ -121,6 +128,7 @@ public class UserService {
                 .leftJoin(RoleDynamicSqlSupport.role)
                 .on(UserDynamicSqlSupport.roleId, equalTo(RoleDynamicSqlSupport.id))
                 .where(UserDynamicSqlSupport.openid, isEqualTo(openId))
+                .and(UserDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
     }
 
@@ -201,8 +209,13 @@ public class UserService {
         user.setUpdateTime(now);
         user.setRoleId(SysRole.USER);
         user.setStatus(SystemConstants.USER_INFO_NOT_COMPLETE);
-        userMapper.insertSelective(user);
-        System.out.println("创建用户成功:" + user.toString());
+        user.setCreateUserId(UserContextHolder.getUserId());
+        int i = userMapper.insertSelective(user);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        roleService.insertUserRole(user.getId(), SysRole.USER);
+        LOG.info("用户{}创建成功, Id: {}, 分配用户权限,", user.getUserName(), user.getId());
     }
 
     /**
@@ -214,7 +227,10 @@ public class UserService {
         user.setUpdateTime(System.currentTimeMillis());
         //如果没有进行逻辑删除 则将用户信息设置成完整
         user.setStatus(SystemConstants.USER_INFO_COMPLETE);
-        userMapper.updateByPrimaryKeySelective(user);
+        int i = userMapper.updateByPrimaryKeySelective(user);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.UPDATE_ERROR);
+        }
     }
 
     /**
@@ -227,7 +243,10 @@ public class UserService {
         User user = optionalUser.orElseThrow(() -> new SystemException(ErrorCode.USER_NOT_FOUND));
         user.setStatus(SystemConstants.STATUS_NEGATIVE);
         user.setUpdateTime(System.currentTimeMillis());
-        userMapper.updateByPrimaryKeySelective(user);
+        int i = userMapper.updateByPrimaryKeySelective(user);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.UPDATE_ERROR);
+        }
     }
 
     /**
@@ -246,6 +265,11 @@ public class UserService {
         User user = optionalUser.orElseThrow(() -> new SystemException(ErrorCode.USER_NOT_FOUND));
         user.setRoleId(roleId);
         user.setUpdateTime(System.currentTimeMillis());
-        userMapper.updateByPrimaryKeySelective(user);
+        int i = userMapper.updateByPrimaryKeySelective(user);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.UPDATE_ERROR);
+        }
+
+        // TODO: 2022/2/5 修改userRole表
     }
 }
