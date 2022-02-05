@@ -2,6 +2,7 @@ package com.guet.qiusuo.fruittravel.controller;
 
 import com.guet.qiusuo.fruittravel.bean.request.LoginDTO;
 import com.guet.qiusuo.fruittravel.bean.vo.UserVO;
+import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.model.User;
 import com.guet.qiusuo.fruittravel.service.UserService;
 import io.swagger.annotations.Api;
@@ -45,6 +46,7 @@ public class UserController {
     @ApiOperation(value = "修改用户")
     @PutMapping
     public void updateUser(@RequestBody User user) {
+        user.setId(UserContextHolder.getUserId());
         userService.updateUser(user);
     }
 

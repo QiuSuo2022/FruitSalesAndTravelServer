@@ -152,11 +152,12 @@ public class UserService {
     }
 
     public UserVO getUserInfoByToken(String token) {
-        if (token == null || "".equals(token)) {
+        if (StringUtils.isEmpty(token)) {
             throw new SystemException(ErrorCode.TOKEN_ERROR);
         }
         List<User> userList = userMapper.select(u ->
-                u.where(UserDynamicSqlSupport.token, isEqualTo(token)));
+                u.where(UserDynamicSqlSupport.token, isEqualTo(token))
+                        .and(UserDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE)));
         if (userList.isEmpty()) {
             return null;
         }
@@ -179,11 +180,11 @@ public class UserService {
         userVO.setCreateUserId(user.getCreateUserId());
         userVO.setUpdateUserId(user.getUpdateUserId());
 
-        List<UserRoleVO> userRoleVOS = roleService.selectUserRoleByUserId(userList.get(0).getId());
-        if (userRoleVOS.size() == 0) {
+        List<UserRoleVO> userRoleVOs = roleService.selectUserRoleByUserId(userList.get(0).getId());
+        if (userRoleVOs.size() == 0) {
             throw new SystemException(ErrorCode.USER_NO_ROLE);
         }
-        userVO.setRoleName(userRoleVOS.get(0).getRoleName());
+        userVO.setRoleName(userRoleVOs.get(0).getRoleName());
         return userVO;
     }
 
@@ -210,20 +211,9 @@ public class UserService {
      * @param user
      */
     public void updateUser(User user) {
-        if (user.getId() == null || user.getId().trim().length() == 0) {
-            throw new SystemException(ErrorCode.ID_NOT_EXIST_ERROR);
-        }
-        List<User> userList = userMapper.select(u ->
-                u.where(UserDynamicSqlSupport.id, isEqualTo(user.getId()))
-                        .and(UserDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE)));
-        if (userList.size() == 0) {
-            throw new SystemException(ErrorCode.ID_NOT_EXIST_ERROR);
-        }
         user.setUpdateTime(System.currentTimeMillis());
         //如果没有进行逻辑删除 则将用户信息设置成完整
-        if (user.getStatus() != 0) {
-            user.setStatus(SystemConstants.USER_INFO_COMPLETE);
-        }
+        user.setStatus(SystemConstants.USER_INFO_COMPLETE);
         userMapper.updateByPrimaryKeySelective(user);
     }
 

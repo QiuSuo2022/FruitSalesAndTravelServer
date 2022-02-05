@@ -40,7 +40,7 @@ public class RoleService {
         return userRoleMapper.selectUserRoleVo(select(
                 UserRoleDynamicSqlSupport.userId,
                 UserRoleDynamicSqlSupport.roleId,
-                RoleDynamicSqlSupport.name)
+                RoleDynamicSqlSupport.name.as("roleName"))
                 .from(UserRoleDynamicSqlSupport.userRole)
                 .leftJoin(RoleDynamicSqlSupport.role)
                 .on(UserRoleDynamicSqlSupport.roleId, equalTo(RoleDynamicSqlSupport.id))
