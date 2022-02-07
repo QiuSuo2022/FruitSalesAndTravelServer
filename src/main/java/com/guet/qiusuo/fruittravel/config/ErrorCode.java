@@ -20,6 +20,10 @@ public enum ErrorCode {
     LOGIN_EXCEPTION(-1, "system.error.login.error"),
     USER_NO_ROLE(-1, "system.error.user.no.role"),
     X_Hub_Signature_256(-1, "system.error.github.signature.mismatch"),
+    NO_PERMISSION(-1,"system.error.no_permission"),
+    NO_FOUND_CHILD_FRUIT(-1,"system.error.no_found.child_fruit"),
+    FRUIT_ALREADY_EXITS(-1,"system.error.fruit.already.exits"),
+    NO_FOUND_FRUIT(-1,"system.error.no_found.fruit")
     ;
 
     @Override
