@@ -8,12 +8,16 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.FruitMapper;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.model.Fruit;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.springframework.transaction.annotation.Transactional;
 
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,21 +26,26 @@ import java.util.UUID;
 public class FruitService {
 
     private FruitMapper fruitMapper;
+
     private ChildFruitService childFruitService;
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @Autowired
     public void setFruitMapper(FruitMapper fruitMapper) {
         this.fruitMapper = fruitMapper;
     }
+
     @Autowired
     public void setChildFruitService(ChildFruitService childFruitService) {
         this.childFruitService = childFruitService;
     }
+
     private List<Fruit> getFruitByName(String fruitName){
         return fruitMapper.selectMany(select(
                 FruitDynamicSqlSupport.id,
                 FruitDynamicSqlSupport.fruitName,
-                FruitDynamicSqlSupport.fruitPrice,//范围
+                FruitDynamicSqlSupport.fruitPrice,
                 FruitDynamicSqlSupport.description,
                 FruitDynamicSqlSupport.departurePoint,
                 FruitDynamicSqlSupport.deliveryCost,
@@ -48,6 +57,7 @@ public class FruitService {
         )
                 .from(FruitDynamicSqlSupport.fruit)
                 .where(FruitDynamicSqlSupport.fruitName, isEqualTo(fruitName))
+                .and(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
     }
 
@@ -58,26 +68,28 @@ public class FruitService {
 
     public void addFruit(Fruit fruit){
         long now = System.currentTimeMillis();
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();
         if (getFruitByName(fruit.getFruitName()).get(0) != null){
             //已经存在该Fruit
             throw new SystemException(ErrorCode.FRUIT_ALREADY_EXITS);
-        }else {
-            fruit.setId(UUID.randomUUID().toString());
-            fruit.setCreateTime(now);
-            fruit.setUpdateTime(now);
-            /*
-             * 1.如果前端中 Fruit与childFruit一起提交的时候,直接使用STATUS_ACTIVE
-             * 2.否则,设置为CHILD_FRUIT_INFO_NOT_COMPLETE
-             * */
-            //假设一起提交
-            fruit.setStatus(SystemConstants.STATUS_ACTIVE);
-            fruitMapper.insertSelective(fruit);
-            System.out.println("创建水果成功:" + fruit.toString());
         }
+
+        fruit.setId(UUID.randomUUID().toString());
+        fruit.setCreateTime(now);
+        fruit.setUpdateTime(now);
+        fruit.setCreateUserId(UserContextHolder.getUserId());
+        fruit.setUpdateUserId(UserContextHolder.getUserId());
+        /*
+         * 1.如果前端中 Fruit与childFruit一起提交的时候,直接使用STATUS_ACTIVE
+         * 2.否则,设置为CHILD_FRUIT_INFO_NOT_COMPLETE
+         * */
+        //假设一起提交
+        fruit.setStatus(SystemConstants.STATUS_ACTIVE);
+        int i = fruitMapper.insertSelective(fruit);
+        if(i == 0){
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        LOG.info("水果{}添加成功",fruit.getFruitName());
     }
 
 
@@ -85,19 +97,21 @@ public class FruitService {
      * 删除Fruit(with childFruit)
      * @param fruitName
      */
+    @Transactional(rollbackFor = Exception.class)
     public void deleteFruit(String fruitName){
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();
         Optional<Fruit> optionalFruit = fruitMapper.selectByPrimaryKey(fruitName);
         Fruit fruit = optionalFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_FRUIT));
         fruit.setStatus(SystemConstants.STATUS_NEGATIVE);
         fruit.setUpdateTime(System.currentTimeMillis());
+        fruit.setUpdateUserId(UserContextHolder.getUserId());
         //先删除childFruit
         childFruitService.deleteChildFruit(fruit.getId());
         //删除Fruit
-        fruitMapper.deleteByPrimaryKey(fruit.getId());
+        int i = fruitMapper.deleteByPrimaryKey(fruit.getId());
+        if (i == 0){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
     }
 
     /**
@@ -105,12 +119,13 @@ public class FruitService {
      * @param fruit
      */
     public void updateFruit(Fruit fruit){
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();
         fruit.setUpdateTime(System.currentTimeMillis());
-        fruitMapper.updateByPrimaryKeySelective(fruit);
+        fruit.setUpdateUserId(UserContextHolder.getUserId());
+        int i =  fruitMapper.updateByPrimaryKeySelective(fruit);
+        if (i == 0){
+            throw new SystemException(ErrorCode.UPDATE_ERROR);
+        }
     }
 
     /**
