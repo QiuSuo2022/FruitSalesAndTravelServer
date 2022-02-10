@@ -61,9 +61,4 @@ public class UserController {
     public void updateUserRole(@RequestParam String userId, @RequestParam String roleId) {
         userService.updateUserRole(userId, roleId);
     }
-    @ApiOperation(value = "查询用户角色")
-    @GetMapping
-    public String searchRole(@RequestParam String userId) {
-        return userService.searchRole(userId);
-    }
 }
