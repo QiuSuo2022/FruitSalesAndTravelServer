@@ -25,6 +25,7 @@ import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -82,11 +83,15 @@ public class UserService {
         }
         loginUser.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
         loginUser.setUpdateTime(System.currentTimeMillis());
-        userMapper.updateByPrimaryKeySelective(loginUser);
+        int i = userMapper.updateByPrimaryKeySelective(loginUser);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.UPDATE_ERROR);
+        }
         return loginUser;
     }
 
-    private void register(String openId, String avatarUrl, String userName, String gender) {
+    @Transactional(rollbackFor = Exception.class)
+    void register(String openId, String avatarUrl, String userName, String gender) {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setAvatarUrl(avatarUrl);
@@ -202,6 +207,7 @@ public class UserService {
      *
      * @param user
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addUser(User user) {
         user.setId(UUID.randomUUID().toString());
         long now = System.currentTimeMillis();
