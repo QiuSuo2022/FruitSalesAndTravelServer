@@ -22,7 +22,9 @@ public enum ErrorCode {
     X_Hub_Signature_256(-1, "system.error.github.signature.mismatch"),
     NO_PERMISSION(-1,"system.error.no_permission"),
     NO_FOUND_CHILD_FRUIT(-1,"system.error.no_found.child_fruit"),
+    NO_FOUND_TICKET(-1,"system.error.no_found.ticket"),
     FRUIT_ALREADY_EXITS(-1,"system.error.fruit.already.exits"),
+    SCENIC_ALREADY_EXITS(-1,"system.error.scenic.already.exits"),
     NO_FOUND_FRUIT(-1,"system.error.no_found.fruit")
     ;
 

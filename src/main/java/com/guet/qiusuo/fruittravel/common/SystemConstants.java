@@ -13,6 +13,8 @@ public class SystemConstants {
 
     public static final Short USER_INFO_NOT_COMPLETE = new Short("2");
 
+    public static final Short SCENIC_INFO_NOT_COMPLETE = new Short("2");
+
     //分页
     public static final String DEFAULT_PAGE = "1";
 
