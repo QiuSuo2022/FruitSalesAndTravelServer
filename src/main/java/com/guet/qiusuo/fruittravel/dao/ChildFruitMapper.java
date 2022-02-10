@@ -194,7 +194,7 @@ public interface ChildFruitMapper {
     //选择status = 1的childFruit
     @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-02-10T19:20:00.223+08:00",
             comments = "Source Table: tbl_child_fruit")
-    default Optional<ChildFruit> selectByfruitId(String fruit_id) {
+    default Optional<ChildFruit> selectByFruitId(String fruit_id) {
         return selectOne(c ->
                 c.where(fruitId, isEqualTo(fruit_id)).and(status,isEqualTo(SystemConstants.STATUS_ACTIVE))
         );
