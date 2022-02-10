@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "水果子项表")
 @RestController
-@RequestMapping("/details")
+@RequestMapping("/childFruit")
 public class ChildFruitController {
     private ChildFruitService childFruitService;
     @Autowired
@@ -30,7 +30,7 @@ public class ChildFruitController {
     }
 
     @ApiOperation(value = "修改水果子项")
-    @PutMapping(value = "/updateChildFruit")
+    @PutMapping
     public void updateChildFruit(@RequestBody ChildFruit childFruit){
         childFruitService.updateChildFruit(childFruit);
     }
