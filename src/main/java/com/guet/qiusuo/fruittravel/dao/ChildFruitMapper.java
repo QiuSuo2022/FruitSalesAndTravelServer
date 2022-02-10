@@ -3,6 +3,7 @@ package com.guet.qiusuo.fruittravel.dao;
 import static com.guet.qiusuo.fruittravel.dao.ChildFruitDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
+import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.model.ChildFruit;
 
 import java.util.Collection;
@@ -33,7 +34,8 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
-
+import org.springframework.stereotype.Repository;
+@Repository
 @Mapper
 public interface ChildFruitMapper {
     @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.223+08:00",
@@ -187,6 +189,14 @@ public interface ChildFruitMapper {
     default Optional<ChildFruit> selectByPrimaryKey(String id_) {
         return selectOne(c ->
                 c.where(id, isEqualTo(id_))
+        );
+    }
+    //选择status = 1的childFruit
+    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-02-10T19:20:00.223+08:00",
+            comments = "Source Table: tbl_child_fruit")
+    default Optional<ChildFruit> selectByfruitId(String fruit_id) {
+        return selectOne(c ->
+                c.where(fruitId, isEqualTo(fruit_id)).and(status,isEqualTo(SystemConstants.STATUS_ACTIVE))
         );
     }
 
