@@ -12,6 +12,7 @@ import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,6 +87,7 @@ public class ScenicService {
      * 删除Scenic(和ticket一起)
      * @param scenicId
      */
+    @Transactional(rollbackFor = Exception.class)
     public void deleteScenic(String scenicId){
         UserContextHolder.validAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
