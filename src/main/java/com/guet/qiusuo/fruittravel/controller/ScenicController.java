@@ -11,7 +11,7 @@ import java.util.List;
 
 @Api(tags = "景点表")
 @RestController
-@RequestMapping("/Scenic")
+@RequestMapping("/scenic")
 public class ScenicController {
     private ScenicService scenicService;
     @Autowired

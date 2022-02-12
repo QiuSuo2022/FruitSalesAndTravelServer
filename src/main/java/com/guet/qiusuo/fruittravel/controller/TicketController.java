@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "景点门票表")
 @RestController
-@RequestMapping("/Ticket")
+@RequestMapping("/ticket")
 public class TicketController {
     private TicketService ticketService;
     @Autowired
