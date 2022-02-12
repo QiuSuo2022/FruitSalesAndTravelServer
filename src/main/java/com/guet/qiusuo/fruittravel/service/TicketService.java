@@ -8,9 +8,15 @@ import com.guet.qiusuo.fruittravel.dao.TicketDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.TicketMapper;
 import com.guet.qiusuo.fruittravel.model.Ticket;
 import org.mybatis.dynamic.sql.render.RenderingStrategy;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +24,7 @@ import java.util.UUID;
 @Service
 public class TicketService {
     private TicketMapper ticketMapper;
-
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @Autowired
     public void setTicketMapper(TicketMapper ticketMapper){this.ticketMapper = ticketMapper;}
@@ -28,20 +34,19 @@ public class TicketService {
      * @param ticket
      */
     public void addTicket(Ticket ticket) {
+        UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")) {
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
         ticket.setId(UUID.randomUUID().toString());
         ticket.setCreateTime(now);
         ticket.setUpdateTime(now);
         ticket.setStatus(SystemConstants.STATUS_ACTIVE);
+        ticket.setCreateUserId(UserContextHolder.getUserId());
+        ticket.setUpdateUserId(UserContextHolder.getUserId());
         int i = ticketMapper.insertSelective(ticket);
         if (i == 0) {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
-        System.out.println("创建景点门票成功:" + ticket.toString());
+        LOG.info("创建景区门票成功,Id:{}",ticket.getScenicId());
     }
 
     /**
@@ -49,15 +54,17 @@ public class TicketService {
      * @param scenicId
      */
     public void deleteTicket(String scenicId){
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();
         Optional<Ticket> optionalTicket = ticketMapper.selectByPrimaryKey(scenicId);
         Ticket ticket = optionalTicket.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_TICKET));
         ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
+        ticket.setUpdateUserId(UserContextHolder.getUserId());
         ticket.setUpdateTime(System.currentTimeMillis());
-        ticketMapper.deleteByPrimaryKey(scenicId);
+        int i = ticketMapper.deleteByPrimaryKey(scenicId);
+        if(i == 0){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
+        LOG.info("删除景区门票成功,Id:{}",scenicId);
     }
 
     /**
@@ -65,12 +72,13 @@ public class TicketService {
      * @param ticket
      */
     public void updateTicket(Ticket ticket){
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();
         ticket.setUpdateTime(System.currentTimeMillis());
-        ticketMapper.updateByPrimaryKeySelective(ticket);
+        ticket.setUpdateUserId(UserContextHolder.getUserId());
+        int i = ticketMapper.updateByPrimaryKeySelective(ticket);
+        if (i == 0){
+            throw new SystemException(ErrorCode.UPDATE_ERROR);
+        }
     }
 
     /**

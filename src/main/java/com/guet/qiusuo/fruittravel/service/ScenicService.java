@@ -7,17 +7,23 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
 import com.guet.qiusuo.fruittravel.model.Scenic;
+import jdk.incubator.jpackage.internal.Log;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 public class ScenicService {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
     private ScenicMapper scenicMapper;
     private TicketService ticketService;
 
@@ -51,18 +57,16 @@ public class ScenicService {
      * @param scenic
      */
     public void addScenic(Scenic scenic){
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();;
         if(getScenicByName(scenic.getScenicName()).get(0) != null){
             //已经存在该景点
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
         }
-        else{
             long now = System.currentTimeMillis();
             scenic.setCreateTime(now);
             scenic.setUpdateTime(now);
+            scenic.setUpdateUserId(UserContextHolder.getUserId());
+            scenic.setCreateUserId(UserContextHolder.getUserId());
             /*
              * 1.如果前端中 Scenic与Ticket一起提交的时候,直接使用STATUS_ACTIVE
              * 2.否则,设置为TICKET_INFO_NOT_COMPLETE
@@ -75,10 +79,7 @@ public class ScenicService {
             if(i == 0){
                 throw new SystemException(ErrorCode.INSERT_ERROR);
             }
-            System.out.println("创建新景点成功:" + scenic.toString());
-        }
-
-
+            LOG.info("景点{}添加成功",scenic.getScenicName());
     }
 
     /**
@@ -86,29 +87,28 @@ public class ScenicService {
      * @param scenicId
      */
     public void deleteScenic(String scenicId){
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
         Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
         scenic.setStatus(SystemConstants.STATUS_NEGATIVE);
+        scenic.setUpdateUserId(UserContextHolder.getUserId());
         scenic.setUpdateTime(System.currentTimeMillis());
         //先删除ticket
         ticketService.deleteTicket(scenic.getId());
         //再删除scenic
-        scenicMapper.deleteByPrimaryKey(scenic.getId());
+        int i = scenicMapper.deleteByPrimaryKey(scenic.getId());
+        if(i == 0){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
     }
     /**
      * 修改Scenic
      * @param scenic
      */
     public void updateScenic(Scenic scenic){
-        String userRoleId = UserContextHolder.getUser().getRoleId();
-        if (userRoleId.equals("1")){
-            throw new SystemException(ErrorCode.NO_PERMISSION);
-        }
+        UserContextHolder.validAdmin();
         scenic.setUpdateTime(System.currentTimeMillis());
+        scenic.setUpdateUserId(UserContextHolder.getUserId());
         int i = scenicMapper.updateByPrimaryKeySelective(scenic);
         if (i == 0) {
             throw new SystemException(ErrorCode.UPDATE_ERROR);
