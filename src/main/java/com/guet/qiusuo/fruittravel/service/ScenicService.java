@@ -7,7 +7,6 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
 import com.guet.qiusuo.fruittravel.model.Scenic;
-import jdk.incubator.jpackage.internal.Log;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +24,22 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ScenicService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
     private ScenicMapper scenicMapper;
+
     private TicketService ticketService;
 
     @Autowired
-    public void setScenicMapper(ScenicMapper scenicMapper){this.scenicMapper = scenicMapper;}
+    public void setScenicMapper(ScenicMapper scenicMapper) {
+        this.scenicMapper = scenicMapper;
+    }
 
     @Autowired
-    public void setTicketService(TicketService ticketService){this.ticketService = ticketService;}
+    public void setTicketService(TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
 
-    private List<Scenic> getScenicByName(String scenicName){
+    private List<Scenic> getScenicByName(String scenicName) {
         return scenicMapper.selectMany(select(
                 ScenicDynamicSqlSupport.id,
                 ScenicDynamicSqlSupport.scenicName,
@@ -49,46 +54,50 @@ public class ScenicService {
                 ScenicDynamicSqlSupport.updateUserId
         )
                 .from(ScenicDynamicSqlSupport.scenic)
-                .where(ScenicDynamicSqlSupport.scenicName,isEqualTo(scenicName))
-                .and(ScenicDynamicSqlSupport.status,isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
+                .where(ScenicDynamicSqlSupport.scenicName, isEqualTo(scenicName))
+                .and(ScenicDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
     }
+
     /**
      * 添加Scenic
+     *
      * @param scenic
      */
-    public void addScenic(Scenic scenic){
-        UserContextHolder.validAdmin();;
-        if(getScenicByName(scenic.getScenicName()).get(0) != null){
+    public void addScenic(Scenic scenic) {
+        UserContextHolder.validAdmin();
+        ;
+        if (getScenicByName(scenic.getScenicName()).get(0) != null) {
             //已经存在该景点
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
         }
-            long now = System.currentTimeMillis();
-            scenic.setCreateTime(now);
-            scenic.setUpdateTime(now);
-            scenic.setUpdateUserId(UserContextHolder.getUserId());
-            scenic.setCreateUserId(UserContextHolder.getUserId());
-            /*
-             * 1.如果前端中 Scenic与Ticket一起提交的时候,直接使用STATUS_ACTIVE
-             * 2.否则,设置为TICKET_INFO_NOT_COMPLETE
-             * */
-            //假设一起提交
-            scenic.setStatus(SystemConstants.STATUS_ACTIVE);
-            //没有一起提交
-            //ticket.setStatus(SystemConstants.SCENIC_INFO_NOT_COMPLETE);
-            int i = scenicMapper.insertSelective(scenic);
-            if(i == 0){
-                throw new SystemException(ErrorCode.INSERT_ERROR);
-            }
-            LOG.info("景点{}添加成功",scenic.getScenicName());
+        long now = System.currentTimeMillis();
+        scenic.setCreateTime(now);
+        scenic.setUpdateTime(now);
+        scenic.setUpdateUserId(UserContextHolder.getUserId());
+        scenic.setCreateUserId(UserContextHolder.getUserId());
+        /*
+         * 1.如果前端中 Scenic与Ticket一起提交的时候,直接使用STATUS_ACTIVE
+         * 2.否则,设置为TICKET_INFO_NOT_COMPLETE
+         * */
+        //假设一起提交
+        scenic.setStatus(SystemConstants.STATUS_ACTIVE);
+        //没有一起提交
+        //ticket.setStatus(SystemConstants.SCENIC_INFO_NOT_COMPLETE);
+        int i = scenicMapper.insertSelective(scenic);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        LOG.info("景点{}添加成功", scenic.getScenicName());
     }
 
     /**
      * 删除Scenic(和ticket一起)
+     *
      * @param scenicId
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteScenic(String scenicId){
+    public void deleteScenic(String scenicId) {
         UserContextHolder.validAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
         Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
@@ -99,15 +108,17 @@ public class ScenicService {
         ticketService.deleteTicket(scenic.getId());
         //再删除scenic
         int i = scenicMapper.deleteByPrimaryKey(scenic.getId());
-        if(i == 0){
+        if (i == 0) {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
     }
+
     /**
      * 修改Scenic
+     *
      * @param scenic
      */
-    public void updateScenic(Scenic scenic){
+    public void updateScenic(Scenic scenic) {
         UserContextHolder.validAdmin();
         scenic.setUpdateTime(System.currentTimeMillis());
         scenic.setUpdateUserId(UserContextHolder.getUserId());
@@ -116,20 +127,24 @@ public class ScenicService {
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
     }
+
     /**
      * 查找Scenic
+     *
      * @param scenicId
+     *
      * @return
      */
-    public Scenic searchScenic(String scenicId){
+    public Scenic searchScenic(String scenicId) {
         return scenicMapper.selectByPrimaryKey(scenicId).orElse(null);
     }
 
     /**
      * 查找全部景点
+     *
      * @return
      */
-    public List<Scenic> searchAllScenic(){
+    public List<Scenic> searchAllScenic() {
         return scenicMapper.selectMany(select(
                 ScenicDynamicSqlSupport.id,
                 ScenicDynamicSqlSupport.scenicName,
@@ -144,8 +159,8 @@ public class ScenicService {
                 ScenicDynamicSqlSupport.updateUserId
         )
                 .from(ScenicDynamicSqlSupport.scenic)
-                .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_NEGATIVE))
-                .and(ScenicDynamicSqlSupport.status,isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
+                .where(ScenicDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_NEGATIVE))
+                .and(ScenicDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
     }
 }

@@ -23,12 +23,6 @@ public class SystemConstants {
     //通知类型
     public static final Short SYSTEM_NOTIFICATION = new Short("0");
 
-    public static final Short SUBJECT_2_NOTIFICATION = new Short("1");
-
-    public static final Short SUBJECT_3_NOTIFICATION = new Short("2");
-
-    public static final Short NEGATIVE_EVALUATE_NOTIFICATION = new Short("3");
-
     public static final Short NOTIFICATION_DONT_READ = new Short("0");
 
     public static final Short NOTIFICATION_HAS_READ = new Short("0");
