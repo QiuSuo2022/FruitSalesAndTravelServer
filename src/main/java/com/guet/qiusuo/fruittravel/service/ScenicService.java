@@ -66,7 +66,6 @@ public class ScenicService {
      */
     public void addScenic(Scenic scenic) {
         UserContextHolder.validAdmin();
-        ;
         if (getScenicByName(scenic.getScenicName()).get(0) != null) {
             //已经存在该景点
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
