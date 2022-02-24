@@ -1,6 +1,9 @@
 package com.guet.qiusuo.fruittravel.service;
 
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
@@ -39,6 +42,36 @@ public class FruitService {
     @Autowired
     public void setChildFruitService(ChildFruitService childFruitService) {
         this.childFruitService = childFruitService;
+    }
+
+    public PageList<Fruit> getFruitList(String id,String fruitName,String fruitPrice,String nameLike,String departurePoint
+                                        ,String description,Integer deliveryCost,Integer page,Integer pageSize) {
+        if (nameLike == null || nameLike.length() == 0) {
+            nameLike = "";
+        }
+
+        PageHelper.startPage(page,pageSize);
+        List<Fruit> fruitList = fruitMapper.selectFruit(select(
+                FruitDynamicSqlSupport.id,
+                FruitDynamicSqlSupport.fruitName,
+                FruitDynamicSqlSupport.fruitPrice,
+                FruitDynamicSqlSupport.description,
+                FruitDynamicSqlSupport.departurePoint,
+                FruitDynamicSqlSupport.deliveryCost,
+                FruitDynamicSqlSupport.status,
+                FruitDynamicSqlSupport.createTime
+            )
+                .from(FruitDynamicSqlSupport.fruit)
+                .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
+                .orderBy(FruitDynamicSqlSupport.createTime.descending())
+                .build().render(RenderingStrategies.MYBATIS3)
+        );
+
+        PageList<Fruit> pageList = new PageList<>();
+        pageList.setList(fruitList);
+        pageList.setPageInfo(new PageInfo<>(fruitList));
+        return pageList;
     }
 
     private List<Fruit> getFruitByName(String fruitName){

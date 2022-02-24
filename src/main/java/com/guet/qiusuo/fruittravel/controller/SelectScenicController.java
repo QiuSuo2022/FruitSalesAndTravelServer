@@ -24,7 +24,7 @@ public class SelectScenicController {
             @ApiImplicitParam(name = "page",value = "页数",dataType = "int"),
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int")
     })
-    @GetMapping("/list")
+    @GetMapping("/scenic-list")
         public PageList<Scenic> getScenicList(@RequestParam(required = false) String id,
                                               @RequestParam(required = false) String scenicName,
                                               @RequestParam(required = false) String location,
@@ -55,6 +55,6 @@ public class SelectScenicController {
             if(openingHours != null && (openingHours.trim().isEmpty() || openingHours.length() == 0)){
                 openingHours = null;
             }
-            return scenicService.getScenicList(id,scenicName, nameLike,location, openingHours, description, type, page, pageSize);
+            return scenicService.getScenicList(id,scenicName, nameLike,location, type, description, openingHours, page, pageSize);
         }
 }

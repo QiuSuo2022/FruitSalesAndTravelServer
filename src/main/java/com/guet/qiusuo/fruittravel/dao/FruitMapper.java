@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Generated;
 
+import com.guet.qiusuo.fruittravel.model.Scenic;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
@@ -265,4 +266,13 @@ public interface FruitMapper {
                         .where(id, isEqualTo(record::getId))
         );
     }
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "Fruit", value = {
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+    })
+    List<Fruit> selectFruit(SelectStatementProvider selectStatement);
 }

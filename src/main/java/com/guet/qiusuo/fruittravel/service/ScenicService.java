@@ -42,8 +42,8 @@ public class ScenicService {
         this.ticketService = ticketService;
     }
 
-    public PageList<Scenic> getScenicList(String id,String scenicName,String nameLike,String location,String openingHours,String description,
-                                          Short type,Integer page,Integer pageSize) {
+    public PageList<Scenic> getScenicList(String id,String scenicName,String location,String nameLike,Short type,String description,
+                                          String openingHours,Integer page,Integer pageSize) {
         if (nameLike == null || nameLike.length() == 0) {
             nameLike = "";
         }
