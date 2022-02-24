@@ -21,19 +21,19 @@ public class ScenicController {
 
     @ApiOperation(value = "添加景点")
     @PostMapping
-    public void addScenic(@RequestBody Scenic scenic){scenicService.addScenic(scenic);}
+    public void addScenic(@RequestBody Scenic scenic) {scenicService.addScenic(scenic);}
 
     @ApiOperation(value = "删除景点")
     @DeleteMapping
-    public void deleteScenic(@RequestParam String scenicId){scenicService.deleteScenic(scenicId);}
+    public void deleteScenic(@RequestParam String scenicId) {scenicService.deleteScenic(scenicId);}
 
     @ApiOperation(value = "修改景点")
     @PutMapping
-    public void updateScenic(@RequestBody Scenic scenic){scenicService.updateScenic(scenic);}
+    public void updateScenic(@RequestBody Scenic scenic) {scenicService.updateScenic(scenic);}
 
     @ApiOperation(value = "查找景点")
     @GetMapping
-    public void searchScenic(@RequestParam String scenicId){scenicService.searchScenic(scenicId);}
+    public void searchScenic(@RequestParam String scenicId) {scenicService.searchScenic(scenicId);}
 
     @ApiOperation(value = "查找所有景点")
     @GetMapping("/get_all_scenic")

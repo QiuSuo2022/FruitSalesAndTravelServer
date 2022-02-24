@@ -3,6 +3,7 @@ package com.guet.qiusuo.fruittravel.dao;
 import static com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.model.Scenic;
 
 import java.util.Collection;
@@ -265,4 +266,14 @@ public interface ScenicMapper {
                         .where(id, isEqualTo(record::getId))
         );
     }
+
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "Scenic", value = {
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+    })
+    List<Scenic> selectScenic(SelectStatementProvider selectStatement);
 }

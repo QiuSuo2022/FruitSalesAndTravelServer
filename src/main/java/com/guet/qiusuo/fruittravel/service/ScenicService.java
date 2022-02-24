@@ -1,5 +1,8 @@
 package com.guet.qiusuo.fruittravel.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
@@ -39,6 +42,35 @@ public class ScenicService {
         this.ticketService = ticketService;
     }
 
+    public PageList<Scenic> getScenicList(String id,String scenicName,String nameLike,String location,String openingHours,String description,
+                                          Short type,Integer page,Integer pageSize) {
+        if (nameLike == null || nameLike.length() == 0) {
+            nameLike = "";
+        }
+
+        PageHelper.startPage(page,pageSize);
+        List<Scenic> scenicList = scenicMapper.selectScenic(select(
+                ScenicDynamicSqlSupport.id,
+                ScenicDynamicSqlSupport.scenicName,
+                ScenicDynamicSqlSupport.location,
+                ScenicDynamicSqlSupport.openingHours,
+                ScenicDynamicSqlSupport.description,
+                ScenicDynamicSqlSupport.type,
+                ScenicDynamicSqlSupport.status,
+                ScenicDynamicSqlSupport.createTime
+                )
+                        .from(ScenicDynamicSqlSupport.scenic)
+                        .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                        .orderBy(ScenicDynamicSqlSupport.createTime.descending())
+                        .build().render(RenderingStrategies.MYBATIS3)
+        );
+
+        PageList<Scenic> pageList = new PageList<>();
+        pageList.setList(scenicList);
+        pageList.setPageInfo(new PageInfo<>(scenicList));
+        return pageList;
+    }
     private List<Scenic> getScenicByName(String scenicName) {
         return scenicMapper.selectMany(select(
                 ScenicDynamicSqlSupport.id,
