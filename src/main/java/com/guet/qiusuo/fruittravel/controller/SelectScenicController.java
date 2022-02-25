@@ -46,15 +46,6 @@ public class SelectScenicController {
             if(scenicName != null && (scenicName.trim().isEmpty() || scenicName.length() == 0)){
                 scenicName = null;
             }
-            if(description != null && (description.trim().isEmpty() || description.length() == 0)){
-                description = null;
-            }
-            if(location != null && (location.trim().isEmpty() || location.length() == 0)){
-                location = null;
-            }
-            if(openingHours != null && (openingHours.trim().isEmpty() || openingHours.length() == 0)){
-                openingHours = null;
-            }
             return scenicService.getScenicList(id,scenicName, nameLike,location, type, description, openingHours, page, pageSize);
         }
 }

@@ -45,15 +45,6 @@ public class SelectFruitController {
         if(fruitName != null && (fruitName.trim().isEmpty() || fruitName.length() == 0)){
             fruitName = null;
         }
-        if(description != null && (description.trim().isEmpty() || description.length() == 0)){
-            description = null;
-        }
-        if(departurePoint != null && (departurePoint.trim().isEmpty() || departurePoint.length() == 0)){
-            departurePoint = null;
-        }
-        if(fruitPrice != null && (fruitPrice.trim().isEmpty() || fruitPrice.length() == 0)){
-            fruitPrice = null;
-        }
         return fruitService.getFruitList(id,fruitName,fruitPrice,nameLike,departurePoint,description,deliveryCost,page,pageSize);
     }
 }
