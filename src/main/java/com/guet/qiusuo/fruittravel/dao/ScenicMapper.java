@@ -268,6 +268,27 @@ public interface ScenicMapper {
     }
 
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "ScenicVOResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "create_user_id", property = "createUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_user_id", property = "updateUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "ticket_id", property = "ticketId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "price", property = "price", jdbcType = JdbcType.INTEGER),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "ticket_description", property = "ticketDescription", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "ticket_name", property = "ticketName", jdbcType = JdbcType.VARCHAR)
+    })
+    List<ScenicVO> selectScenicVOs(SelectStatementProvider statementProvider);
+
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @Results(id = "Scenic", value = {
             @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR, id = true),
             @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),

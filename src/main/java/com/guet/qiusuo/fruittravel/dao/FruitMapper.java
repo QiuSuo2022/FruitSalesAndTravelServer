@@ -3,6 +3,7 @@ package com.guet.qiusuo.fruittravel.dao;
 import static com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
+import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 
 import java.util.Collection;
@@ -266,6 +267,25 @@ public interface FruitMapper {
                         .where(id, isEqualTo(record::getId))
         );
     }
+
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "FruitVOResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "create_user_id", property = "createUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_user_id", property = "updateUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "stock", property = "stock", jdbcType = JdbcType.INTEGER),
+            @Result(column = "child_fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR)
+    })
+    List<FruitVO> selectFruitVOs(SelectStatementProvider selectStatement);
+
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @Results(id = "Fruit", value = {
             @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR, id = true),
