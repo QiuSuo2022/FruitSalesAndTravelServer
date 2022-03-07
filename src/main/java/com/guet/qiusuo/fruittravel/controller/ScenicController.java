@@ -37,7 +37,7 @@ public class ScenicController {
 
     @ApiOperation(value = "查找景点")
     @GetMapping
-    public void searchScenic(@RequestParam String scenicId) {scenicService.searchScenic(scenicId);}
+    public Scenic searchScenic(@RequestParam String scenicId) {return scenicService.searchScenic(scenicId);}
 
     @ApiOperation(value = "查找所有景点")
     @GetMapping("/get_all_scenic")
