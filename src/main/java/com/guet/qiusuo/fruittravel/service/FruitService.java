@@ -44,8 +44,8 @@ public class FruitService {
         this.childFruitService = childFruitService;
     }
 
-    public PageList<Fruit> getFruitList(String id,String fruitName,String fruitPrice,String nameLike,String departurePoint
-                                        ,String description,Integer deliveryCost,Integer page,Integer pageSize) {
+    public PageList<Fruit> getFruitList(String id, String fruitName, String fruitPrice, String nameLike, String departurePoint
+            , String description, Integer deliveryCost, Integer page, Integer pageSize) {
         if (nameLike == null || nameLike.length() == 0) {
             nameLike = "";
         }
