@@ -3,6 +3,7 @@ package com.guet.qiusuo.fruittravel.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -10,6 +11,7 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.FruitMapper;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
+import com.guet.qiusuo.fruittravel.dao.FruitScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,6 +184,50 @@ public class FruitService {
                 .from(FruitDynamicSqlSupport.fruit)
                 .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
+    }
+
+    /**
+     * 根据fruit_id查找FruitVO
+     * @param fruit_id
+     * @return
+     */
+    public FruitVO getFruitVOByFruitId(String fruit_id){
+        List<Fruit> fruitList = fruitMapper.selectMany(select(
+            FruitDynamicSqlSupport.id,
+            FruitDynamicSqlSupport.fruitName,
+            FruitDynamicSqlSupport.fruitPrice,
+            FruitDynamicSqlSupport.description,
+            FruitDynamicSqlSupport.departurePoint,
+            FruitDynamicSqlSupport.deliveryCost,
+            FruitDynamicSqlSupport.status,
+            FruitDynamicSqlSupport.createTime,
+            FruitDynamicSqlSupport.updateTime,
+            FruitDynamicSqlSupport.createUserId,
+            FruitDynamicSqlSupport.updateUserId
+        )
+                        .from(FruitDynamicSqlSupport.fruit)
+                .where(FruitDynamicSqlSupport.id, isEqualTo(fruit_id))
+                .and(FruitDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        if (fruitList.isEmpty()){
+            return null;
+        }
+        Fruit fruit = fruitList.get(0);
+        FruitVO fruitVO = new FruitVO();
+        fruitVO.setId(fruit.getId());
+        fruitVO.setFruitName(fruit.getFruitName());
+        fruitVO.setFruitPrice(fruit.getFruitPrice());
+        fruitVO.setDescription(fruit.getDescription());
+        fruitVO.setDeparturePoint(fruit.getDeparturePoint());
+        fruitVO.setDeliveryCost(fruit.getDeliveryCost());
+        fruitVO.setStatus(fruit.getStatus());
+        fruitVO.setCreateTime(fruit.getCreateTime());
+        fruitVO.setUpdateTime(fruit.getUpdateTime());
+        fruitVO.setCreateUserId(fruit.getUpdateUserId());
+
+        fruitVO.setStock(childFruitService.searchChildFruit(fruit_id).getStock());
+        fruitVO.setChildFruitName(childFruitService.searchChildFruit(fruit_id).getFruitName());
+        return fruitVO;
     }
 }
 
