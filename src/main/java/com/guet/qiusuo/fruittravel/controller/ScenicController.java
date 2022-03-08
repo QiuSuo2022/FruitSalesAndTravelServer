@@ -46,12 +46,7 @@ public class ScenicController {
     @ApiOperation("获取景区列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "景区ID",dataType = "String"),
-            @ApiImplicitParam(name = "scenicName",value = "景区名称",dataType = "String"),
             @ApiImplicitParam(name = "nameLike",value = "景区名称模糊词",dataType = "String"),
-            @ApiImplicitParam(name = "location",value = "景区地理位置",dataType = "String"),
-            @ApiImplicitParam(name = "type",value = "景区类型",dataType = "Short"),
-            @ApiImplicitParam(name = "description",value = "景区描述",dataType = "String"),
-            @ApiImplicitParam(name = "openingHours",value = "景区开放时间",dataType = "String"),
             @ApiImplicitParam(name = "page",value = "页数",dataType = "int"),
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int")
     })

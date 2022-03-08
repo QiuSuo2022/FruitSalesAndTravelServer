@@ -51,12 +51,7 @@ public class FruitController {
     @ApiOperation("获取水果列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "水果ID",dataType = "String"),
-            @ApiImplicitParam(name = "fruitName",value = "水果名称",dataType = "String"),
             @ApiImplicitParam(name = "nameLike",value = "水果名称模糊词",dataType = "String"),
-            @ApiImplicitParam(name = "fruitPrice",value = "水果价格",dataType = "String"),
-            @ApiImplicitParam(name = "departurePoint",value = "发货地点",dataType = "String"),
-            @ApiImplicitParam(name = "description",value = "水果描述",dataType = "String"),
-            @ApiImplicitParam(name = "deliveryCost",value = "快递费",dataType = "Integer"),
             @ApiImplicitParam(name = "page",value = "页数",dataType = "int"),
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int")
     })
