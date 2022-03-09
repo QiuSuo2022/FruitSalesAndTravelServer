@@ -11,7 +11,6 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.FruitMapper;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.FruitScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

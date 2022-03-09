@@ -18,11 +18,8 @@ public class ScenicVO extends Scenic {
     private Integer price;
 
     @ApiModelProperty(value = "景区门票类型")
-    private Short type;
+    private Short ticketType;
 
     @ApiModelProperty(value = "景区门票描述")
     private String ticketDescription;
-
-    @ApiModelProperty(value = "景区门票名称")
-    private String ticketName;
 }

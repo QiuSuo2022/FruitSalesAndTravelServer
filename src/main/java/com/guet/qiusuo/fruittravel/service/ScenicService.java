@@ -2,13 +2,17 @@ package com.guet.qiusuo.fruittravel.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
+import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
+import com.guet.qiusuo.fruittravel.model.Fruit;
 import com.guet.qiusuo.fruittravel.model.Scenic;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -193,5 +197,52 @@ public class ScenicService {
                 .where(ScenicDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_NEGATIVE))
                 .and(ScenicDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
+    }
+
+    /**
+     * 根据scenic_id查找ScenicVO
+     * @param scenic_id
+     * @return
+     */
+    public ScenicVO getScenicVOByScenicId(String scenic_id) {
+        List<Scenic> scenicList = scenicMapper.selectMany(select(
+                ScenicDynamicSqlSupport.id,
+                ScenicDynamicSqlSupport.scenicName,
+                ScenicDynamicSqlSupport.location,
+                ScenicDynamicSqlSupport.openingHours,
+                ScenicDynamicSqlSupport.description,
+                ScenicDynamicSqlSupport.type,
+                ScenicDynamicSqlSupport.status,
+                ScenicDynamicSqlSupport.createTime,
+                FruitDynamicSqlSupport.updateTime,
+                FruitDynamicSqlSupport.createUserId,
+                FruitDynamicSqlSupport.updateUserId
+        )
+                        .from(ScenicDynamicSqlSupport.scenic)
+                        .where(ScenicDynamicSqlSupport.id, isEqualTo(scenic_id))
+                        .and(ScenicDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .build().render(RenderingStrategies.MYBATIS3));
+
+        if (scenicList.isEmpty()){
+            return null;
+        }
+        Scenic scenic = scenicList.get(0);
+        ScenicVO scenicVO = new ScenicVO();
+        scenicVO.setId(scenic.getId());
+        scenicVO.setScenicName(scenic.getScenicName());
+        scenicVO.setLocation(scenic.getLocation());
+        scenicVO.setDescription(scenic.getDescription());
+        scenicVO.setOpeningHours(scenic.getOpeningHours());
+        scenicVO.setType(scenic.getType());
+        scenicVO.setStatus(scenic.getStatus());
+        scenicVO.setCreateTime(scenic.getCreateTime());
+        scenicVO.setUpdateTime(scenic.getUpdateTime());
+        scenicVO.setCreateUserId(scenic.getUpdateUserId());
+
+        scenicVO.setTicketId(ticketService.searchTicket(scenic_id).getScenicId());
+        scenicVO.setPrice(ticketService.searchTicket(scenic_id).getPrice());
+        scenicVO.setTicketType(ticketService.searchTicket(scenic_id).getType());
+        scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).getDescription());
+        return scenicVO;
     }
 }

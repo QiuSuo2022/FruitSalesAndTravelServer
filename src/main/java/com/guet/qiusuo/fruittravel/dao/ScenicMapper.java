@@ -282,9 +282,8 @@ public interface ScenicMapper {
             @Result(column = "update_user_id", property = "updateUserId", jdbcType = JdbcType.VARCHAR),
             @Result(column = "ticket_id", property = "ticketId", jdbcType = JdbcType.VARCHAR),
             @Result(column = "price", property = "price", jdbcType = JdbcType.INTEGER),
-            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "ticket_type", property = "ticketType", jdbcType = JdbcType.SMALLINT),
             @Result(column = "ticket_description", property = "ticketDescription", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "ticket_name", property = "ticketName", jdbcType = JdbcType.VARCHAR)
     })
     List<ScenicVO> selectScenicVOs(SelectStatementProvider statementProvider);
 
