@@ -2,7 +2,6 @@ package com.guet.qiusuo.fruittravel.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
@@ -12,7 +11,6 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
-import com.guet.qiusuo.fruittravel.model.Fruit;
 import com.guet.qiusuo.fruittravel.model.Scenic;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
@@ -107,6 +106,7 @@ public class ScenicService {
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
         }
         long now = System.currentTimeMillis();
+        scenic.setId(UUID.randomUUID().toString());
         scenic.setCreateTime(now);
         scenic.setUpdateTime(now);
         scenic.setUpdateUserId(UserContextHolder.getUserId());
@@ -135,7 +135,7 @@ public class ScenicService {
     public void deleteScenic(String scenicId) {
         UserContextHolder.validAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
-        Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
+        Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_SCENIC));
         scenic.setStatus(SystemConstants.STATUS_NEGATIVE);
         scenic.setUpdateUserId(UserContextHolder.getUserId());
         scenic.setUpdateTime(System.currentTimeMillis());
