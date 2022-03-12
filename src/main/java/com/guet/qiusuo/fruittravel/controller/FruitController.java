@@ -50,7 +50,6 @@ public class FruitController {
 
     @ApiOperation("获取水果列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "水果ID",dataType = "String", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "nameLike",value = "水果名称模糊词",dataType = "String", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
