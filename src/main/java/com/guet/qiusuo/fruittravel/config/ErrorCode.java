@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.config;
 
+@SuppressWarnings("AlibabaEnumConstantsMustHaveComment")
 public enum ErrorCode {
     LIMITED_AUTHORITY(-1, "limited.authority"),
     UNKNOWN_ERROR(-1, "system.error"),
@@ -25,7 +26,7 @@ public enum ErrorCode {
     NO_FOUND_TICKET(-1,"system.error.no_found.ticket"),
     FRUIT_ALREADY_EXITS(-1,"system.error.fruit.already.exits"),
     SCENIC_ALREADY_EXITS(-1,"system.error.scenic.already.exits"),
-    NO_FOUND_FRUIT(-1,"system.error.no_found.fruit")
+    NO_FOUND_FRUIT(-1,"system.error.no_found.fruit"),
     ;
 
     @Override
