@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.controller;
 
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.model.Scenic;
@@ -37,7 +38,7 @@ public class ScenicController {
 
     @ApiOperation(value = "查找景点")
     @GetMapping
-    public Scenic searchScenic(@RequestParam String scenicId) {return scenicService.searchScenic(scenicId);}
+    public ScenicVO searchScenic(@RequestParam String scenicId) {return scenicService.getScenicVOByScenicId(scenicId);}
 
     @ApiOperation(value = "查找所有景点")
     @GetMapping("/get_all_scenic")
@@ -45,10 +46,9 @@ public class ScenicController {
 
     @ApiOperation("获取景区列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "景区ID",dataType = "String"),
-            @ApiImplicitParam(name = "nameLike",value = "景区名称模糊词",dataType = "String"),
-            @ApiImplicitParam(name = "page",value = "页数",dataType = "int"),
-            @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int")
+            @ApiImplicitParam(name = "nameLike",value = "景区名称模糊词",dataType = "String", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
     })
     @GetMapping("/scenic_list")
     public PageList<Scenic> getScenicList(@RequestParam(required = false) String id,
