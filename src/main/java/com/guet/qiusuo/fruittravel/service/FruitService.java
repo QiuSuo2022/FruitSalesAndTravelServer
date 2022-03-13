@@ -11,7 +11,6 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.FruitMapper;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.FruitScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,11 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+
+/**
+ * @author lu
+ */
 @Service
 public class FruitService {
 
@@ -135,8 +137,12 @@ public class FruitService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteFruit(String fruitName){
         UserContextHolder.validAdmin();
-        Optional<Fruit> optionalFruit = fruitMapper.selectByPrimaryKey(fruitName);
-        Fruit fruit = optionalFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_FRUIT));
+        List<Fruit> fruitList = getFruitByName(fruitName);
+        if (fruitList.isEmpty()){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
+        Fruit fruit = new Fruit();
+        fruit = fruitList.get(0);
         fruit.setStatus(SystemConstants.STATUS_NEGATIVE);
         fruit.setUpdateTime(System.currentTimeMillis());
         fruit.setUpdateUserId(UserContextHolder.getUserId());
