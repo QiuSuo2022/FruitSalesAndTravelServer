@@ -17,6 +17,13 @@ public class ImageFile {
     @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.239+08:00",
             comments = "Source field: tbl_image_file.id")
     private String id;
+    /**
+     * Database Column Remarks:
+     * 绑定景区/水果
+     */
+    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.239+08:00",
+            comments = "Source field: tbl_image_file.id")
+    private String fk_id;
 
     /**
      * Database Column Remarks:
@@ -228,4 +235,14 @@ public class ImageFile {
     public void setUpdateUserId(String updateUserId) {
         this.updateUserId = updateUserId == null ? null : updateUserId.trim();
     }
+    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-03-13T17:08:00.241+08:00", comments = "Source field: tbl_image_file.fk_id")
+    public void setFk_id(String fk_id) {
+        this.fk_id = fk_id == null ? null : fk_id.trim();
+    }
+    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-03-13T17:08:00.241+08:00",
+            comments = "Source field: tbl_image_file.fk_id")
+    public String getFk_id() {
+        return fk_id;
+    }
+
 }
