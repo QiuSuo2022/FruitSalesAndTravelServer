@@ -15,6 +15,9 @@ import java.util.UUID;
 import static org.slf4j.LoggerFactory.getLogger;
 import static java.lang.invoke.MethodHandles.lookup;
 
+/**
+ * @author lu
+ */
 @Service
 public class ChildFruitService {
 
