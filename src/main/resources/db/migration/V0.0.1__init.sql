@@ -67,7 +67,6 @@ create table tbl_child_fruit
 create table tbl_image_file
 (
     id              varchar(44)     not null comment 'uuid',
-    fk_id           varchar(44)     null comment '关联景区/水果'
     image_name      varchar(255)    null comment '图片名',
     type            smallint        null comment '图片类别: 0--轮播图, 1--水果商品图, 2--商品评价图',
     image_size      smallint        null comment '文件大小',
