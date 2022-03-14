@@ -41,7 +41,7 @@ public class ScenicController {
     public ScenicVO searchScenic(@RequestParam String scenicId) {return scenicService.getScenicVOByScenicId(scenicId);}
 
     @ApiOperation(value = "查找所有景点")
-    @GetMapping("/get_all_scenic")
+    @GetMapping("/getAllScenic")
     public List<Scenic> searchAllScenic() {return scenicService.searchAllScenic();}
 
     @ApiOperation("获取景区列表")

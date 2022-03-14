@@ -34,7 +34,7 @@ public class ReservationController {
     public Reservation searchReservation(@RequestBody String Id) {return reservationService.searchReservation(Id);}
 
     @ApiOperation(value = "查找全部预定信息")
-    @GetMapping("/get_all_reservation")
+    @GetMapping("/getAllReservation")
     public List<Reservation> searchAllReservation() {return reservationService.searchAllReservation();}
 
 }

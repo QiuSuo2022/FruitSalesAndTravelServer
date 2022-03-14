@@ -194,7 +194,7 @@ public class ScenicService {
                 ScenicDynamicSqlSupport.updateUserId
         )
                 .from(ScenicDynamicSqlSupport.scenic)
-                .where(ScenicDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_NEGATIVE))
+                .where(ScenicDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(ScenicDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
     }
@@ -214,9 +214,9 @@ public class ScenicService {
                 ScenicDynamicSqlSupport.type,
                 ScenicDynamicSqlSupport.status,
                 ScenicDynamicSqlSupport.createTime,
-                FruitDynamicSqlSupport.updateTime,
-                FruitDynamicSqlSupport.createUserId,
-                FruitDynamicSqlSupport.updateUserId
+                ScenicDynamicSqlSupport.updateTime,
+                ScenicDynamicSqlSupport.createUserId,
+                ScenicDynamicSqlSupport.updateUserId
         )
                         .from(ScenicDynamicSqlSupport.scenic)
                         .where(ScenicDynamicSqlSupport.id, isEqualTo(scenic_id))
