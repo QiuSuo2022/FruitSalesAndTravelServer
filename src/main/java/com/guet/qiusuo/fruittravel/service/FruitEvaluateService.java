@@ -7,15 +7,12 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateMapper;
-import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
-import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +21,10 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * @author ss
+ * @date 2022/3/14
+ */
 @Service
 public class FruitEvaluateService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -31,7 +32,7 @@ public class FruitEvaluateService {
     private EvaluateMapper evaluateMapper;
 
     private FruitEvaluateService fruitEvaluateService;
-    private SelectStatementProvider select;
+
 
 
     @Autowired
