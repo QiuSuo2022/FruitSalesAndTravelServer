@@ -1,0 +1,126 @@
+package com.guet.qiusuo.fruittravel.service;
+
+import com.guet.qiusuo.fruittravel.common.SystemConstants;
+import com.guet.qiusuo.fruittravel.config.ErrorCode;
+import com.guet.qiusuo.fruittravel.config.SystemException;
+import com.guet.qiusuo.fruittravel.config.UserContextHolder;
+import com.guet.qiusuo.fruittravel.dao.EvaluateMapper;
+import com.guet.qiusuo.fruittravel.model.Evaluate;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
+@Service
+public class FruitEvaluateService {
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private EvaluateMapper evaluateMapper;
+
+    private FruitEvaluateService fruitEvaluateService;
+
+    @Autowired
+    public void setEvaluateMapper(EvaluateMapper evaluateMapper) {this.evaluateMapper = evaluateMapper;}
+
+    /**
+     * 添加Evaluate(主评)
+     *
+     * @param evaluate
+     */
+    public void addFruitEvaluate(Evaluate evaluate) {
+        UserContextHolder.validAdmin();
+        long now = System.currentTimeMillis();
+        evaluate.setId(UUID.randomUUID().toString());
+        evaluate.setCreateTime(now);
+        evaluate.setUpdateTime(now);
+        evaluate.setStatus(SystemConstants.STATUS_ACTIVE);
+        evaluate.setCreateUserId(UserContextHolder.getUserId());
+        evaluate.setUpdateUserId(UserContextHolder.getUserId());
+        int i = evaluateMapper.insertSelective(evaluate);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        LOG.info("评价水果成功,Id:{}",evaluate.getId());
+    }
+
+    /**
+     * 添加主评的追评(evaluateId为主评的Id)
+     *
+     * @param evaluateId
+     */
+    public void addFruitReview(String evaluateId) {
+        UserContextHolder.validAdmin();
+        Evaluate reEvaluate = new Evaluate();
+        long now = System.currentTimeMillis();
+        reEvaluate.setStatus(SystemConstants.STATUS_ACTIVE);
+        reEvaluate.setEvaluateId(evaluateId);
+        reEvaluate.setId(UUID.randomUUID().toString());
+        reEvaluate.setCreateTime(now);
+        reEvaluate.setUpdateTime(now);
+        reEvaluate.setCreateUserId(UserContextHolder.getUserId());
+        reEvaluate.setUpdateUserId(UserContextHolder.getUserId());
+        int i = evaluateMapper.insertSelective(reEvaluate);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        LOG.info("添加追评成功,Id:{}",evaluateId);
+    }
+
+    /**
+     *删除追评
+     * @param evaluateId
+     */
+    public void deleteFruitReEvaluate(String evaluateId) {
+        UserContextHolder.validAdmin();
+        Optional<Evaluate> optionalEvaluate = evaluateMapper.selectByPrimaryKey(evaluateId);
+        Evaluate evaluate = optionalEvaluate.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_REEVALUATE));
+        evaluate.setStatus(SystemConstants.STATUS_NEGATIVE);
+        evaluate.setUpdateUserId(UserContextHolder.getUserId());
+        evaluate.setUpdateTime(System.currentTimeMillis());
+        int i = evaluateMapper.deleteByPrimaryKey(evaluateId);
+        if(i == 0){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
+        LOG.info("删除追评成功,Id:{}",evaluateId);
+    }
+
+
+    /**
+     *删除评价(连带追评一起删除)
+     * @param UUID
+     */
+    public void deleteFruitEvaluate(String UUID) {
+        UserContextHolder.validAdmin();
+        Optional<Evaluate> optionalEvaluate = evaluateMapper.selectByPrimaryKey(UUID);
+        Evaluate evaluate = optionalEvaluate.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_EVALUATE));
+        evaluate.setStatus(SystemConstants.STATUS_NEGATIVE);
+        evaluate.setUpdateUserId(UserContextHolder.getUserId());
+        evaluate.setUpdateTime(System.currentTimeMillis());
+        //先删除追评
+        fruitEvaluateService.deleteFruitReEvaluate(evaluate.getId());
+        //再删除主评
+        int i = evaluateMapper.deleteByPrimaryKey(evaluate.getId());
+        if(i == 0){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
+    }
+
+    /**
+     * 修改水果评价
+     * @param evaluate
+     */
+    public void updateFruitEvaluate(Evaluate evaluate) {
+        UserContextHolder.validAdmin();
+        evaluate.setUpdateTime(System.currentTimeMillis());
+        evaluate.setUpdateUserId(UserContextHolder.getUserId());
+        int i = evaluateMapper.updateByPrimaryKeySelective(evaluate);
+        if (i == 0){
+            throw new SystemException(ErrorCode.UPDATE_ERROR);
+        }
+    }
+}

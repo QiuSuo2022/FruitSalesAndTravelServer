@@ -27,7 +27,9 @@ public enum ErrorCode {
     SCENIC_ALREADY_EXITS(-1,"system.error.scenic.already.exits"),
     NO_FOUND_FRUIT(-1,"system.error.no_found.fruit"),
     NO_FOUND_SCENIC(-1,"system.error.no_found.scenic"),
-    NO_FOUND_RESERVATION(-1,"system.error.no_found.reservation")
+    NO_FOUND_RESERVATION(-1,"system.error.no_found.reservation"),
+    NO_FOUND_EVALUATE(-1,"system.error.no_found.evaluate"),
+    NO_FOUND_REEVALUATE(-1,"system.error.no_found.reevaluate")
     ;
 
     @Override
