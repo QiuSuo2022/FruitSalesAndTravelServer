@@ -58,6 +58,7 @@ public class ScenicController {
                                           @RequestParam(required = false) Short type,
                                           @RequestParam(required = false) String description,
                                           @RequestParam(required = false) String openingHours,
+                                          @RequestParam(required = false) Short orderByType,
                                           @RequestParam(required = false,defaultValue =
                                                   SystemConstants.DEFAULT_PAGE) Integer page,
                                           @RequestParam(required = false,defaultValue =
@@ -72,6 +73,6 @@ public class ScenicController {
         if(scenicName != null && (scenicName.trim().isEmpty() || scenicName.length() == 0)){
             scenicName = null;
         }
-        return scenicService.getScenicList(id, scenicName, location, nameLike, type, description, openingHours, page, pageSize);
+        return scenicService.getScenicList(id, scenicName, location, nameLike, type, description, openingHours,orderByType, page, pageSize);
     }
 }
