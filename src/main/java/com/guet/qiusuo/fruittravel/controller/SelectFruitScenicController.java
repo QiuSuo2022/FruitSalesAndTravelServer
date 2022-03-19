@@ -31,6 +31,7 @@ public class SelectFruitScenicController {
                                                     @RequestParam(required = false) String departurePoint,
                                                     @RequestParam(required = false) String fruitDescription,
                                                     @RequestParam(required = false) Integer deliveryCost,
+                                                    @RequestParam(required = false) Short orderByType,
                                                     @RequestParam(required = false,defaultValue =
                                                            SystemConstants.DEFAULT_PAGE) Integer page,
                                                     @RequestParam(required = false,defaultValue =
@@ -45,7 +46,7 @@ public class SelectFruitScenicController {
             fruitName = null;
         }
         return fruitService.getFruitList(fruitId,fruitName,fruitPrice,nameLike,departurePoint,fruitDescription,
-                deliveryCost,page,pageSize);
+                deliveryCost,orderByType,page,pageSize);
     }
 
     @ApiOperation("获取景区列表")
@@ -62,6 +63,7 @@ public class SelectFruitScenicController {
                                                  @RequestParam(required = false) Short type,
                                                  @RequestParam(required = false) String scenicDescription,
                                                  @RequestParam(required = false) String openingHours,
+                                                 @RequestParam(required = false) Short orderByType,
                                                  @RequestParam(required = false,defaultValue =
                                                          SystemConstants.DEFAULT_PAGE) Integer page,
                                                  @RequestParam(required = false,defaultValue =
@@ -76,6 +78,6 @@ public class SelectFruitScenicController {
             scenicName = null;
         }
         return scenicService.getScenicList(scenicId,scenicName,location,nameLike,type,scenicDescription,openingHours,
-                page,pageSize);
+                orderByType,page,pageSize);
     }
 }

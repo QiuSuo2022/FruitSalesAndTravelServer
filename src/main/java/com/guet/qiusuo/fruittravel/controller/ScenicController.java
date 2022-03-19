@@ -52,15 +52,16 @@ public class ScenicController {
     })
     @GetMapping("/scenic_list")
     public PageList<Scenic> getScenicList(@RequestParam(required = false) String id,
-                                            @RequestParam(required = false) String scenicName,
-                                            @RequestParam(required = false) String location,
-                                            @RequestParam(required = false) String nameLike,
-                                            @RequestParam(required = false) Short type,
-                                            @RequestParam(required = false) String description,
-                                            @RequestParam(required = false) String openingHours,
-                                            @RequestParam(required = false,defaultValue =
+                                          @RequestParam(required = false) String scenicName,
+                                          @RequestParam(required = false) String location,
+                                          @RequestParam(required = false) String nameLike,
+                                          @RequestParam(required = false) Short type,
+                                          @RequestParam(required = false) String description,
+                                          @RequestParam(required = false) String openingHours,
+                                          @RequestParam(required = false) Short orderByType,
+                                          @RequestParam(required = false,defaultValue =
                                                   SystemConstants.DEFAULT_PAGE) Integer page,
-                                            @RequestParam(required = false,defaultValue =
+                                          @RequestParam(required = false,defaultValue =
                                                   SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize){
 
         if(nameLike != null && nameLike.trim().isEmpty()) {
@@ -72,6 +73,6 @@ public class ScenicController {
         if(scenicName != null && (scenicName.trim().isEmpty() || scenicName.length() == 0)){
             scenicName = null;
         }
-        return scenicService.getScenicList(id,scenicName, nameLike,location, type, description, openingHours, page, pageSize);
+        return scenicService.getScenicList(id, scenicName, location, nameLike, type, description, openingHours,orderByType, page, pageSize);
     }
 }

@@ -62,6 +62,7 @@ public class FruitController {
                                         @RequestParam(required = false) String departurePoint,
                                         @RequestParam(required = false) String description,
                                         @RequestParam(required = false) Integer deliveryCost,
+                                        @RequestParam(required = false) Short orderByType,
                                         @RequestParam(required = false,defaultValue =
                                                 SystemConstants.DEFAULT_PAGE) Integer page,
                                         @RequestParam(required = false,defaultValue =
@@ -75,7 +76,7 @@ public class FruitController {
         if(fruitName != null && (fruitName.trim().isEmpty() || fruitName.length() == 0)){
             fruitName = null;
         }
-        return fruitService.getFruitList(id,fruitName,fruitPrice,nameLike,departurePoint,description,deliveryCost,page,pageSize);
+        return fruitService.getFruitList(id,fruitName,fruitPrice,nameLike,departurePoint,description,deliveryCost,orderByType,page,pageSize);
     }
 }
 

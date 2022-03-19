@@ -11,6 +11,7 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
+import com.guet.qiusuo.fruittravel.dao.TicketDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.model.Scenic;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -46,28 +47,49 @@ public class ScenicService {
     }
 
     public PageList<Scenic> getScenicList(String id,String scenicName,String location,String nameLike,Short type,String description,
-                                          String openingHours,Integer page,Integer pageSize) {
+                                          String openingHours,Short ordeyByType, Integer page,Integer pageSize) {
         if (nameLike == null || nameLike.length() == 0) {
             nameLike = "";
         }
 
         PageHelper.startPage(page,pageSize);
-        List<Scenic> scenicList = scenicMapper.selectScenic(select(
-                ScenicDynamicSqlSupport.id,
-                ScenicDynamicSqlSupport.scenicName,
-                ScenicDynamicSqlSupport.location,
-                ScenicDynamicSqlSupport.openingHours,
-                ScenicDynamicSqlSupport.description,
-                ScenicDynamicSqlSupport.type,
-                ScenicDynamicSqlSupport.status,
-                ScenicDynamicSqlSupport.createTime
-                )
-                        .from(ScenicDynamicSqlSupport.scenic)
-                        .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                        .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
-                        .orderBy(ScenicDynamicSqlSupport.createTime.descending())
-                        .build().render(RenderingStrategies.MYBATIS3)
-        );
+        List<Scenic> scenicList;
+        if(ordeyByType.equals(SystemConstants.PRICE_ASC)) {
+            scenicList = scenicMapper.selectScenic(select(
+                            ScenicDynamicSqlSupport.id,
+                            ScenicDynamicSqlSupport.scenicName,
+                            ScenicDynamicSqlSupport.location,
+                            ScenicDynamicSqlSupport.openingHours,
+                            ScenicDynamicSqlSupport.description,
+                            ScenicDynamicSqlSupport.type,
+                            ScenicDynamicSqlSupport.status,
+                            ScenicDynamicSqlSupport.createTime
+                    )
+                            .from(ScenicDynamicSqlSupport.scenic)
+                            .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                            .orderBy(TicketDynamicSqlSupport.price)
+                            .build().render(RenderingStrategies.MYBATIS3)
+            );
+        }
+        else  {
+            scenicList = scenicMapper.selectScenic(select(
+                            ScenicDynamicSqlSupport.id,
+                            ScenicDynamicSqlSupport.scenicName,
+                            ScenicDynamicSqlSupport.location,
+                            ScenicDynamicSqlSupport.openingHours,
+                            ScenicDynamicSqlSupport.description,
+                            ScenicDynamicSqlSupport.type,
+                            ScenicDynamicSqlSupport.status,
+                            ScenicDynamicSqlSupport.createTime
+                    )
+                            .from(ScenicDynamicSqlSupport.scenic)
+                            .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                            .orderBy(TicketDynamicSqlSupport.price.descending())
+                            .build().render(RenderingStrategies.MYBATIS3)
+            );
+        }
 
         PageList<Scenic> pageList = new PageList<>();
         pageList.setList(scenicList);
