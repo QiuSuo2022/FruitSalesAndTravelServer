@@ -289,8 +289,8 @@ public interface ScenicMapper {
 
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @Results(id = "Scenic", value = {
-            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
             @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
             @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
             @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
