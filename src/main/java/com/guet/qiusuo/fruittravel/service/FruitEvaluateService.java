@@ -174,6 +174,7 @@ public class FruitEvaluateService {
                         .from(EvaluateDynamicSqlSupport.evaluate)
                         .where(EvaluateDynamicSqlSupport.evaluateId, isEqualTo(evaluateId))
                         .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .orderBy(EvaluateDynamicSqlSupport.createTime)
                         .build().render(RenderingStrategies.MYBATIS3));
         if (evaluateList.isEmpty()) {
             return null;
