@@ -289,7 +289,7 @@ public interface FruitMapper {
     })
     List<Fruit> selectFruit(SelectStatementProvider selectStatement);
 
-/*    @Select({
+    @Select({
             "select fruit_price*0.25 + quantity*0.5 + grade*0.25",
             "from tbl_fruit",
             "left join tbl_cart",
@@ -298,6 +298,10 @@ public interface FruitMapper {
             "on tbl_fruit.id = tbl_evaluate.childFruitId",
             "order by (fruit_price*0.25 + quantity*0.5 + grade*0.25)"
     })
-    @ResultMap("SortResult")
-    List<Fruit> selectFruitSort();*/
+    @Results(id = "SortResult", value = {
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "quantity", property = "quantity", jdbcType = JdbcType.INTEGER),
+            @Result(column = "grade", property = "grade", jdbcType = JdbcType.SMALLINT)
+    })
+    List<Fruit> selectFruitSort();
 }
