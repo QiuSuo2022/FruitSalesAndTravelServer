@@ -10,21 +10,21 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.CartDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.FruitMapper;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
+import com.guet.qiusuo.fruittravel.dao.FruitMapper;
 import com.guet.qiusuo.fruittravel.model.Fruit;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 import static org.slf4j.LoggerFactory.getLogger;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * @author lu
@@ -217,7 +217,7 @@ public class FruitService {
     public void addFruit(Fruit fruit){
         long now = System.currentTimeMillis();
         UserContextHolder.validAdmin();
-        if (getFruitByName(fruit.getFruitName()).get(0) != null){
+        if (!getFruitByName(fruit.getFruitName()).isEmpty()) {
             //已经存在该Fruit
             throw new SystemException(ErrorCode.FRUIT_ALREADY_EXITS);
         }
