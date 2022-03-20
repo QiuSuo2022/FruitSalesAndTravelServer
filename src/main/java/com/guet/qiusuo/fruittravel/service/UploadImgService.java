@@ -35,7 +35,7 @@ public class UploadImgService {
         String fileName=file.getOriginalFilename();
         String dirType = imgType.toString();
         String uuFileName= UUID.randomUUID().toString();
-        String filePath = LOCAL_BASEPATH +"/" + dirType + "/" + uuFileName;
+        String filePath = LOCAL_BASEPATH +"/" + dirType + "/" + uuFileName+"/";
         String url = NGINX_URL+filePath+fileName;
 
         //存储图片信息
