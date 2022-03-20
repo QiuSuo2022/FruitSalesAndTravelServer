@@ -65,6 +65,8 @@ public class ScenicService {
                             ScenicDynamicSqlSupport.createTime
                     )
                             .from(ScenicDynamicSqlSupport.scenic)
+                            .leftJoin(TicketDynamicSqlSupport.ticket)
+                            .on(TicketDynamicSqlSupport.scenicId, equalTo(ScenicDynamicSqlSupport.id))
                             .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
                             .orderBy(TicketDynamicSqlSupport.price)
@@ -83,6 +85,8 @@ public class ScenicService {
                             ScenicDynamicSqlSupport.createTime
                     )
                             .from(ScenicDynamicSqlSupport.scenic)
+                            .leftJoin(TicketDynamicSqlSupport.ticket)
+                            .on(TicketDynamicSqlSupport.scenicId, equalTo(ScenicDynamicSqlSupport.id))
                             .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
                             .orderBy(TicketDynamicSqlSupport.price.descending())
