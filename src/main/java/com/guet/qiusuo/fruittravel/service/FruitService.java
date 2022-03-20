@@ -13,6 +13,7 @@ import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.FruitMapper;
 import com.guet.qiusuo.fruittravel.model.Fruit;
+import org.apache.ibatis.annotations.Select;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +105,8 @@ public class FruitService {
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
+                            .leftJoin(CartDynamicSqlSupport.cart)
+                            .on(FruitDynamicSqlSupport.id, equalTo(CartDynamicSqlSupport.childFruitId))
                             .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
                             .orderBy(CartDynamicSqlSupport.quantity)
@@ -122,6 +125,8 @@ public class FruitService {
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
+                            .leftJoin(CartDynamicSqlSupport.cart)
+                            .on(FruitDynamicSqlSupport.id, equalTo(CartDynamicSqlSupport.childFruitId))
                             .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
                             .orderBy(CartDynamicSqlSupport.quantity.descending())
@@ -140,6 +145,8 @@ public class FruitService {
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
+                            .leftJoin(EvaluateDynamicSqlSupport.evaluate)
+                            .on(FruitDynamicSqlSupport.id, equalTo(EvaluateDynamicSqlSupport.childFruitId))
                             .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
                             .orderBy(EvaluateDynamicSqlSupport.grade)
@@ -158,30 +165,17 @@ public class FruitService {
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
+                            .leftJoin(EvaluateDynamicSqlSupport.evaluate)
+                            .on(FruitDynamicSqlSupport.id, equalTo(EvaluateDynamicSqlSupport.childFruitId))
                             .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
                             .orderBy(EvaluateDynamicSqlSupport.grade.descending())
                             .build().render(RenderingStrategies.MYBATIS3)
             );
         }
-        //综合排序
+        //综合排序,先按照加权平均计算,销量权重占0.5,价格和评分各占0.25
         else {
-            fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.id,
-                            FruitDynamicSqlSupport.fruitName,
-                            FruitDynamicSqlSupport.fruitPrice,
-                            FruitDynamicSqlSupport.description,
-                            FruitDynamicSqlSupport.departurePoint,
-                            FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.status,
-                            FruitDynamicSqlSupport.createTime
-                    )
-                            .from(FruitDynamicSqlSupport.fruit)
-                            .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .orderBy()
-                            .build().render(RenderingStrategies.MYBATIS3)
-            );
+            fruitList = fruitMapper.selectFruitSort();
         }
         PageList<Fruit> pageList = new PageList<>();
         pageList.setList(fruitList);
