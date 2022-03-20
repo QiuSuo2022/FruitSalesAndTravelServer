@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.config;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -71,7 +72,7 @@ public class ExceptionHandleConfig {
         private String message;
 
         public ExceptionResponse(Exception e) {
-//            this.trace = ExceptionUtils.getStackTrace(e);
+            this.trace = ExceptionUtils.getStackTrace(e);
             this.message = e.getMessage();
         }
 

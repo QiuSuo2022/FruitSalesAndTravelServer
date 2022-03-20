@@ -8,7 +8,6 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
-import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
 import com.guet.qiusuo.fruittravel.dao.TicketDynamicSqlSupport;
@@ -123,7 +122,7 @@ public class ScenicService {
      */
     public void addScenic(Scenic scenic) {
         UserContextHolder.validAdmin();
-        if (getScenicByName(scenic.getScenicName()).get(0) != null) {
+        if (!getScenicByName(scenic.getScenicName()).isEmpty()) {
             //已经存在该景点
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
         }
