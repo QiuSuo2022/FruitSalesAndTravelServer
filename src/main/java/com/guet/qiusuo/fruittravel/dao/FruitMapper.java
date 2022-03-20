@@ -289,7 +289,7 @@ public interface FruitMapper {
     })
     List<Fruit> selectFruit(SelectStatementProvider selectStatement);
 
-    @Select({
+/*    @Select({
             "select fruit_price*0.25 + quantity*0.5 + grade*0.25",
             "from tbl_fruit",
             "left join tbl_cart",
@@ -299,5 +299,5 @@ public interface FruitMapper {
             "order by (fruit_price*0.25 + quantity*0.5 + grade*0.25)"
     })
     @ResultMap("SortResult")
-    List<Fruit> selectFruitSort();
+    List<Fruit> selectFruitSort();*/
 }
