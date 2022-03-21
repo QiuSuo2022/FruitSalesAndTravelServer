@@ -1,9 +1,13 @@
 package com.guet.qiusuo.fruittravel.service;
 
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
+import com.guet.qiusuo.fruittravel.config.ErrorCode;
+import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
+import com.guet.qiusuo.fruittravel.dao.ImageFileMapper;
 import com.guet.qiusuo.fruittravel.model.ImageFile;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,20 +28,29 @@ public class UploadImgService {
 
     private static final String LOCAL_IP = "120.76.200.109";
 
-    private static final String LOCAL_BASEPATH = "/root/home/images";
+    private static final String LOCAL_BASEPATH = "/root/home/images/";
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private ImageFileMapper imageFileMapper;
+    @Autowired
+    public void setImageFileMapper(ImageFileMapper imageFileMapper) {
+        this.imageFileMapper = imageFileMapper;
+    }
+
+
 
     String port = "80";
 
     public ImageFile uploadImg(MultipartFile file,Short imgType,String remark){
-        String NGINX_URL = "http://" + LOCAL_IP + ":" + port;
-        String fileName=file.getOriginalFilename();
-        String dirType = imgType.toString();
-        String uuFileName= UUID.randomUUID().toString();
-        String filePath = LOCAL_BASEPATH +"/" + dirType + "/" + uuFileName+"/";
-        String url = NGINX_URL+filePath+fileName;
 
+
+        String NGINX_URL = "http://" + LOCAL_IP + ":" + port + "/";
+        String originalFilename = file.getOriginalFilename() ;
+        String uuFileName = UUID.randomUUID().toString();
+        String filePath = LOCAL_BASEPATH;
+        String fileName = uuFileName + originalFilename ;
+        String url = NGINX_URL+fileName;
         //存储图片信息
         long now = System.currentTimeMillis();
         UserContextHolder.validAdmin();
@@ -52,6 +65,10 @@ public class UploadImgService {
         img.setUpdateTime(now);
         img.setCreateUserId(UserContextHolder.getUserId());
         img.setUpdateUserId(UserContextHolder.getUserId());
+        int i = imageFileMapper.insert(img);
+        if (i == 0){
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
         try {
             InputStream input = null;
             input = file.getInputStream();
@@ -75,6 +92,7 @@ public class UploadImgService {
                 LOG.error("文件上传异常",e);
                 img.setStatus(SystemConstants.STATUS_NEGATIVE);
              }
-             return img;
+        imageFileMapper.updateByPrimaryKey(img);
+        return img;
              }
     }
