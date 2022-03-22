@@ -41,8 +41,17 @@ public class ScenicController {
     public ScenicVO searchScenic(@RequestParam String scenicId) {return scenicService.getScenicVOByScenicId(scenicId);}
 
     @ApiOperation(value = "查找所有景点")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
+    })
     @GetMapping("/getAllScenic")
-    public List<Scenic> searchAllScenic() {return scenicService.searchAllScenic();}
+    public PageList<Scenic> searchAllScenic(@RequestParam(required = false,defaultValue =
+                                                    SystemConstants.DEFAULT_PAGE) Integer page,
+                                            @RequestParam(required = false,defaultValue =
+                                                    SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
+        return scenicService.searchAllScenic(page, pageSize);
+    }
 
     @ApiOperation("获取景区列表")
     @ApiImplicitParams({

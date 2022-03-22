@@ -43,9 +43,16 @@ public class FruitController {
     }
 
     @ApiOperation(value = "查找所有水果")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
+    })
     @GetMapping("/getFruits")
-    public List<Fruit> searchAllFruits(){
-        return fruitService.searchAllFruits();
+    public PageList<Fruit> searchAllFruits(@RequestParam(required = false,defaultValue =
+                                                    SystemConstants.DEFAULT_PAGE) Integer page,
+                                           @RequestParam(required = false,defaultValue =
+                                                   SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
+        return fruitService.searchAllFruits(page, pageSize);
     }
 
     @ApiOperation("获取水果列表")

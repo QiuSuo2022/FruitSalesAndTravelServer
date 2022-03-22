@@ -278,8 +278,10 @@ public class FruitService {
      * 查询全部Fruit
      * @return
      */
-    public List<Fruit> searchAllFruits(){
-        return fruitMapper.selectMany(select(
+    public PageList<Fruit> searchAllFruits(Integer page, Integer pageSize){
+        PageHelper.startPage(page,pageSize);
+        List<Fruit> fruitList;
+        fruitList = fruitMapper.selectMany(select(
                 FruitDynamicSqlSupport.id,
                 FruitDynamicSqlSupport.fruitName,
                 FruitDynamicSqlSupport.fruitPrice,
@@ -294,7 +296,13 @@ public class FruitService {
         )
                 .from(FruitDynamicSqlSupport.fruit)
                 .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .orderBy(FruitDynamicSqlSupport.createTime)
                 .build().render(RenderingStrategies.MYBATIS3));
+
+        PageList<Fruit> pageList = new PageList<>();
+        pageList.setList(fruitList);
+        pageList.setPageInfo(new PageInfo<>(fruitList));
+        return pageList;
     }
 
     /**

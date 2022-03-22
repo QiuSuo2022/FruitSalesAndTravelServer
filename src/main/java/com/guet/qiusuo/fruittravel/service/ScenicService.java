@@ -204,24 +204,31 @@ public class ScenicService {
      *
      * @return
      */
-    public List<Scenic> searchAllScenic() {
-        return scenicMapper.selectMany(select(
-                ScenicDynamicSqlSupport.id,
-                ScenicDynamicSqlSupport.scenicName,
-                ScenicDynamicSqlSupport.location,
-                ScenicDynamicSqlSupport.openingHours,
-                ScenicDynamicSqlSupport.description,
-                ScenicDynamicSqlSupport.type,
-                ScenicDynamicSqlSupport.status,
-                ScenicDynamicSqlSupport.createTime,
-                ScenicDynamicSqlSupport.updateTime,
-                ScenicDynamicSqlSupport.createUserId,
-                ScenicDynamicSqlSupport.updateUserId
-        )
-                .from(ScenicDynamicSqlSupport.scenic)
-                .where(ScenicDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
-                .and(ScenicDynamicSqlSupport.status, isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
-                .build().render(RenderingStrategies.MYBATIS3));
+    public PageList<Scenic> searchAllScenic(Integer page,Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        List<Scenic> scenicList;
+        scenicList = scenicMapper.selectScenic(select(
+                        ScenicDynamicSqlSupport.id,
+                        ScenicDynamicSqlSupport.scenicName,
+                        ScenicDynamicSqlSupport.location,
+                        ScenicDynamicSqlSupport.openingHours,
+                        ScenicDynamicSqlSupport.description,
+                        ScenicDynamicSqlSupport.type,
+                        ScenicDynamicSqlSupport.status,
+                        ScenicDynamicSqlSupport.createTime,
+                        ScenicDynamicSqlSupport.updateTime,
+                        ScenicDynamicSqlSupport.createUserId,
+                        ScenicDynamicSqlSupport.updateUserId
+                )
+                        .from(ScenicDynamicSqlSupport.scenic)
+                        .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .orderBy(ScenicDynamicSqlSupport.createTime)
+                        .build().render(RenderingStrategies.MYBATIS3)
+        );
+        PageList<Scenic> pageList = new PageList<>();
+        pageList.setList(scenicList);
+        pageList.setPageInfo(new PageInfo<>(scenicList));
+        return pageList;
     }
 
     /**
