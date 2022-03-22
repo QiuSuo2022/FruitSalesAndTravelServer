@@ -59,7 +59,7 @@ public class ScenicController {
             @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
     })
-    @GetMapping("/scenic_list")
+    @GetMapping("/scenicList")
     public PageList<Scenic> getScenicList(@RequestParam(required = false) String id,
                                           @RequestParam(required = false) String scenicName,
                                           @RequestParam(required = false) String location,

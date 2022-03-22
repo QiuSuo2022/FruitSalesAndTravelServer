@@ -290,18 +290,49 @@ public interface FruitMapper {
     List<Fruit> selectFruit(SelectStatementProvider selectStatement);
 
     @Select({
-            "select fruit_price*0.25 + quantity*0.5 + grade*0.25",
+            "select tbl_fruit.id,fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.status,tbl_fruit.create_time",
             "from tbl_fruit",
+            "left join tbl_child_fruit",
+            "on tbl_fruit.id = tbl_child_fruit.fruit_id",
             "left join tbl_cart",
-            "on tbl_fruit.id = tbl_cart.childFruitId",
+            "on tbl_child_fruit.id = tbl_cart.child_fruit_id",
             "left join tbl_evaluate",
-            "on tbl_fruit.id = tbl_evaluate.childFruitId",
-            "order by (fruit_price*0.25 + quantity*0.5 + grade*0.25)"
+            "on tbl_child_fruit.id = tbl_evaluate.child_fruit_id",
+            "where fruit_name like %#{nameLike}%",
+            "order by (tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25)"
     })
     @Results(id = "SortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
             @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
             @Result(column = "quantity", property = "quantity", jdbcType = JdbcType.INTEGER),
             @Result(column = "grade", property = "grade", jdbcType = JdbcType.SMALLINT)
     })
-    List<Fruit> selectFruitSort();
+    List<Fruit> selectFruitSort(@Param("nameLike") String nameLike);
+
+    @Select({
+            "select fruit_name,min(tbl_child_fruit.fruit_price),description,departure_point,quantity",
+            "from tbl_fruit",
+            "left join tbl_child_fruit",
+            "on tbl_child_fruit.fruit_id = tbl_fruit.id",
+            "left join tbl_cart",
+            "on tbl_cart.child_fruit_id = tbl_child_fruit.id",
+            "left join tbl_evaluate",
+            "on tbl_child_fruit.id = tbl_evaluate.child_fruit_id",
+            "where fruit_name like %#{nameLike}%",
+            "order by (tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25)"
+    })
+    @Results(id = "FruitRecommend", value = {
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.INTEGER),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "quantity", property = "quantity", jdbcType = JdbcType.INTEGER)
+    })
+    List<Fruit> FruitRecommend(@Param("nameLike") String nameLike);
 }

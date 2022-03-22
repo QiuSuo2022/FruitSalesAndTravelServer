@@ -49,6 +49,20 @@ public class FruitService {
         this.childFruitService = childFruitService;
     }
 
+    /**
+     * 获取水果列表
+     * @param id
+     * @param fruitName
+     * @param fruitPrice
+     * @param nameLike
+     * @param departurePoint
+     * @param description
+     * @param deliveryCost
+     * @param orderByType
+     * @param page
+     * @param pageSize
+     * @return
+     */
     public PageList<Fruit> getFruitList(String id, String fruitName, String fruitPrice, String nameLike, String departurePoint
             , String description, Integer deliveryCost,Short orderByType, Integer page, Integer pageSize) {
         if (nameLike == null || nameLike.length() == 0) {
@@ -175,7 +189,7 @@ public class FruitService {
         }
         //综合排序,先按照加权平均计算,销量权重占0.5,价格和评分各占0.25
         else {
-            fruitList = fruitMapper.selectFruitSort();
+            fruitList = fruitMapper.selectFruitSort(nameLike);
         }
         PageList<Fruit> pageList = new PageList<>();
         pageList.setList(fruitList);
@@ -347,6 +361,27 @@ public class FruitService {
         fruitVO.setChildFruitName(childFruitService.searchChildFruit(fruitId).getFruitName());
         return fruitVO;
     }
+
+    /**
+     * 获取水果推荐列表
+     * @param nameLike
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public PageList<Fruit> getFruitRecommendList(String nameLike, Integer page, Integer pageSize) {
+        if (nameLike == null || nameLike.length() == 0) {
+            nameLike = "";
+        }
+        PageHelper.startPage(page,pageSize);
+        List<Fruit> fruitList;
+        fruitList = fruitMapper.FruitRecommend(nameLike);
+        PageList<Fruit> pageList = new PageList<>();
+        pageList.setList(fruitList);
+        pageList.setPageInfo(new PageInfo<>(fruitList));
+        return pageList;
+    }
+
 }
 
 
