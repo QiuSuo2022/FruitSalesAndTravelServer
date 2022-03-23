@@ -34,13 +34,15 @@ public class FruitEvaluateService {
 
     private FruitEvaluateService fruitEvaluateService;
 
-
-
     @Autowired
     public void setEvaluateMapper(EvaluateMapper evaluateMapper) {
         this.evaluateMapper = evaluateMapper;
     }
 
+    @Autowired
+    public void setFruitEvaluateService(FruitEvaluateService fruitEvaluateService) {
+        this.fruitEvaluateService = fruitEvaluateService;
+    }
     /**
      * 添加Evaluate(主评)
      *
