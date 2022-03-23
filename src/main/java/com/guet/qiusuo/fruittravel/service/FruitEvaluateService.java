@@ -215,11 +215,14 @@ public class FruitEvaluateService {
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
 
-        if(fruitEvaluateService.searchFruitReevaluate(evaluateId).isEmpty()) {
-            fruitEvaluateVO.setFruitReevaluate(null);
+
+
+        if(fruitEvaluateService.searchFruitReevaluate(evaluateId) != null &&
+                !fruitEvaluateService.searchFruitReevaluate(evaluateId).isEmpty()) {
+            fruitEvaluateVO.setFruitReevaluate(fruitEvaluateService.searchFruitReevaluate(evaluateId));
         }
         else {
-            fruitEvaluateVO.setFruitReevaluate(fruitEvaluateService.searchFruitReevaluate(evaluateId));
+            fruitEvaluateVO.setFruitReevaluate(null);
         }
         fruitEvaluateVOList.add(fruitEvaluateVO);
         return fruitEvaluateVOList;
