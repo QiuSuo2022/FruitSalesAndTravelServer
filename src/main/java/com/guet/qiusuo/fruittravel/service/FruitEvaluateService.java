@@ -192,7 +192,7 @@ public class FruitEvaluateService {
                 EvaluateDynamicSqlSupport.updateUserId
         )
                         .from(EvaluateDynamicSqlSupport.evaluate)
-                        .where(EvaluateDynamicSqlSupport.childFruitId, isEqualTo(evaluateId))
+                        .where(EvaluateDynamicSqlSupport.evaluateId, isEqualTo(evaluateId))
                         .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                         .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.EVALUATE_TYPE))
                         .orderBy(EvaluateDynamicSqlSupport.createTime)
