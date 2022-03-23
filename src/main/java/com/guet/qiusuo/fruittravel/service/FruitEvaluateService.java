@@ -194,7 +194,12 @@ public class FruitEvaluateService {
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
 
-        fruitEvaluateVO.setFruitReevaluate(fruitEvaluateService.searchFruitReevaluate(evaluateId).getDetail());
+        if(fruitEvaluateService.searchFruitReevaluate(evaluateId) == null) {
+            throw new NullPointerException("没有追评");
+        }
+        else {
+            fruitEvaluateVO.setFruitReevaluate(fruitEvaluateService.searchFruitReevaluate(evaluateId).getDetail());
+        }
         fruitEvaluateVOList.add(fruitEvaluateVO);
         return fruitEvaluateVOList;
     }
