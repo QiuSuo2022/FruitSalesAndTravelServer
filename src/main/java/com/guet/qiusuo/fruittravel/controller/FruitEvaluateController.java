@@ -53,7 +53,7 @@ public class FruitEvaluateController {
 
     @ApiOperation(value = "查询追评")
     @GetMapping("/searchReevaluate")
-    public Evaluate searchReevaluate(@RequestParam String evaluateId) {
+    public List<Evaluate> searchReevaluate(@RequestParam String evaluateId) {
         return fruitEvaluateService.searchFruitReevaluate(evaluateId);
     }
 
