@@ -46,14 +46,13 @@ public class FruitEvaluateService {
      *
      * @param evaluate
      */
-    public void addFruitEvaluate(Evaluate evaluate, ChildFruit childFruit) {
+    public void addFruitEvaluate(Evaluate evaluate) {
         UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
         evaluate.setId(UUID.randomUUID().toString());
         evaluate.setCreateTime(now);
         evaluate.setUpdateTime(now);
         evaluate.setEvaluateId(evaluate.getId());
-        evaluate.setChildFruitId(childFruit.getId());
         evaluate.setStatus(SystemConstants.STATUS_ACTIVE);
         evaluate.setCreateUserId(UserContextHolder.getUserId());
         evaluate.setUpdateUserId(UserContextHolder.getUserId());

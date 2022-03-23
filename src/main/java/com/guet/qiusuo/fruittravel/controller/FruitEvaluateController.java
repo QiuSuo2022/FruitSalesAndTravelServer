@@ -23,8 +23,8 @@ public class FruitEvaluateController {
 
     @ApiOperation(value = "增加主评")
     @PostMapping("/addEvaluate")
-    public void addFruitEvaluate(@RequestBody Evaluate evaluate, @RequestBody ChildFruit childFruit) {
-        fruitEvaluateService.addFruitEvaluate(evaluate,childFruit);
+    public void addFruitEvaluate(@RequestBody Evaluate evaluate) {
+        fruitEvaluateService.addFruitEvaluate(evaluate);
     }
 
     @ApiOperation(value = "增加追评")
