@@ -215,7 +215,7 @@ public class FruitEvaluateService {
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
 
-        if(fruitEvaluateService.searchFruitReevaluate(evaluateId) == null) {
+        if(fruitEvaluateService.searchFruitReevaluate(evaluateId).isEmpty()) {
             fruitEvaluateVO.setFruitReevaluate(null);
         }
         else {
