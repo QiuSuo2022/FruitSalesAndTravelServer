@@ -1,6 +1,7 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 import com.guet.qiusuo.fruittravel.bean.vo.FruitEvaluateVO;
+import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
 import com.guet.qiusuo.fruittravel.service.FruitEvaluateService;
 import io.swagger.annotations.Api;
@@ -22,8 +23,8 @@ public class FruitEvaluateController {
 
     @ApiOperation(value = "增加主评")
     @PostMapping("/addEvaluate")
-    public void addFruitEvaluate(@RequestBody Evaluate evaluate) {
-        fruitEvaluateService.addFruitEvaluate(evaluate);
+    public void addFruitEvaluate(@RequestBody Evaluate evaluate, @RequestBody ChildFruit childFruit) {
+        fruitEvaluateService.addFruitEvaluate(evaluate,childFruit);
     }
 
     @ApiOperation(value = "增加追评")

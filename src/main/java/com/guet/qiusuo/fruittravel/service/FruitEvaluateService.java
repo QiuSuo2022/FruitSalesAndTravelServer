@@ -7,6 +7,7 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateMapper;
+import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -45,12 +46,14 @@ public class FruitEvaluateService {
      *
      * @param evaluate
      */
-    public void addFruitEvaluate(Evaluate evaluate) {
+    public void addFruitEvaluate(Evaluate evaluate, ChildFruit childFruit) {
         UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
         evaluate.setId(UUID.randomUUID().toString());
         evaluate.setCreateTime(now);
         evaluate.setUpdateTime(now);
+        evaluate.setEvaluateId(evaluate.getId());
+        evaluate.setChildFruitId(childFruit.getId());
         evaluate.setStatus(SystemConstants.STATUS_ACTIVE);
         evaluate.setCreateUserId(UserContextHolder.getUserId());
         evaluate.setUpdateUserId(UserContextHolder.getUserId());
