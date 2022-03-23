@@ -55,6 +55,7 @@ public class ScenicController {
 
     @ApiOperation("获取景区列表")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderByType",value = "排序方式",dataType = "Short", dataTypeClass = Short.class, required = true),
             @ApiImplicitParam(name = "nameLike",value = "景区名称模糊词",dataType = "String", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)

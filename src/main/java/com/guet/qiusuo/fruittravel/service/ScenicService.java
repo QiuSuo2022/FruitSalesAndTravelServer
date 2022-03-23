@@ -53,10 +53,7 @@ public class ScenicService {
 
         PageHelper.startPage(page,pageSize);
         List<Scenic> scenicList;
-        if(ordeyByType.equals(null)) {
-            throw new NullPointerException();
-        }
-        else if(ordeyByType.equals(SystemConstants.PRICE_ASC)) {
+        if(ordeyByType.equals(SystemConstants.PRICE_ASC)) {
             scenicList = scenicMapper.selectScenic(select(
                             ScenicDynamicSqlSupport.id,
                             ScenicDynamicSqlSupport.scenicName,
