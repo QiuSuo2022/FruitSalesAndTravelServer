@@ -32,7 +32,6 @@ public class EvaluateService {
 
     private EvaluateMapper evaluateMapper;
 
-
     @Autowired
     public void setEvaluateMapper(EvaluateMapper evaluateMapper) {
         this.evaluateMapper = evaluateMapper;
@@ -173,7 +172,7 @@ public class EvaluateService {
      * @param evaluateId
      * @return
      */
-    public List<FruitEvaluateVO> searchFruitEvaluate(String evaluateId) {
+    public FruitEvaluateVO searchFruitEvaluate(String evaluateId) {
         List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
                 EvaluateDynamicSqlSupport.id,
                 EvaluateDynamicSqlSupport.userId,
@@ -200,7 +199,6 @@ public class EvaluateService {
         //获取符合查询条件的水果主评
         Evaluate evaluate = evaluateList.get(0);
         FruitEvaluateVO fruitEvaluateVO = new FruitEvaluateVO();
-        List<FruitEvaluateVO> fruitEvaluateVOList = new ArrayList<>();
         fruitEvaluateVO.setId(evaluate.getId());
         fruitEvaluateVO.setEvaluateId(evaluate.getEvaluateId());
         fruitEvaluateVO.setChildFruitId(evaluate.getChildFruitId());
@@ -212,8 +210,6 @@ public class EvaluateService {
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
 
-
-
         if(searchFruitReevaluate(evaluateId) != null &&
                 !searchFruitReevaluate(evaluateId).isEmpty()) {
             fruitEvaluateVO.setFruitReevaluate(searchFruitReevaluate(evaluateId));
@@ -221,7 +217,6 @@ public class EvaluateService {
         else {
             fruitEvaluateVO.setFruitReevaluate(null);
         }
-        fruitEvaluateVOList.add(fruitEvaluateVO);
-        return fruitEvaluateVOList;
+        return fruitEvaluateVO;
     }
 }

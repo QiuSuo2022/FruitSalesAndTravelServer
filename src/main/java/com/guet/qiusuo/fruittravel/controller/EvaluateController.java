@@ -58,7 +58,7 @@ public class EvaluateController {
 
     @ApiOperation(value = "查询评价")
     @GetMapping("/searchEvaluate")
-    public List<FruitEvaluateVO> searchEvaluate(@RequestParam String evaluateId) {
+    public FruitEvaluateVO searchEvaluate(@RequestParam String evaluateId) {
         return evaluateService.searchFruitEvaluate(evaluateId);
     }
 }
