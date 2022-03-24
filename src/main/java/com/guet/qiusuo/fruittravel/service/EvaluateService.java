@@ -188,7 +188,7 @@ public class EvaluateService {
                 EvaluateDynamicSqlSupport.updateUserId
         )
                         .from(EvaluateDynamicSqlSupport.evaluate)
-                        .where(EvaluateDynamicSqlSupport.evaluateId, isEqualTo(evaluateId))
+                        .where(EvaluateDynamicSqlSupport.id, isEqualTo(evaluateId))
                         .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                         .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.EVALUATE_TYPE))
                         .orderBy(EvaluateDynamicSqlSupport.createTime)
@@ -210,8 +210,7 @@ public class EvaluateService {
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
 
-        if(searchFruitReevaluate(evaluateId) != null &&
-                !searchFruitReevaluate(evaluateId).isEmpty()) {
+        if(!searchFruitReevaluate(evaluateId).isEmpty()) {
             fruitEvaluateVO.setFruitReevaluate(searchFruitReevaluate(evaluateId));
         }
         else {
