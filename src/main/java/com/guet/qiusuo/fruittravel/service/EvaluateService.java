@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -199,7 +200,7 @@ public class EvaluateService {
         //获取符合查询条件的水果主评
         Evaluate evaluate = evaluateList.get(0);
         FruitEvaluateVO fruitEvaluateVO = new FruitEvaluateVO();
-        List<FruitEvaluateVO> fruitEvaluateVOList = null;
+        List<FruitEvaluateVO> fruitEvaluateVOList = new ArrayList<>();
         fruitEvaluateVO.setId(evaluate.getId());
         fruitEvaluateVO.setEvaluateId(evaluate.getEvaluateId());
         fruitEvaluateVO.setChildFruitId(evaluate.getChildFruitId());
