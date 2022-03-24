@@ -7,7 +7,6 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateMapper;
-import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -27,22 +26,17 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date 2022/3/14
  */
 @Service
-public class FruitEvaluateService {
+public class EvaluateService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private EvaluateMapper evaluateMapper;
 
-    private FruitEvaluateService fruitEvaluateService;
 
     @Autowired
     public void setEvaluateMapper(EvaluateMapper evaluateMapper) {
         this.evaluateMapper = evaluateMapper;
     }
 
-    @Autowired
-    public void setFruitEvaluateService(FruitEvaluateService fruitEvaluateService) {
-        this.fruitEvaluateService = fruitEvaluateService;
-    }
     /**
      * 添加Evaluate(主评)
      *
@@ -121,7 +115,7 @@ public class FruitEvaluateService {
         evaluate.setUpdateUserId(UserContextHolder.getUserId());
         evaluate.setUpdateTime(System.currentTimeMillis());
         //先删除追评
-        fruitEvaluateService.deleteFruitReEvaluate(evaluate.getId());
+        deleteFruitReEvaluate(evaluate.getId());
         //再删除主评
         int i = evaluateMapper.deleteByPrimaryKey(evaluate.getId());
         if (i == 0) {
@@ -219,9 +213,9 @@ public class FruitEvaluateService {
 
 
 
-        if(fruitEvaluateService.searchFruitReevaluate(evaluateId) != null &&
-                !fruitEvaluateService.searchFruitReevaluate(evaluateId).isEmpty()) {
-            fruitEvaluateVO.setFruitReevaluate(fruitEvaluateService.searchFruitReevaluate(evaluateId));
+        if(searchFruitReevaluate(evaluateId) != null &&
+                !searchFruitReevaluate(evaluateId).isEmpty()) {
+            fruitEvaluateVO.setFruitReevaluate(searchFruitReevaluate(evaluateId));
         }
         else {
             fruitEvaluateVO.setFruitReevaluate(null);
