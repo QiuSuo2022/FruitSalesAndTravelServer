@@ -7,11 +7,15 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "水果子项表")
 @RestController
 @RequestMapping("/childFruit")
 public class ChildFruitController {
+
     private ChildFruitService childFruitService;
+
     @Autowired
     public void setChildFruitService(ChildFruitService childFruitService){
         this.childFruitService = childFruitService;
@@ -19,26 +23,32 @@ public class ChildFruitController {
 
     @ApiOperation(value = "添加水果子项")
     @PostMapping
-    public void addChildFruit(@RequestBody ChildFruit childFruit){
-        childFruitService.addChildFruit(childFruit);
+    public boolean addChildFruit(@RequestBody ChildFruit childFruit){
+        return childFruitService.addChildFruit(childFruit);
     }
 
     @ApiOperation(value = "删除水果子项")
     @DeleteMapping
-    public void deleteChildFruit(@RequestParam String fruitId){
-        childFruitService.deleteChildFruit(fruitId);
+    public boolean deleteChildFruit(@RequestParam String fruitId){
+        return childFruitService.deleteChildFruit(fruitId);
     }
 
     @ApiOperation(value = "修改水果子项")
     @PutMapping
-    public void updateChildFruit(@RequestBody ChildFruit childFruit){
-        childFruitService.updateChildFruit(childFruit);
+    public boolean updateChildFruit(@RequestBody ChildFruit childFruit){
+        return childFruitService.updateChildFruit(childFruit);
     }
 
-    @ApiOperation(value = "查找水果子项")
-    @GetMapping
-    public void searchChildFruit(@RequestParam String fruitId){
-        childFruitService.searchChildFruit(fruitId);
+    @ApiOperation(value = "查找所有水果子项")
+    @PostMapping
+    public List<ChildFruit> getAllChildFruits(@RequestParam String childFruitId){
+        return childFruitService.getAllChildFruits();
+    }
+
+    @ApiOperation(value = "查找单个水果子项")
+    @PostMapping
+    public ChildFruit getChildFruit(@RequestParam String childFruitId){
+        return childFruitService.getChildFruit(childFruitId);
     }
 
 }

@@ -4,16 +4,20 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
+import com.guet.qiusuo.fruittravel.dao.ChildFruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ChildFruitMapper;
 import com.guet.qiusuo.fruittravel.model.ChildFruit;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import static org.slf4j.LoggerFactory.getLogger;
 import static java.lang.invoke.MethodHandles.lookup;
+import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
  * @author lu
@@ -34,7 +38,7 @@ public class ChildFruitService {
      * 添加childFruit
      * @param childFruit
      */
-    public void addChildFruit(ChildFruit childFruit){
+    public boolean addChildFruit(ChildFruit childFruit){
         UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
         childFruit.setId(UUID.randomUUID().toString());
@@ -48,13 +52,14 @@ public class ChildFruitService {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
         LOG.info("创建水果子项成功,Id:{}",childFruit.getFruitId());
+        return true;
     }
 
     /**
      * 删除childFruit
      * @param fruitId
      */
-    public void deleteChildFruit(String fruitId){
+    public boolean deleteChildFruit(String fruitId){
         UserContextHolder.validAdmin();
         Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(fruitId);
         ChildFruit childFruit = optionalChildFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
@@ -66,13 +71,14 @@ public class ChildFruitService {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
         LOG.info("删除水果子项成功,Id:{}",fruitId);
+        return true;
     }
 
     /**
      * 修改childFruit
      * @param childFruit
      */
-    public void updateChildFruit(ChildFruit childFruit){
+    public boolean updateChildFruit(ChildFruit childFruit){
         UserContextHolder.validAdmin();
         childFruit.setUpdateTime(System.currentTimeMillis());
         childFruit.setUpdateUserId(UserContextHolder.getUserId());
@@ -81,15 +87,28 @@ public class ChildFruitService {
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
         LOG.info("修改水果子项成功,Id:{}",childFruit.getFruitId());
+        return true;
     }
 
     /**
      * 查找childFruit(status = SystemContext.STATUS_ACTIVE)
-     * @param fruitId
+     * @param childFruitId
      * @return
      */
-    public ChildFruit searchChildFruit(String fruitId){
+    public ChildFruit getChildFruit(String childFruitId){
         //如果不存在childFruit则返回null
-        return childFruitMapper.selectByPrimaryKey(fruitId).orElse(null);
+        return childFruitMapper.selectByPrimaryKey(childFruitId).orElse(null);
+    }
+
+    public List<ChildFruit> getAllChildFruits(){
+        List<ChildFruit> list  = childFruitMapper.selectMany(select(
+                ChildFruitDynamicSqlSupport.id,
+                ChildFruitDynamicSqlSupport.fruitName,
+                ChildFruitDynamicSqlSupport.status,
+                ChildFruitDynamicSqlSupport.updateTime)
+                .from(ChildFruitDynamicSqlSupport.childFruit)
+                .where(ChildFruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        return list;
     }
 }

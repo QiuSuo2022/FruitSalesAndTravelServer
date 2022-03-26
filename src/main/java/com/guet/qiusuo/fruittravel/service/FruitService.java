@@ -222,7 +222,7 @@ public class FruitService {
      * @param fruit
      */
 
-    public void addFruit(Fruit fruit){
+    public boolean addFruit(Fruit fruit){
         long now = System.currentTimeMillis();
         UserContextHolder.validAdmin();
         if (!getFruitByName(fruit.getFruitName()).isEmpty()) {
@@ -246,17 +246,18 @@ public class FruitService {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
         LOG.info("水果{}添加成功",fruit.getFruitName());
+        return true;
     }
 
 
     /**
      * 删除Fruit(with childFruit)
-     * @param fruitName
+     * @param fruitId
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteFruit(String fruitName){
+    public boolean deleteFruit(String fruitId){
         UserContextHolder.validAdmin();
-        List<Fruit> fruitList = getFruitByName(fruitName);
+        List<Fruit> fruitList = getFruitByName(fruitId);
         if (fruitList.isEmpty()){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
@@ -272,13 +273,14 @@ public class FruitService {
         if (i == 0){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
+        return true;
     }
 
     /**
      * 修改Fruit
      * @param fruit
      */
-    public void updateFruit(Fruit fruit){
+    public boolean updateFruit(Fruit fruit){
         UserContextHolder.validAdmin();
         fruit.setUpdateTime(System.currentTimeMillis());
         fruit.setUpdateUserId(UserContextHolder.getUserId());
@@ -286,6 +288,7 @@ public class FruitService {
         if (i == 0){
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        return true;
     }
 
     /**
@@ -357,8 +360,8 @@ public class FruitService {
         fruitVO.setUpdateTime(fruit.getUpdateTime());
         fruitVO.setCreateUserId(fruit.getUpdateUserId());
 
-        fruitVO.setStock(childFruitService.searchChildFruit(fruitId).getStock());
-        fruitVO.setChildFruitName(childFruitService.searchChildFruit(fruitId).getFruitName());
+        fruitVO.setStock(childFruitService.getChildFruit(fruitId).getStock());
+        fruitVO.setChildFruitName(childFruitService.getChildFruit(fruitId).getFruitName());
         return fruitVO;
     }
 

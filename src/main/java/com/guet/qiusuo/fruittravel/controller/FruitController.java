@@ -26,20 +26,20 @@ public class FruitController {
 
     @ApiOperation(value = "添加水果")
     @PostMapping
-    public void addFruit(@RequestBody Fruit fruit){
-        fruitService.addFruit(fruit);
+    public boolean addFruit(@RequestBody Fruit fruit){
+        return fruitService.addFruit(fruit);
     }
 
     @ApiOperation(value = "删除水果")
     @DeleteMapping
-    public void deleteFruit(@RequestParam String fruitName){
-        fruitService.deleteFruit(fruitName);
+    public boolean deleteFruit(@RequestParam String fruitId){
+        return fruitService.deleteFruit(fruitId);
     }
 
     @ApiOperation(value = "修改水果")
     @PutMapping("/updateFruit")
-    public void updateFruit(@RequestBody Fruit fruit){
-        fruitService.updateFruit(fruit);
+    public boolean updateFruit(@RequestBody Fruit fruit){
+        return fruitService.updateFruit(fruit);
     }
 
     @ApiOperation(value = "查找所有水果")
