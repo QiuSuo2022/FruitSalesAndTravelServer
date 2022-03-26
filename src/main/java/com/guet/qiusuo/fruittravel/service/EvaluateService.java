@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,14 +27,10 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date 2022/3/14
  */
 @Service
-public class FruitEvaluateService {
+public class EvaluateService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private EvaluateMapper evaluateMapper;
-
-    private FruitEvaluateService fruitEvaluateService;
-
-
 
     @Autowired
     public void setEvaluateMapper(EvaluateMapper evaluateMapper) {
@@ -51,6 +48,7 @@ public class FruitEvaluateService {
         evaluate.setId(UUID.randomUUID().toString());
         evaluate.setCreateTime(now);
         evaluate.setUpdateTime(now);
+        evaluate.setEvaluateId(evaluate.getId());
         evaluate.setStatus(SystemConstants.STATUS_ACTIVE);
         evaluate.setCreateUserId(UserContextHolder.getUserId());
         evaluate.setUpdateUserId(UserContextHolder.getUserId());
@@ -117,7 +115,7 @@ public class FruitEvaluateService {
         evaluate.setUpdateUserId(UserContextHolder.getUserId());
         evaluate.setUpdateTime(System.currentTimeMillis());
         //先删除追评
-        fruitEvaluateService.deleteFruitReEvaluate(evaluate.getId());
+        deleteFruitReEvaluate(evaluate.getId());
         //再删除主评
         int i = evaluateMapper.deleteByPrimaryKey(evaluate.getId());
         if (i == 0) {
@@ -141,23 +139,13 @@ public class FruitEvaluateService {
     }
 
     /**
-     * 查询水果追评
+     * 根据evaluateId查询水果追评
      *
      * @param evaluateId
      * @return
      */
-    public Evaluate searchFruitReevaluate(String evaluateId) {
-        return evaluateMapper.selectByPrimaryKey(evaluateId).orElse(null);
-    }
-
-    /**
-     * 查询水果评价(包括主评和追评)
-     *
-     * @param evaluateId
-     * @return
-     */
-    public List<FruitEvaluateVO> searchFruitEvaluate(String evaluateId) {
-        List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
+    public List<Evaluate> searchFruitReevaluate(String evaluateId) {
+         return evaluateMapper.selectMany(select(
                 EvaluateDynamicSqlSupport.id,
                 EvaluateDynamicSqlSupport.userId,
                 EvaluateDynamicSqlSupport.childFruitId,
@@ -173,7 +161,36 @@ public class FruitEvaluateService {
         )
                         .from(EvaluateDynamicSqlSupport.evaluate)
                         .where(EvaluateDynamicSqlSupport.evaluateId, isEqualTo(evaluateId))
+                         .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.REEVALUATE_TYPE))
+                        .build().render(RenderingStrategies.MYBATIS3));
+
+    }
+    /**
+     * 查询水果评价(包括主评和追评)
+     *
+     * @param evaluateId
+     * @return
+     */
+    public FruitEvaluateVO searchFruitEvaluate(String evaluateId) {
+        List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
+                EvaluateDynamicSqlSupport.id,
+                EvaluateDynamicSqlSupport.userId,
+                EvaluateDynamicSqlSupport.childFruitId,
+                EvaluateDynamicSqlSupport.evaluateId,
+                EvaluateDynamicSqlSupport.detail,
+                EvaluateDynamicSqlSupport.grade,
+                EvaluateDynamicSqlSupport.type,
+                EvaluateDynamicSqlSupport.status,
+                EvaluateDynamicSqlSupport.createTime,
+                EvaluateDynamicSqlSupport.updateTime,
+                EvaluateDynamicSqlSupport.createUserId,
+                EvaluateDynamicSqlSupport.updateUserId
+        )
+                        .from(EvaluateDynamicSqlSupport.evaluate)
+                        .where(EvaluateDynamicSqlSupport.id, isEqualTo(evaluateId))
                         .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.EVALUATE_TYPE))
                         .orderBy(EvaluateDynamicSqlSupport.createTime)
                         .build().render(RenderingStrategies.MYBATIS3));
         if (evaluateList.isEmpty()) {
@@ -182,7 +199,6 @@ public class FruitEvaluateService {
         //获取符合查询条件的水果主评
         Evaluate evaluate = evaluateList.get(0);
         FruitEvaluateVO fruitEvaluateVO = new FruitEvaluateVO();
-        List<FruitEvaluateVO> fruitEvaluateVOList = null;
         fruitEvaluateVO.setId(evaluate.getId());
         fruitEvaluateVO.setEvaluateId(evaluate.getEvaluateId());
         fruitEvaluateVO.setChildFruitId(evaluate.getChildFruitId());
@@ -194,13 +210,12 @@ public class FruitEvaluateService {
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
 
-        if(fruitEvaluateService.searchFruitReevaluate(evaluateId) == null) {
-            throw new NullPointerException("没有追评");
+        if(!searchFruitReevaluate(evaluateId).isEmpty()) {
+            fruitEvaluateVO.setFruitReevaluate(searchFruitReevaluate(evaluateId));
         }
         else {
-            fruitEvaluateVO.setFruitReevaluate(fruitEvaluateService.searchFruitReevaluate(evaluateId).getDetail());
+            fruitEvaluateVO.setFruitReevaluate(null);
         }
-        fruitEvaluateVOList.add(fruitEvaluateVO);
-        return fruitEvaluateVOList;
+        return fruitEvaluateVO;
     }
 }

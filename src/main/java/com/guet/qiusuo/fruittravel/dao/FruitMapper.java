@@ -316,7 +316,7 @@ public interface FruitMapper {
     List<Fruit> selectFruitSort(@Param("nameLike") String nameLike);
 
     @Select({
-            "select fruit_name,min(tbl_child_fruit.fruit_price),description,departure_point,quantity",
+            "select tbl_child_fruit.fruit_name,min(tbl_child_fruit.fruit_price),description,departure_point,quantity",
             "from tbl_fruit",
             "left join tbl_child_fruit",
             "on tbl_child_fruit.fruit_id = tbl_fruit.id",
@@ -324,8 +324,9 @@ public interface FruitMapper {
             "on tbl_cart.child_fruit_id = tbl_child_fruit.id",
             "left join tbl_evaluate",
             "on tbl_child_fruit.id = tbl_evaluate.child_fruit_id",
-            "where fruit_name like %#{nameLike}%",
-            "order by (tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25)"
+            "where tbl_child_fruit.fruit_name like %#{nameLike}%",
+            "group by tbl_child_fruit.fruit_name,description,departure_point,quantity,grade,tbl_child_fruit.fruit_price",
+            "order by tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25"
     })
     @Results(id = "FruitRecommend", value = {
             @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
