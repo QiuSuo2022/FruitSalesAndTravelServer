@@ -40,13 +40,13 @@ public class ChildFruitController {
     }
 
     @ApiOperation(value = "查找所有水果子项")
-    @PostMapping
-    public List<ChildFruit> getAllChildFruits(@RequestParam String childFruitId){
+    @GetMapping(value = "/allChildFruit")
+    public List<ChildFruit> getAllChildFruit(){
         return childFruitService.getAllChildFruits();
     }
 
     @ApiOperation(value = "查找单个水果子项")
-    @PostMapping
+    @GetMapping
     public ChildFruit getChildFruit(@RequestParam String childFruitId){
         return childFruitService.getChildFruit(childFruitId);
     }
