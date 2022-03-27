@@ -12,239 +12,204 @@ import javax.annotation.Generated;
 public class Evaluate {
     /**
      * Database Column Remarks:
-     * uuid
+     *   uuid
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.224+08:00",
-            comments = "Source field: tbl_evaluate.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7464931+08:00", comments="Source field: tbl_evaluate.id")
     private String id;
 
     /**
      * Database Column Remarks:
-     * 用户id
+     *   用户id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.224+08:00",
-            comments = "Source field: tbl_evaluate.user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7484943+08:00", comments="Source field: tbl_evaluate.user_id")
     private String userId;
 
     /**
      * Database Column Remarks:
-     * 水果商品子项id
+     *   水果商品子项id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.child_fruit_id")
-    private String childFruitId;
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7484943+08:00", comments="Source field: tbl_evaluate.product_id")
+    private String productId;
 
     /**
      * Database Column Remarks:
-     * 评价id
+     *   评价id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.evaluate_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7484943+08:00", comments="Source field: tbl_evaluate.evaluate_id")
     private String evaluateId;
 
     /**
      * Database Column Remarks:
-     * 评价详情
+     *   评价详情
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.detail")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.detail")
     private String detail;
 
     /**
      * Database Column Remarks:
-     * 对商品的整体评价, 0-5星评分
+     *   对商品的整体评价, 0-5星评分
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.grade")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.grade")
     private Short grade;
 
     /**
      * Database Column Remarks:
-     * 0-评价商品 1-对评价的评论
+     *   0-评价商品 1-对评价的评论
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.type")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.type")
     private Short type;
 
     /**
      * Database Column Remarks:
-     * 状态, 0: 无效 1: 有效
+     *   状态, 0: 无效 1: 有效
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.status")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.status")
     private Short status;
 
     /**
      * Database Column Remarks:
-     * 创建时间
+     *   创建时间
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.create_time")
     private Long createTime;
 
     /**
      * Database Column Remarks:
-     * 最后更新时间
+     *   最后更新时间
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.update_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.update_time")
     private Long updateTime;
 
     /**
      * Database Column Remarks:
-     * 增加此条数据的用户id
+     *   增加此条数据的用户id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.create_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.create_user_id")
     private String createUserId;
 
     /**
      * Database Column Remarks:
-     * 最后更新此条数据的用户id
+     *   最后更新此条数据的用户id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.227+08:00",
-            comments = "Source field: tbl_evaluate.update_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.update_user_id")
     private String updateUserId;
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.224+08:00",
-            comments = "Source field: tbl_evaluate.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7474932+08:00", comments="Source field: tbl_evaluate.id")
     public String getId() {
         return id;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.224+08:00",
-            comments = "Source field: tbl_evaluate.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7474932+08:00", comments="Source field: tbl_evaluate.id")
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.224+08:00",
-            comments = "Source field: tbl_evaluate.user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7484943+08:00", comments="Source field: tbl_evaluate.user_id")
     public String getUserId() {
         return userId;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7484943+08:00", comments="Source field: tbl_evaluate.user_id")
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.child_fruit_id")
-    public String getChildFruitId() {
-        return childFruitId;
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7484943+08:00", comments="Source field: tbl_evaluate.product_id")
+    public String getProductId() {
+        return productId;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.child_fruit_id")
-    public void setChildFruitId(String childFruitId) {
-        this.childFruitId = childFruitId == null ? null : childFruitId.trim();
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7484943+08:00", comments="Source field: tbl_evaluate.product_id")
+    public void setProductId(String productId) {
+        this.productId = productId == null ? null : productId.trim();
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.evaluate_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.evaluate_id")
     public String getEvaluateId() {
         return evaluateId;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.evaluate_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.evaluate_id")
     public void setEvaluateId(String evaluateId) {
         this.evaluateId = evaluateId == null ? null : evaluateId.trim();
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.detail")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.detail")
     public String getDetail() {
         return detail;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.detail")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.detail")
     public void setDetail(String detail) {
         this.detail = detail == null ? null : detail.trim();
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.225+08:00",
-            comments = "Source field: tbl_evaluate.grade")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.grade")
     public Short getGrade() {
         return grade;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.grade")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.grade")
     public void setGrade(Short grade) {
         this.grade = grade;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.type")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.type")
     public Short getType() {
         return type;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.type")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.type")
     public void setType(Short type) {
         this.type = type;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.status")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7490706+08:00", comments="Source field: tbl_evaluate.status")
     public Short getStatus() {
         return status;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.status")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.status")
     public void setStatus(Short status) {
         this.status = status;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.create_time")
     public Long getCreateTime() {
         return createTime;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.create_time")
     public void setCreateTime(Long createTime) {
         this.createTime = createTime;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.update_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.update_time")
     public Long getUpdateTime() {
         return updateTime;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.226+08:00",
-            comments = "Source field: tbl_evaluate.update_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.update_time")
     public void setUpdateTime(Long updateTime) {
         this.updateTime = updateTime;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.227+08:00",
-            comments = "Source field: tbl_evaluate.create_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.create_user_id")
     public String getCreateUserId() {
         return createUserId;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.227+08:00",
-            comments = "Source field: tbl_evaluate.create_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.create_user_id")
     public void setCreateUserId(String createUserId) {
         this.createUserId = createUserId == null ? null : createUserId.trim();
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.227+08:00",
-            comments = "Source field: tbl_evaluate.update_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.update_user_id")
     public String getUpdateUserId() {
         return updateUserId;
     }
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.227+08:00", comments = "Source field: tbl_evaluate.update_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7500038+08:00", comments="Source field: tbl_evaluate.update_user_id")
     public void setUpdateUserId(String updateUserId) {
         this.updateUserId = updateUserId == null ? null : updateUserId.trim();
     }
