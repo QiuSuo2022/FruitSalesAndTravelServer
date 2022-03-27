@@ -277,4 +277,16 @@ public class ScenicService {
         scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).getDescription());
         return scenicVO;
     }
+    public List<Scenic> getAllScenic(){
+        return  scenicMapper.selectScenic(select(
+                ScenicDynamicSqlSupport.id,
+                ScenicDynamicSqlSupport.scenicName,
+                ScenicDynamicSqlSupport.type,
+                ScenicDynamicSqlSupport.updateTime
+                )
+                        .from(ScenicDynamicSqlSupport.scenic)
+                        .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .build().render(RenderingStrategies.MYBATIS3)
+        );
+    }
 }
