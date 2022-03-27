@@ -12,6 +12,7 @@ import com.guet.qiusuo.fruittravel.dao.CartDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.FruitMapper;
+import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.apache.ibatis.annotations.Select;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -291,11 +293,16 @@ public class FruitService {
         return true;
     }
 
+    public Fruit getFruit(String fruitId){
+        Optional<Fruit> optionalFruit =  fruitMapper.selectByPrimaryKey(fruitId);
+        Fruit fruit = optionalFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_FRUIT));
+        return fruit;
+    }
     /**
      * 查询全部Fruit
      * @return
      */
-    public PageList<Fruit> searchAllFruits(Integer page, Integer pageSize){
+    public PageList<Fruit> getAllFruits(Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize);
         List<Fruit> fruitList;
         fruitList = fruitMapper.selectMany(select(
