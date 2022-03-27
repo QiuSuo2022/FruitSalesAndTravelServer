@@ -148,7 +148,7 @@ public class EvaluateService {
          return evaluateMapper.selectMany(select(
                 EvaluateDynamicSqlSupport.id,
                 EvaluateDynamicSqlSupport.userId,
-                EvaluateDynamicSqlSupport.childFruitId,
+                EvaluateDynamicSqlSupport.productId,
                 EvaluateDynamicSqlSupport.evaluateId,
                 EvaluateDynamicSqlSupport.detail,
                 EvaluateDynamicSqlSupport.grade,
@@ -176,7 +176,7 @@ public class EvaluateService {
         List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
                 EvaluateDynamicSqlSupport.id,
                 EvaluateDynamicSqlSupport.userId,
-                EvaluateDynamicSqlSupport.childFruitId,
+                EvaluateDynamicSqlSupport.productId,
                 EvaluateDynamicSqlSupport.evaluateId,
                 EvaluateDynamicSqlSupport.detail,
                 EvaluateDynamicSqlSupport.grade,
@@ -201,7 +201,7 @@ public class EvaluateService {
         FruitEvaluateVO fruitEvaluateVO = new FruitEvaluateVO();
         fruitEvaluateVO.setId(evaluate.getId());
         fruitEvaluateVO.setEvaluateId(evaluate.getEvaluateId());
-        fruitEvaluateVO.setChildFruitId(evaluate.getChildFruitId());
+        fruitEvaluateVO.setProductId(evaluate.getProductId());
         fruitEvaluateVO.setDetail(evaluate.getDetail());
         fruitEvaluateVO.setGrade(evaluate.getGrade());
         fruitEvaluateVO.setType(evaluate.getType());
