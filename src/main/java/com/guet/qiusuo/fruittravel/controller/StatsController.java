@@ -40,6 +40,18 @@ public class StatsController {
         this.statsService = statsService;
     }
 
+    @ApiOperation(value = "获取销量最高的景区")
+    @GetMapping("/getTopSalesScenic")
+    public Map<String,Long> getTopSaleScenic(@RequestParam short ago){
+        return statsService.getTopSaleScenic(ago);
+    }
+
+    @ApiOperation(value = "获取销量最高的水果")
+    @GetMapping("/getTopSalesFruit")
+    public Map<String,Long> getTopSaleFruit(@RequestParam short ago){
+        return statsService.getTopSaleFruit(ago);
+    }
+
     @ApiOperation(value = "根据产品获取一周/月/年的好/中/坏评价统计量")
     @GetMapping("/getProductEvalAmount")
     public long getEvaluationAmountByProductId(@RequestParam String productId,@RequestParam short ago, @RequestParam short evaluationType){

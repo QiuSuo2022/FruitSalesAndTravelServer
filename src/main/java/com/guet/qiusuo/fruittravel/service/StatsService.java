@@ -168,7 +168,7 @@ public class StatsService {
     }
 
     /**
-     * Controller调用 - 获取近期门票销量的报表
+     * Controller调用 - 获取近期门票销量的list
      * @param ago
      * @return
      */
@@ -178,7 +178,7 @@ public class StatsService {
     }
 
     /**
-     * Controller调用 - 获取近期水果销量的报表
+     * Controller调用 - 获取近期水果销量的list
      * @param ago
      * @return
      */
@@ -188,7 +188,7 @@ public class StatsService {
     }
 
     /**
-     * Controller调用 - 获取近期景区评价情况的报表
+     * Controller调用 - 获取近期景区评价情况的list
      * @param ago
      * @return
      */
@@ -196,10 +196,40 @@ public class StatsService {
         return getAllScenicEvaluationMapByAgo(ago,evaluationType);
     }
 
-
+    /**
+     * Controller调用 - 获取近期水果的评价情况的list
+     * @param ago
+     * @param evaluationType
+     * @return
+     */
     public List<Map.Entry<String, Long>> getAllChildFruitsEvaluationByAgo(short ago, short evaluationType){
         return getAllChildFruitsEvaluationMapByAgo(ago,evaluationType);
     }
+
+    /**
+     * 获取销量最高的景区
+     * @param ago
+     * @return
+     */
+    public Map<String,Long> getTopSaleScenic(short ago){
+        List<Scenic> scenicList = scenicService.getAllScenic();
+        Map<String,Long> max = new HashMap<String,Long>();
+        max.put(getAllScenicSalesMapByAgo(ago).get(scenicList.size()).getKey(),getAllScenicSalesMapByAgo(ago).get(scenicList.size()).getValue());
+        return max;
+    }
+
+    /**
+     * 获取销量最高的水果
+     * @param ago
+     * @return
+     */
+    public Map<String,Long> getTopSaleFruit(short ago){
+        List<ChildFruit> childFruitsList = childFruitService.getAllChildFruits();
+        Map<String,Long> max = new HashMap<String,Long>();
+        max.put(getAllChildFruitsSalesMapByAgo(ago).get(childFruitsList.size()).getKey(),getAllChildFruitsSalesMapByAgo(ago).get(childFruitsList.size()).getValue());
+        return max;
+    }
+
     /***********************************以下是主要方法***************************************/
 
     private List<Map.Entry<String, Long>> getAllChildFruitsSalesMapByAgo(short ago){
@@ -333,6 +363,7 @@ public class StatsService {
     }
 
     /************************************以下是工具方法和sql方法*********************************/
+
     /**
      * 对map根据value进行排序, 返回的是List<Map.Entry<String,Long>>
      * @param map
