@@ -52,7 +52,7 @@ public class FruitController {
                                                     SystemConstants.DEFAULT_PAGE) Integer page,
                                            @RequestParam(required = false,defaultValue =
                                                    SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
-        return fruitService.searchAllFruits(page, pageSize);
+        return fruitService.getAllFruits(page, pageSize);
     }
 
     @ApiOperation("获取水果列表")
@@ -101,6 +101,12 @@ public class FruitController {
                                                          SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
 
         return fruitService.getFruitRecommendList(nameLike, page, pageSize);
+    }
+
+    @ApiOperation(value = "获取单个水果")
+    @GetMapping
+    public Fruit getFruit(String fruitId){
+        return fruitService.getFruit(fruitId);
     }
 }
 
