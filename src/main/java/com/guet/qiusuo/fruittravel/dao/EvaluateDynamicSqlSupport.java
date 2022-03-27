@@ -2,119 +2,104 @@ package com.guet.qiusuo.fruittravel.dao;
 
 import java.sql.JDBCType;
 import javax.annotation.Generated;
-
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
 public final class EvaluateDynamicSqlSupport {
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.227+08:00",
-            comments = "Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7555181+08:00", comments="Source Table: tbl_evaluate")
     public static final Evaluate evaluate = new Evaluate();
 
     /**
      * Database Column Remarks:
-     * uuid
+     *   uuid
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.228+08:00",
-            comments = "Source field: tbl_evaluate.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7565178+08:00", comments="Source field: tbl_evaluate.id")
     public static final SqlColumn<String> id = evaluate.id;
 
     /**
      * Database Column Remarks:
-     * 用户id
+     *   用户id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.228+08:00",
-            comments = "Source field: tbl_evaluate.user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.user_id")
     public static final SqlColumn<String> userId = evaluate.userId;
 
     /**
      * Database Column Remarks:
-     * 水果商品子项id
+     *   水果商品子项id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.228+08:00",
-            comments = "Source field: tbl_evaluate.child_fruit_id")
-    public static final SqlColumn<String> childFruitId = evaluate.childFruitId;
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.product_id")
+    public static final SqlColumn<String> productId = evaluate.productId;
 
     /**
      * Database Column Remarks:
-     * 评价id
+     *   评价id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.228+08:00",
-            comments = "Source field: tbl_evaluate.evaluate_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.evaluate_id")
     public static final SqlColumn<String> evaluateId = evaluate.evaluateId;
 
     /**
      * Database Column Remarks:
-     * 评价详情
+     *   评价详情
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.228+08:00",
-            comments = "Source field: tbl_evaluate.detail")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.detail")
     public static final SqlColumn<String> detail = evaluate.detail;
 
     /**
      * Database Column Remarks:
-     * 对商品的整体评价, 0-5星评分
+     *   对商品的整体评价, 0-5星评分
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.229+08:00",
-            comments = "Source field: tbl_evaluate.grade")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.grade")
     public static final SqlColumn<Short> grade = evaluate.grade;
 
     /**
      * Database Column Remarks:
-     * 0-评价商品 1-对评价的评论
+     *   0-评价商品 1-对评价的评论
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.229+08:00",
-            comments = "Source field: tbl_evaluate.type")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.type")
     public static final SqlColumn<Short> type = evaluate.type;
 
     /**
      * Database Column Remarks:
-     * 状态, 0: 无效 1: 有效
+     *   状态, 0: 无效 1: 有效
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.229+08:00",
-            comments = "Source field: tbl_evaluate.status")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.status")
     public static final SqlColumn<Short> status = evaluate.status;
 
     /**
      * Database Column Remarks:
-     * 创建时间
+     *   创建时间
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.229+08:00",
-            comments = "Source field: tbl_evaluate.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.create_time")
     public static final SqlColumn<Long> createTime = evaluate.createTime;
 
     /**
      * Database Column Remarks:
-     * 最后更新时间
+     *   最后更新时间
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.229+08:00",
-            comments = "Source field: tbl_evaluate.update_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7575195+08:00", comments="Source field: tbl_evaluate.update_time")
     public static final SqlColumn<Long> updateTime = evaluate.updateTime;
 
     /**
      * Database Column Remarks:
-     * 增加此条数据的用户id
+     *   增加此条数据的用户id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.229+08:00",
-            comments = "Source field: tbl_evaluate.create_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7585285+08:00", comments="Source field: tbl_evaluate.create_user_id")
     public static final SqlColumn<String> createUserId = evaluate.createUserId;
 
     /**
      * Database Column Remarks:
-     * 最后更新此条数据的用户id
+     *   最后更新此条数据的用户id
      */
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.23+08:00", comments
-            = "Source field: tbl_evaluate.update_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7585285+08:00", comments="Source field: tbl_evaluate.update_user_id")
     public static final SqlColumn<String> updateUserId = evaluate.updateUserId;
 
-    @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.228+08:00",
-            comments = "Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7565178+08:00", comments="Source Table: tbl_evaluate")
     public static final class Evaluate extends SqlTable {
         public final SqlColumn<String> id = column("id", JDBCType.VARCHAR);
 
         public final SqlColumn<String> userId = column("user_id", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> childFruitId = column("child_fruit_id", JDBCType.VARCHAR);
+        public final SqlColumn<String> productId = column("product_id", JDBCType.VARCHAR);
 
         public final SqlColumn<String> evaluateId = column("evaluate_id", JDBCType.VARCHAR);
 
