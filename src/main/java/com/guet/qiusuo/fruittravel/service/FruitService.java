@@ -330,6 +330,26 @@ public class FruitService {
     }
 
     /**
+     * 查询全部Fruit - 不分页
+     * @return
+     */
+    public List<Fruit> getAllFruitList(){
+        return fruitMapper.selectMany(select(
+                FruitDynamicSqlSupport.id,
+                FruitDynamicSqlSupport.fruitName,
+                FruitDynamicSqlSupport.status,
+                FruitDynamicSqlSupport.updateTime
+        )
+                .from(FruitDynamicSqlSupport.fruit)
+                .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .orderBy(FruitDynamicSqlSupport.createTime)
+                .build().render(RenderingStrategies.MYBATIS3));
+    }
+
+
+
+
+    /**
      * 根据fruit_id查找FruitVO
      * @param fruitId
      */
