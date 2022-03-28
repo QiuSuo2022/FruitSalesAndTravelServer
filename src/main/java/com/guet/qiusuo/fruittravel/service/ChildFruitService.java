@@ -100,6 +100,12 @@ public class ChildFruitService {
         return childFruitMapper.selectByPrimaryKey(childFruitId).orElse(null);
     }
 
+    public ChildFruit getChildFruitByFruitId(String FruitId){
+        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(FruitId);
+        return optionalChildFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
+    }
+
+
     public List<ChildFruit> getAllChildFruits(){
         List<ChildFruit> list  = childFruitMapper.selectMany(select(
                 ChildFruitDynamicSqlSupport.id,
