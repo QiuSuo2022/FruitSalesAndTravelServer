@@ -39,7 +39,7 @@ public class ReservationService {
      * @param reservation
      */
     public void addReservation(Reservation reservation) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         long now = System.currentTimeMillis();
         reservation.setCreateTime(now);
         reservation.setUpdateTime(now);
@@ -60,7 +60,7 @@ public class ReservationService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void deleteReservation(String Id) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         Optional<Reservation> optionalReservation = reservationMapper.selectByPrimaryKey(Id);
         Reservation reservation = optionalReservation.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_RESERVATION));
         reservation.setStatus(SystemConstants.STATUS_NEGATIVE);
@@ -78,7 +78,7 @@ public class ReservationService {
      * @param reservation
      */
     public void updateReservation(Reservation reservation) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         reservation.setUpdateTime(System.currentTimeMillis());
         reservation.setUpdateUserId(UserContextHolder.getUserId());
         int i = reservationMapper.updateByPrimaryKeySelective(reservation);
@@ -95,6 +95,7 @@ public class ReservationService {
      * @return
      */
     public Reservation searchReservation(String Id) {
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         return reservationMapper.selectByPrimaryKey(Id).orElse(null);
     }
 
@@ -104,6 +105,7 @@ public class ReservationService {
      * @return
      */
     public List<Reservation> searchAllReservation() {
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         return reservationMapper.selectMany(select(
                 ReservationDynamicSqlSupport.id,
                 ReservationDynamicSqlSupport.userId,

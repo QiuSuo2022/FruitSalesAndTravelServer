@@ -75,6 +75,7 @@ public class CartService {
      * @param cart
      */
     public void addCart(Cart cart){
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         if (cart == null){
             LOG.info("参数为空!");
             throw new SystemException(ErrorCode.PARAM_ERROR);
@@ -106,6 +107,7 @@ public class CartService {
      * @param childFruitId
      */
     public void deleteCart(String userId, String childFruitId){
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         Cart cart = getCartByUserIdAndChildFruitId(userId,childFruitId).get(0);
         if (cart != null){
             cart.setStatus(SystemConstants.STATUS_NEGATIVE);
@@ -126,6 +128,7 @@ public class CartService {
      * @param cart
      */
     public void updateCart(Cart cart){
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         cart.setUpdateTime(System.currentTimeMillis());
         cart.setUpdateUserId(UserContextHolder.getUserId());
         int i = cartMapper.updateByPrimaryKey(cart);
@@ -140,6 +143,7 @@ public class CartService {
      * @return
      */
     public List<Cart> selectCarts(String userId){
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         return getCartByUserId(userId);
     }
 }
