@@ -34,12 +34,11 @@ public class StatsController {
     @GetMapping("/getTopSalesFruit")
     public HashMap<String,Long> getTopSaleFruit(@RequestParam short ago){
         return statsService.getTopSaleFruit(ago);
-
     }
 
     @ApiOperation(value = "获取一种水果一周/月/年的销量")
     @GetMapping("/getOneFruitSales")
-    public long getSalesAmountByFruitId(@RequestParam String fruitId,@RequestParam short ago){
+    public long getOneFruitSalesByFruitId(@RequestParam String fruitId,@RequestParam short ago){
         long amount = 0;
         amount = statsService.getSingleSalesByFruitId(fruitId, ago);
         return amount;
@@ -47,13 +46,13 @@ public class StatsController {
 
     @ApiOperation(value = "获取所有水果一周/月/年的销量的报表数据")
     @GetMapping("/getAllFruitSalesData")
-    public List<Map.Entry<String, Long>> getSalesReportOfChildFruit(@RequestParam short ago){
+    public List<Map.Entry<String, Long>> getAllFruitSalesData(@RequestParam short ago){
         return statsService.getAllFruitsSalesByAgo(ago);
     }
 
     @ApiOperation(value = "获取所有水果一周/月/年的评价的报表")
     @GetMapping("/getAllFruitEvalData")
-    public List<Map.Entry<String, Long>> getEvaluationReportOfChildFruit(@RequestParam short ago, short evaluationType){
+    public List<Map.Entry<String, Long>> getAllFruitEvalData(@RequestParam short ago, short evaluationType){
        return statsService.getAllFruitsEvaluationByAgo(ago,evaluationType);
     }
 
@@ -76,13 +75,13 @@ public class StatsController {
 
     @ApiOperation(value = "获取所有景区一周/月/年的销量的报表")
     @GetMapping("/getAllScenicSalesData")
-    public List<Map.Entry<String, Long>> getSalesReportOfScenic(@RequestParam short ago){
+    public List<Map.Entry<String, Long>> getAllScenicSalesData(@RequestParam short ago){
         return statsService.getAllScenicSalesByAgo(ago);
     }
 
     @ApiOperation(value = "获取所有景区一周/月/年的评价的报表")
     @GetMapping("/getAllScenicEvalData")
-    public List<Map.Entry<String, Long>> getEvaluationReportOfScenic(@RequestParam short ago, short evaluationType){
+    public List<Map.Entry<String, Long>> getAllScenicEvalData(@RequestParam short ago, short evaluationType){
         return statsService.getAllScenicEvaluationByAgo(ago,evaluationType);
     }
 }

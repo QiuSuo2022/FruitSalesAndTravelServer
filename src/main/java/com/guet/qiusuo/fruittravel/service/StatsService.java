@@ -177,7 +177,8 @@ public class StatsService {
     public HashMap<String,Long> getTopSaleScenic(short ago){
         List<Scenic> scenicList = scenicService.getAllScenic();
         HashMap<String,Long> max = new HashMap<String,Long>(1);
-        max.put(getAllScenicSalesMapByAgo(ago).get(scenicList.size()).getKey(),getAllScenicSalesMapByAgo(ago).get(scenicList.size()).getValue());
+        Map.Entry<String,Long> map = getAllScenicSalesMapByAgo(ago).get(scenicList.size());
+        max.put(map.getKey(),map.getValue());
         return max;
     }
 
@@ -189,7 +190,8 @@ public class StatsService {
     public HashMap<String,Long> getTopSaleFruit(short ago){
         List<ChildFruit> childFruitsList = childFruitService.getAllChildFruits();
         HashMap<String,Long> max = new HashMap<String,Long>(1);
-        max.put(getAllFruitsSalesByAgo(ago).get(childFruitsList.size()).getKey(),getAllFruitsSalesByAgo(ago).get(childFruitsList.size()).getValue());
+        Map.Entry<String,Long> map = getAllFruitsSalesByAgo(ago).get(childFruitsList.size());
+        max.put(map.getKey(),map.getValue());
         return max;
     }
 
@@ -197,7 +199,7 @@ public class StatsService {
 
     private List<Map.Entry<String, Long>> getAllFruitsSalesMapByAgo(short ago){
         List<Fruit> FruitList = fruitService.getAllFruitList();
-        Map<String,Long> map = new HashMap<String, Long>(FruitList.size());
+        Map<String,Long> map = new HashMap<String, Long>(FruitList.size()+1);
         for (int i = 0; i < FruitList.size(); i++){
             map.put(FruitList.get(i).getFruitName(),
                     getSingleSalesByFruitId(FruitList.get(i).getId(),ago));
@@ -316,7 +318,7 @@ public class StatsService {
     private List<Map.Entry<String,Long>> getAllScenicSalesMapByAgo(short ago){
         //获取景区种类, 一个景区对应多个订单即销量
         List<Scenic> scenicList = scenicService.getAllScenic();
-        Map<String,Long> map = new HashMap<String, Long>(scenicList.size());
+        Map<String,Long> map = new HashMap<String, Long>(scenicList.size()+1);
             for (int i = 0;i < scenicList.size(); i++) {
                 map.put(scenicList.get(i).getScenicName(),
                         getSingleSalesByScenicId(scenicList.get(i).getId(),ago));
@@ -357,8 +359,7 @@ public class StatsService {
      * @return
      */
     private long getScenicEvaluationAmountSql(String scenicId,long past,short gradeFrom ,short gradeTo) {
-        Long ans = evaluateMapper.count(select(EvaluateDynamicSqlSupport.id)
-                .from(EvaluateDynamicSqlSupport.evaluate)
+        Long ans = evaluateMapper.count(countFrom(EvaluateDynamicSqlSupport.evaluate)
                 .where(EvaluateDynamicSqlSupport.productId,isEqualTo(scenicId))
                 .and(EvaluateDynamicSqlSupport.grade,isBetween(gradeFrom).and(gradeTo))
                 .and(EvaluateDynamicSqlSupport.type,isEqualTo(TYPE_PRODUCT))
@@ -379,22 +380,26 @@ public class StatsService {
      * @param gradeTo
      * @return
      */
-    private long getFruitEvaluationAmountSql(String fruitId,long past,short gradeFrom ,short gradeTo) {
+    private Long getFruitEvaluationAmountSql(String fruitId,long past,short gradeFrom ,short gradeTo) {
         List<ChildFruit> childFruitList = childFruitService.getChildFruitListByFruitId(fruitId);
         Long sum = 0L;
+        Long temp = 0L;
         for (ChildFruit childFruit:childFruitList
              ) {
-             sum = evaluateMapper.count(select(EvaluateDynamicSqlSupport.id)
-                    .from(EvaluateDynamicSqlSupport.evaluate)
+            temp = evaluateMapper.count(countFrom(EvaluateDynamicSqlSupport.evaluate)
                     .where(EvaluateDynamicSqlSupport.productId,isEqualTo(childFruit.getId()))
                             .and(EvaluateDynamicSqlSupport.grade,isBetween(gradeFrom).and(gradeTo))
                             .and(EvaluateDynamicSqlSupport.type,isEqualTo(TYPE_PRODUCT))
                             .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(EvaluateDynamicSqlSupport.createTime,isBetween(past).and(now))
                             .build().render(RenderingStrategies.MYBATIS3));
-            if (sum == null) {
+            if (temp == null) {
                 return 0L;
             }
+             sum = sum + temp;
+        }
+        if (sum == null) {
+            return 0L;
         }
         return sum;
     }
@@ -405,10 +410,9 @@ public class StatsService {
      * @param past
      * @return
      */
-    private long getSalesByFruitIdSql(String fruitId,long past) {
+    private Long getSalesByFruitIdSql(String fruitId,long past) {
         //fruitId获取fruit, 根据fruitId检索已经支付的订单
-        Long ans = orderFormMapper.count(select(OrderFormDynamicSqlSupport.id)
-                .from(OrderFormDynamicSqlSupport.orderForm)
+        Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
                 .where(OrderFormDynamicSqlSupport.orderFormStatus,isNotEqualTo(UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
@@ -427,8 +431,7 @@ public class StatsService {
      * @return
      */
     private long getSalesByScenicIdSql(String scenicId,long past) {
-        Long ans = orderFormMapper.count(select(OrderFormDynamicSqlSupport.id)
-                .from(OrderFormDynamicSqlSupport.orderForm)
+        Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
                 .where(OrderFormDynamicSqlSupport.orderFormStatus,isNotEqualTo(UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
