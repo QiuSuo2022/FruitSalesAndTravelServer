@@ -31,7 +31,9 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.springframework.stereotype.Repository;
 
+@Repository
 @Mapper
 public interface OrderFormMapper {
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-29T14:31:39.3337702+08:00", comments="Source Table: tbl_order_form")
