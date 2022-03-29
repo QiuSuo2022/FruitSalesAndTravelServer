@@ -33,8 +33,10 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.springframework.stereotype.Repository;
 
 @Mapper
+@Repository
 public interface ImageFileMapper {
     @Generated(value = "org.mybatis.generator.api.MyBatisGenerator", date = "2022-01-26T02:15:00.245+08:00",
             comments = "Source Table: tbl_image_file")

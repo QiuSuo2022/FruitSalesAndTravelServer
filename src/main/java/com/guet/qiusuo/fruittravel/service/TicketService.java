@@ -36,7 +36,7 @@ public class TicketService {
     public void addTicket(Ticket ticket) {
         UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
-        ticket.setId(UUID.randomUUID().toString());
+        ticket.setId(UUID.randomUUID().toString().replace("-", ""));
         ticket.setCreateTime(now);
         ticket.setUpdateTime(now);
         ticket.setStatus(SystemConstants.STATUS_ACTIVE);

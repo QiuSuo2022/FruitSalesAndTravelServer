@@ -55,7 +55,7 @@ public class UploadImgService {
         long now = System.currentTimeMillis();
         UserContextHolder.validAdmin();
         ImageFile img = new ImageFile();
-        img.setId(uuFileName);
+        img.setId(uuFileName.replace("-", ""));
         img.setImageName(fileName);
         img.setType(imgType);
         img.setImageSize((short)file.getSize());

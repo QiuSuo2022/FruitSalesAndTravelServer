@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import static org.slf4j.LoggerFactory.getLogger;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -41,7 +40,7 @@ public class ChildFruitService {
     public boolean addChildFruit(ChildFruit childFruit){
         UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
-        childFruit.setId(UUID.randomUUID().toString());
+        childFruit.setId(UUID.randomUUID().toString().replace("-", ""));
         childFruit.setStatus(SystemConstants.STATUS_ACTIVE);
         childFruit.setCreateTime(now);
         childFruit.setUpdateTime(now);

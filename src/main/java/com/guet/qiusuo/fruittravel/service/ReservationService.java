@@ -43,7 +43,7 @@ public class ReservationService {
         long now = System.currentTimeMillis();
         reservation.setCreateTime(now);
         reservation.setUpdateTime(now);
-        reservation.setId(UUID.randomUUID().toString());
+        reservation.setId(UUID.randomUUID().toString().replace("-", ""));
         reservation.setUpdateUserId(UserContextHolder.getUserId());
         reservation.setCreateUserId(UserContextHolder.getUserId());
         reservation.setStatus(SystemConstants.STATUS_ACTIVE);

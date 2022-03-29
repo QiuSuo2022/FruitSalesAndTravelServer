@@ -131,7 +131,7 @@ public class ScenicService {
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
         }
         long now = System.currentTimeMillis();
-        scenic.setId(UUID.randomUUID().toString());
+        scenic.setId(UUID.randomUUID().toString().replace("-", ""));
         scenic.setCreateTime(now);
         scenic.setUpdateTime(now);
         scenic.setUpdateUserId(UserContextHolder.getUserId());

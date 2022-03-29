@@ -45,7 +45,7 @@ public class EvaluateService {
     public void addFruitEvaluate(Evaluate evaluate) {
         UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
-        evaluate.setId(UUID.randomUUID().toString());
+        evaluate.setId(UUID.randomUUID().toString().replace("-", ""));
         evaluate.setCreateTime(now);
         evaluate.setUpdateTime(now);
         evaluate.setEvaluateId(evaluate.getId());
@@ -70,7 +70,7 @@ public class EvaluateService {
         long now = System.currentTimeMillis();
         reEvaluate.setStatus(SystemConstants.STATUS_ACTIVE);
         reEvaluate.setEvaluateId(evaluateId);
-        reEvaluate.setId(UUID.randomUUID().toString());
+        reEvaluate.setId(UUID.randomUUID().toString().replace("-", ""));
         reEvaluate.setCreateTime(now);
         reEvaluate.setUpdateTime(now);
         reEvaluate.setCreateUserId(UserContextHolder.getUserId());
