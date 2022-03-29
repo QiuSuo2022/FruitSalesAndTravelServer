@@ -40,7 +40,7 @@ public class StatsService {
 
     private static final short STAR_1 = 1;
     private static final short STAR_2 = 2;
-    private static final short STAR_3 = 3;
+    //private static final short STAR_3 = 3;
     private static final short STAR_4 = 4;
     private static final short STAR_5 = 5;
 
@@ -176,7 +176,7 @@ public class StatsService {
      */
     public HashMap<String,Long> getTopSaleScenic(short ago){
         List<Scenic> scenicList = scenicService.getAllScenic();
-        HashMap<String,Long> max = new HashMap<String,Long>();
+        HashMap<String,Long> max = new HashMap<String,Long>(1);
         max.put(getAllScenicSalesMapByAgo(ago).get(scenicList.size()).getKey(),getAllScenicSalesMapByAgo(ago).get(scenicList.size()).getValue());
         return max;
     }
@@ -188,7 +188,7 @@ public class StatsService {
      */
     public HashMap<String,Long> getTopSaleFruit(short ago){
         List<ChildFruit> childFruitsList = childFruitService.getAllChildFruits();
-        HashMap<String,Long> max = new HashMap<String,Long>();
+        HashMap<String,Long> max = new HashMap<String,Long>(1);
         max.put(getAllFruitsSalesByAgo(ago).get(childFruitsList.size()).getKey(),getAllFruitsSalesByAgo(ago).get(childFruitsList.size()).getValue());
         return max;
     }
@@ -357,7 +357,7 @@ public class StatsService {
      * @return
      */
     private long getScenicEvaluationAmountSql(String scenicId,long past,short gradeFrom ,short gradeTo) {
-        return  evaluateMapper.count(select()
+        Long ans = evaluateMapper.count(select(EvaluateDynamicSqlSupport.id)
                 .from(EvaluateDynamicSqlSupport.evaluate)
                 .where(EvaluateDynamicSqlSupport.productId,isEqualTo(scenicId))
                 .and(EvaluateDynamicSqlSupport.grade,isBetween(gradeFrom).and(gradeTo))
@@ -365,6 +365,10 @@ public class StatsService {
                 .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(EvaluateDynamicSqlSupport.createTime,isBetween(past).and(now))
                 .build().render(RenderingStrategies.MYBATIS3));
+        if (ans == null) {
+            return 0L;
+        }
+        return ans;
     }
 
     /**
@@ -376,49 +380,44 @@ public class StatsService {
      * @return
      */
     private long getFruitEvaluationAmountSql(String fruitId,long past,short gradeFrom ,short gradeTo) {
-        return  evaluateMapper.count(select()
-                .from(EvaluateDynamicSqlSupport.evaluate)
-                .where(EvaluateDynamicSqlSupport.productId,isEqualTo(childFruitService.getChildFruitByFruitId(fruitId).getId()))
-                .and(EvaluateDynamicSqlSupport.grade,isBetween(gradeFrom).and(gradeTo))
-                .and(EvaluateDynamicSqlSupport.type,isEqualTo(TYPE_PRODUCT))
-                .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                .and(EvaluateDynamicSqlSupport.createTime,isBetween(past).and(now))
-                .build().render(RenderingStrategies.MYBATIS3));
+        List<ChildFruit> childFruitList = childFruitService.getChildFruitListByFruitId(fruitId);
+        Long sum = 0L;
+        for (ChildFruit childFruit:childFruitList
+             ) {
+             sum = evaluateMapper.count(select(EvaluateDynamicSqlSupport.id)
+                    .from(EvaluateDynamicSqlSupport.evaluate)
+                    .where(EvaluateDynamicSqlSupport.productId,isEqualTo(childFruit.getId()))
+                            .and(EvaluateDynamicSqlSupport.grade,isBetween(gradeFrom).and(gradeTo))
+                            .and(EvaluateDynamicSqlSupport.type,isEqualTo(TYPE_PRODUCT))
+                            .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(EvaluateDynamicSqlSupport.createTime,isBetween(past).and(now))
+                            .build().render(RenderingStrategies.MYBATIS3));
+            if (sum == null) {
+                return 0L;
+            }
+        }
+        return sum;
     }
 
     /**
-     * 获取中评的Sql方法
-     * @param id
-     * @param past
-     * @return
-     */
-    /*
-    private long getCommonEvaluationAmountSql(String id,long past) {
-        return  evaluateMapper.count(select()
-                .from(EvaluateDynamicSqlSupport.evaluate)
-                .where(EvaluateDynamicSqlSupport.productId,isEqualTo(id))
-                .and(EvaluateDynamicSqlSupport.grade,isEqualTo(STAR_3))
-                .and(EvaluateDynamicSqlSupport.type,isEqualTo(TYPE_PRODUCT))
-                .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                .and(EvaluateDynamicSqlSupport.createTime,isBetween(past).and(now))
-                .build().render(RenderingStrategies.MYBATIS3));
-    }*/
-
-    /**
-     * 根据childFruitId统计销量的Sql方法
+     * 根据fruitId统计销量的Sql方法
      * @param fruitId
      * @param past
      * @return
      */
     private long getSalesByFruitIdSql(String fruitId,long past) {
         //fruitId获取fruit, 根据fruitId检索已经支付的订单
-        return  orderFormMapper.count(select()
+        Long ans = orderFormMapper.count(select(OrderFormDynamicSqlSupport.id)
                 .from(OrderFormDynamicSqlSupport.orderForm)
                 .where(OrderFormDynamicSqlSupport.orderFormStatus,isNotEqualTo(UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
                 .and(OrderFormDynamicSqlSupport.fruitId,isEqualTo(fruitId))
                 .build().render(RenderingStrategies.MYBATIS3));
+        if (ans == null) {
+            return 0L;
+        }
+        return ans;
     }
 
     /**
@@ -428,13 +427,17 @@ public class StatsService {
      * @return
      */
     private long getSalesByScenicIdSql(String scenicId,long past) {
-        return  orderFormMapper.count(select()
+        Long ans = orderFormMapper.count(select(OrderFormDynamicSqlSupport.id)
                 .from(OrderFormDynamicSqlSupport.orderForm)
                 .where(OrderFormDynamicSqlSupport.orderFormStatus,isNotEqualTo(UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
                 .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
                 .build().render(RenderingStrategies.MYBATIS3));
+        if (ans == null) {
+            return 0L;
+        }
+        return ans;
     }
 
 }
