@@ -61,16 +61,21 @@ public class ChildFruitService {
      */
     public boolean deleteChildFruit(String fruitId){
         UserContextHolder.validAdmin();
-        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(fruitId);
-        ChildFruit childFruit = optionalChildFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
-        childFruit.setStatus(SystemConstants.STATUS_NEGATIVE);
-        childFruit.setUpdateTime(System.currentTimeMillis());
-        childFruit.setUpdateUserId(UserContextHolder.getUserId());
-        int i = childFruitMapper.updateByPrimaryKeySelective(childFruit);
-        if (i == 0){
-            throw new SystemException(ErrorCode.DELETE_ERROR);
+        List<ChildFruit> childFruitList = getChildFruitListByFruitId(fruitId);
+        if (childFruitList.isEmpty()){
+            throw new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT);
         }
-        LOG.info("删除水果子项成功,Id:{}",fruitId);
+        for (ChildFruit childFruit:childFruitList
+             ) {
+            childFruit.setStatus(SystemConstants.STATUS_NEGATIVE);
+            childFruit.setUpdateTime(System.currentTimeMillis());
+            childFruit.setUpdateUserId(UserContextHolder.getUserId());
+            int i = childFruitMapper.updateByPrimaryKeySelective(childFruit);
+            if (i == 0){
+                throw new SystemException(ErrorCode.DELETE_ERROR);
+            }
+            LOG.info("删除水果子项成功,Id:{}",fruitId);
+        }
         return true;
     }
 
@@ -100,9 +105,16 @@ public class ChildFruitService {
         return childFruitMapper.selectByPrimaryKey(childFruitId).orElse(null);
     }
 
-    public ChildFruit getChildFruitByFruitId(String FruitId){
-        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(FruitId);
-        return optionalChildFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
+    public List<ChildFruit> getChildFruitListByFruitId(String FruitId){
+        return childFruitMapper.selectMany(select(
+                ChildFruitDynamicSqlSupport.id,
+                ChildFruitDynamicSqlSupport.fruitName,
+                ChildFruitDynamicSqlSupport.status,
+                ChildFruitDynamicSqlSupport.updateTime)
+                .from(ChildFruitDynamicSqlSupport.childFruit)
+                .where(ChildFruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(ChildFruitDynamicSqlSupport.fruitId,isEqualTo(FruitId))
+                .build().render(RenderingStrategies.MYBATIS3));
     }
 
 
