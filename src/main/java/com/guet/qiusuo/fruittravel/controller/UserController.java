@@ -2,8 +2,11 @@ package com.guet.qiusuo.fruittravel.controller;
 
 import com.guet.qiusuo.fruittravel.bean.request.LoginDTO;
 import com.guet.qiusuo.fruittravel.bean.vo.UserVO;
+import com.guet.qiusuo.fruittravel.common.SysRole;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.model.User;
+import com.guet.qiusuo.fruittravel.model.UserRole;
+import com.guet.qiusuo.fruittravel.service.RoleService;
 import com.guet.qiusuo.fruittravel.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
     private UserService userService;
+    private RoleService roleService;
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {this.roleService = roleService; }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -43,6 +50,17 @@ public class UserController {
         userService.addUser(user);
     }
 
+    @ApiOperation(value = "添加超级管理员")
+    @PostMapping("/superAdmin")
+    public void setSuperAdmin(@RequestBody User user) {
+        userService.addUser(user);
+        user.setRoleId(SysRole.SUPERADMIN);
+    }
+
+    @ApiOperation(value = "分配管理员权限")
+    @PutMapping("/admin")
+    public void setAdmin(@RequestBody UserRole userRole) { roleService.grantPermission(userRole); }
+
     @ApiOperation(value = "修改用户")
     @PutMapping
     public void updateUser(@RequestBody User user) {
@@ -61,4 +79,5 @@ public class UserController {
     public void updateUserRole(@RequestParam String userId, @RequestParam String roleId) {
         userService.updateUserRole(userId, roleId);
     }
+
 }

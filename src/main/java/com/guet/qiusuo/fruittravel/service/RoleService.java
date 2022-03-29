@@ -56,7 +56,7 @@ public class RoleService {
                 .render(RenderingStrategies.MYBATIS3));
     }
 
-    void insertUserRole(String userId, String roleId) {
+    public void insertUserRole(String userId, String roleId) {
         UserContextHolder.validAdmin();
         UserRole userRole = new UserRole();
         userRole.setId(UUID.randomUUID().toString());
@@ -78,7 +78,7 @@ public class RoleService {
      * 超级管理员修改用户信息
      * @param userRole
      */
-    void updateUserRole(UserRole userRole) {
+    public void updateUserRole(UserRole userRole) {
         UserContextHolder.validSuperAdmin();
         if(userRole.getRoleId().equals(SysRole.SUPERADMIN)) {
             throw new SystemException(ErrorCode.NO_ACCESS);
@@ -95,7 +95,7 @@ public class RoleService {
      * 超级管理员分配权限
      * @param userRole
      */
-    void grantPermission(UserRole userRole) {
+    public void grantPermission(UserRole userRole) {
         UserContextHolder.validSuperAdmin();
         userRole.setUpdateUserId(UserContextHolder.getUserId());
         userRole.setUpdateTime(System.currentTimeMillis());
@@ -108,10 +108,23 @@ public class RoleService {
     }
 
     /**
+     * 超级管理员收回权限
+     * @param userRole
+     */
+    public void revokePermission(UserRole userRole) {
+        UserContextHolder.validSuperAdmin();
+        userRole.setUpdateUserId(UserContextHolder.getUserId());
+        userRole.setUpdateTime(System.currentTimeMillis());
+        if(userRole.getRoleId().equals(SysRole.ADMIN)) {
+            userRole.setRoleId(SysRole.USER);
+        }
+    }
+
+    /**
      * 超级管理员封禁管理员和用户
      * @param userRole
      */
-    void confineUserRoles(UserRole userRole) {
+    public void confineUserRoles(UserRole userRole) {
         UserContextHolder.validSuperAdmin();
         if(userRole.getRoleId().equals(SysRole.SUPERADMIN)) {
             throw new SystemException(ErrorCode.NO_ACCESS);
@@ -125,7 +138,7 @@ public class RoleService {
      * 管理员封禁普通用户
      * @param userRole
      */
-    void confineUserRole(UserRole userRole) {
+    public void confineUserRole(UserRole userRole) {
         UserContextHolder.validAdmin();
         if(userRole.getRoleId().equals(SysRole.SUPERADMIN) || userRole.getRoleId().equals(SysRole.ADMIN)) {
             throw new SystemException(ErrorCode.NO_ACCESS);
