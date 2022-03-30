@@ -50,7 +50,7 @@ public class UserController {
         userService.addUser(user);
     }
 
-    @ApiOperation(value = "添加超级管理员")
+    /*@ApiOperation(value = "添加超级管理员")
     @PostMapping("/superAdmin")
     public void setSuperAdmin(@RequestBody User user) {
         userService.addUser(user);
@@ -58,8 +58,12 @@ public class UserController {
     }
 
     @ApiOperation(value = "分配管理员权限")
-    @PutMapping("/admin")
+    @PutMapping("/grantAdmin")
     public void setAdmin(@RequestBody UserRole userRole) { roleService.grantPermission(userRole); }
+
+    @ApiOperation(value = "收回管理员权限")
+    @PutMapping("/revokeAdmin")
+    public void revokeAdmin(@RequestBody UserRole userRole) { roleService.revokePermission(userRole); }*/
 
     @ApiOperation(value = "修改用户")
     @PutMapping
