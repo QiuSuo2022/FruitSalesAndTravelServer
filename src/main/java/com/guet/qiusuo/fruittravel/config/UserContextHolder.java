@@ -42,6 +42,12 @@ public class UserContextHolder {
         }
     }
 
+    public static void validSuperAdmin() {
+        if(!isSuperAdmin()) {
+            throw new SystemException(ErrorCode.NO_ACCESS);
+        }
+    }
+
     /**
      * 校验用户权限
      *
@@ -56,6 +62,10 @@ public class UserContextHolder {
 
     private static boolean isAdmin() {
         return isRole(SysRole.ADMIN);
+    }
+
+    private static boolean isSuperAdmin() {
+        return isRole(SysRole.SUPERADMIN);
     }
 
     private static boolean isRole(String role) {

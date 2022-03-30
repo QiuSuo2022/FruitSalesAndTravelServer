@@ -43,7 +43,7 @@ public class EvaluateService {
      * @param evaluate
      */
     public void addFruitEvaluate(Evaluate evaluate) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         long now = System.currentTimeMillis();
         evaluate.setId(UUID.randomUUID().toString().replace("-", ""));
         evaluate.setCreateTime(now);
@@ -65,7 +65,6 @@ public class EvaluateService {
      * @param evaluateId
      */
     public void addFruitReevaluate(String evaluateId) {
-        UserContextHolder.validAdmin();
         Evaluate reEvaluate = new Evaluate();
         long now = System.currentTimeMillis();
         reEvaluate.setStatus(SystemConstants.STATUS_ACTIVE);
@@ -88,7 +87,7 @@ public class EvaluateService {
      * @param evaluateId
      */
     public void deleteFruitReEvaluate(String evaluateId) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         Optional<Evaluate> optionalEvaluate = evaluateMapper.selectByPrimaryKey(evaluateId);
         Evaluate evaluate = optionalEvaluate.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_REEVALUATE));
         evaluate.setStatus(SystemConstants.STATUS_NEGATIVE);
@@ -108,7 +107,7 @@ public class EvaluateService {
      * @param UUID
      */
     public void deleteFruitEvaluate(String UUID) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         Optional<Evaluate> optionalEvaluate = evaluateMapper.selectByPrimaryKey(UUID);
         Evaluate evaluate = optionalEvaluate.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_EVALUATE));
         evaluate.setStatus(SystemConstants.STATUS_NEGATIVE);
@@ -129,7 +128,7 @@ public class EvaluateService {
      * @param evaluate
      */
     public void updateFruitEvaluate(Evaluate evaluate) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validUser(UserContextHolder.getUserId());
         evaluate.setUpdateTime(System.currentTimeMillis());
         evaluate.setUpdateUserId(UserContextHolder.getUserId());
         int i = evaluateMapper.updateByPrimaryKeySelective(evaluate);
