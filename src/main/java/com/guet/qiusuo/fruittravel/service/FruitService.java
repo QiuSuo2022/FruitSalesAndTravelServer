@@ -75,13 +75,11 @@ public class FruitService {
         List<Fruit> fruitList;
         if(orderByType.equals(SystemConstants.PRICE_ASC)) {
             fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.id,
                             FruitDynamicSqlSupport.fruitName,
                             FruitDynamicSqlSupport.fruitPrice,
                             FruitDynamicSqlSupport.description,
                             FruitDynamicSqlSupport.departurePoint,
                             FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.status,
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
@@ -93,13 +91,11 @@ public class FruitService {
         }
         else if(orderByType.equals(SystemConstants.PRICE_DESC)) {
             fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.id,
                             FruitDynamicSqlSupport.fruitName,
                             FruitDynamicSqlSupport.fruitPrice,
                             FruitDynamicSqlSupport.description,
                             FruitDynamicSqlSupport.departurePoint,
                             FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.status,
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
@@ -111,13 +107,11 @@ public class FruitService {
         }
         else if(orderByType.equals(SystemConstants.SALE_ASC)) {
             fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.id,
                             FruitDynamicSqlSupport.fruitName,
                             FruitDynamicSqlSupport.fruitPrice,
                             FruitDynamicSqlSupport.description,
                             FruitDynamicSqlSupport.departurePoint,
                             FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.status,
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
@@ -131,13 +125,11 @@ public class FruitService {
         }
         else if(orderByType.equals(SystemConstants.SALE_DESC)) {
             fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.id,
                             FruitDynamicSqlSupport.fruitName,
                             FruitDynamicSqlSupport.fruitPrice,
                             FruitDynamicSqlSupport.description,
                             FruitDynamicSqlSupport.departurePoint,
                             FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.status,
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
@@ -151,13 +143,11 @@ public class FruitService {
         }
         else if(orderByType.equals(SystemConstants.GRADE_ASC)) {
             fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.id,
                             FruitDynamicSqlSupport.fruitName,
                             FruitDynamicSqlSupport.fruitPrice,
                             FruitDynamicSqlSupport.description,
                             FruitDynamicSqlSupport.departurePoint,
                             FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.status,
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
@@ -171,13 +161,11 @@ public class FruitService {
         }
         else if(orderByType.equals(SystemConstants.GRADE_DESC)) {
             fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.id,
                             FruitDynamicSqlSupport.fruitName,
                             FruitDynamicSqlSupport.fruitPrice,
                             FruitDynamicSqlSupport.description,
                             FruitDynamicSqlSupport.departurePoint,
                             FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.status,
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
