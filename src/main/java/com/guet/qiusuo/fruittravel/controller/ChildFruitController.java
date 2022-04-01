@@ -45,10 +45,10 @@ public class ChildFruitController {
         return childFruitService.getAllChildFruits();
     }
 
-    @ApiOperation(value = "查找单个水果子项")
+    @ApiOperation(value = "获取水果子项列表")
     @GetMapping
-    public ChildFruit getChildFruit(@RequestParam String childFruitId){
-        return childFruitService.getChildFruit(childFruitId);
+    public List<ChildFruit> getChildFruit(@RequestParam String childFruitId){
+        return childFruitService.getChildFruitListByFruitId(childFruitId);
     }
 
 }
