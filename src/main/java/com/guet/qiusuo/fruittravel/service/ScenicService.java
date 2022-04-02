@@ -271,10 +271,18 @@ public class ScenicService {
         scenicVO.setUpdateTime(scenic.getUpdateTime());
         scenicVO.setCreateUserId(scenic.getUpdateUserId());
 
-        scenicVO.setTicketId(ticketService.searchTicket(scenic_id).getScenicId());
-        scenicVO.setPrice(ticketService.searchTicket(scenic_id).getPrice());
-        scenicVO.setTicketType(ticketService.searchTicket(scenic_id).getType());
-        scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).getDescription());
+        if(ticketService.searchTicket(scenic_id) == null) {
+            scenicVO.setTicketId(null);
+            scenicVO.setPrice(null);
+            scenicVO.setTicketType(null);
+            scenicVO.setTicketDescription(null);
+        }
+        else {
+            scenicVO.setTicketId(ticketService.searchTicket(scenic_id).getScenicId());
+            scenicVO.setPrice(ticketService.searchTicket(scenic_id).getPrice());
+            scenicVO.setTicketType(ticketService.searchTicket(scenic_id).getType());
+            scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).getDescription());
+        }
         return scenicVO;
     }
     public List<Scenic> getAllScenic(){
