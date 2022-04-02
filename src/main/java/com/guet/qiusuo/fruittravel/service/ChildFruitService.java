@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import static org.slf4j.LoggerFactory.getLogger;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -41,7 +40,7 @@ public class ChildFruitService {
     public boolean addChildFruit(ChildFruit childFruit){
         UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
-        childFruit.setId(UUID.randomUUID().toString());
+        childFruit.setId(UUID.randomUUID().toString().replace("-", ""));
         childFruit.setStatus(SystemConstants.STATUS_ACTIVE);
         childFruit.setCreateTime(now);
         childFruit.setUpdateTime(now);
@@ -61,16 +60,21 @@ public class ChildFruitService {
      */
     public boolean deleteChildFruit(String fruitId){
         UserContextHolder.validAdmin();
-        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(fruitId);
-        ChildFruit childFruit = optionalChildFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
-        childFruit.setStatus(SystemConstants.STATUS_NEGATIVE);
-        childFruit.setUpdateTime(System.currentTimeMillis());
-        childFruit.setUpdateUserId(UserContextHolder.getUserId());
-        int i = childFruitMapper.updateByPrimaryKeySelective(childFruit);
-        if (i == 0){
-            throw new SystemException(ErrorCode.DELETE_ERROR);
+        List<ChildFruit> childFruitList = getChildFruitListByFruitId(fruitId);
+        if (childFruitList.isEmpty()){
+            throw new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT);
         }
-        LOG.info("删除水果子项成功,Id:{}",fruitId);
+        for (ChildFruit childFruit:childFruitList
+             ) {
+            childFruit.setStatus(SystemConstants.STATUS_NEGATIVE);
+            childFruit.setUpdateTime(System.currentTimeMillis());
+            childFruit.setUpdateUserId(UserContextHolder.getUserId());
+            int i = childFruitMapper.updateByPrimaryKeySelective(childFruit);
+            if (i == 0){
+                throw new SystemException(ErrorCode.DELETE_ERROR);
+            }
+            LOG.info("删除水果子项成功,Id:{}",fruitId);
+        }
         return true;
     }
 
@@ -100,9 +104,16 @@ public class ChildFruitService {
         return childFruitMapper.selectByPrimaryKey(childFruitId).orElse(null);
     }
 
-    public ChildFruit getChildFruitByFruitId(String FruitId){
-        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(FruitId);
-        return optionalChildFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT));
+    public List<ChildFruit> getChildFruitListByFruitId(String FruitId){
+        return childFruitMapper.selectMany(select(
+                ChildFruitDynamicSqlSupport.id,
+                ChildFruitDynamicSqlSupport.fruitName,
+                ChildFruitDynamicSqlSupport.status,
+                ChildFruitDynamicSqlSupport.updateTime)
+                .from(ChildFruitDynamicSqlSupport.childFruit)
+                .where(ChildFruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(ChildFruitDynamicSqlSupport.fruitId,isEqualTo(FruitId))
+                .build().render(RenderingStrategies.MYBATIS3));
     }
 
 

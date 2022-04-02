@@ -12,9 +12,7 @@ import com.guet.qiusuo.fruittravel.dao.CartDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.FruitMapper;
-import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Fruit;
-import org.apache.ibatis.annotations.Select;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,7 +218,7 @@ public class FruitService {
             throw new SystemException(ErrorCode.FRUIT_ALREADY_EXITS);
         }
 
-        fruit.setId(UUID.randomUUID().toString());
+        fruit.setId(UUID.randomUUID().toString().replace("-", ""));
         fruit.setCreateTime(now);
         fruit.setUpdateTime(now);
         fruit.setCreateUserId(UserContextHolder.getUserId());

@@ -1,6 +1,7 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 
+import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.model.ImageFile;
 import com.guet.qiusuo.fruittravel.service.UploadImgService;
 import io.swagger.annotations.Api;
@@ -31,6 +32,7 @@ public class UploadImageController {
     public ImageFile uploadImg(@RequestParam("file") MultipartFile file,
                                @RequestParam("imgType") Short imgType,
                                @RequestParam("imgRemark") String remark) throws IOException {
+        UserContextHolder.validAdmin();
         if(file.isEmpty()){
             return null;
         }

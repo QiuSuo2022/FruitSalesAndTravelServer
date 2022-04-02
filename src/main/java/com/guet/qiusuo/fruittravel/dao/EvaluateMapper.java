@@ -33,7 +33,9 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.springframework.stereotype.Repository;
 
+@Repository
 @Mapper
 public interface EvaluateMapper {
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7685842+08:00", comments="Source Table: tbl_evaluate")
@@ -41,7 +43,7 @@ public interface EvaluateMapper {
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7585285+08:00", comments="Source Table: tbl_evaluate")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    long count(SelectStatementProvider selectStatement);
+    Long count(SelectStatementProvider selectStatement);
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7600556+08:00", comments="Source Table: tbl_evaluate")
     @DeleteProvider(type=SqlProviderAdapter.class, method="delete")

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
@@ -88,6 +89,7 @@ public class CartService {
             c.setQuantity(sum);
             updateCart(c);
         }else {
+            cart.setId(UUID.randomUUID().toString().replace("-", ""));
             cart.setStatus(SystemConstants.STATUS_ACTIVE);
             cart.setCreateTime(System.currentTimeMillis());
             cart.setUpdateTime(System.currentTimeMillis());

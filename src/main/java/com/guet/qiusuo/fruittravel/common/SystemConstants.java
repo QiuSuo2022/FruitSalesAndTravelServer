@@ -1,6 +1,8 @@
 package com.guet.qiusuo.fruittravel.common;
 
 
+import java.math.BigInteger;
+
 public class SystemConstants {
     //排序
     public static final Short PRICE_ASC = new Short("0");
@@ -50,4 +52,40 @@ public class SystemConstants {
      * 用户信息不全
      */
     public static final Short USER_INFO_INCOMPLETE = new Short("3");
+
+
+    /**
+     * 日期时间戳
+     */
+    public static final short WEEK  = 1;
+    public static final long WEEK_MILLIS  = new BigInteger("604800017").longValue();
+
+    public static final short MONTH = 2;
+    public static final long MONTH_MILLIS = new BigInteger("2629800000").longValue();
+
+    public static final short YEAH  = 3;
+    public static final long YEAH_MILLIS  = new BigInteger("31557600000").longValue();
+
+    /**
+     * 评价星级
+     */
+    public static final short STAR_1 = 1;
+    public static final short STAR_2 = 2;
+    public static final short STAR_3 = 3;
+    public static final short STAR_4 = 4;
+    public static final short STAR_5 = 5;
+
+    /**
+     * 支付状态
+     */
+    public static final short UNPAID = 0;
+
+    /**
+     * 评价类型
+     */
+    public static final short GOOD_EVALUATION   = 1;
+    public static final short COMMON_EVALUATION = 2;
+    public static final short BAD_EVALUATION    = 3;
+
+
 }
