@@ -34,7 +34,7 @@ public class ScenicController {
 
     @ApiOperation(value = "修改景点")
     @PutMapping
-    public void updateScenic(@RequestBody Scenic scenic) {scenicService.updateScenic(scenic);}
+    public boolean updateScenic(@RequestBody Scenic scenic) {return scenicService.updateScenic(scenic);}
 
     @ApiOperation(value = "查找景点")
     @GetMapping

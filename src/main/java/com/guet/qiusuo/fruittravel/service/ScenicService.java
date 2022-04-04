@@ -178,7 +178,7 @@ public class ScenicService {
      *
      * @param scenic
      */
-    public void updateScenic(Scenic scenic) {
+    public boolean updateScenic(Scenic scenic) {
         UserContextHolder.validAdmin();
         scenic.setUpdateTime(System.currentTimeMillis());
         scenic.setUpdateUserId(UserContextHolder.getUserId());
@@ -186,6 +186,7 @@ public class ScenicService {
         if (i == 0) {
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        return true;
     }
 
     /**
