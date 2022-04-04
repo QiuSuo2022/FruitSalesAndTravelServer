@@ -30,7 +30,7 @@ public class ScenicController {
 
     @ApiOperation(value = "删除景点")
     @DeleteMapping
-    public void deleteScenic(@RequestParam String scenicId) {scenicService.deleteScenic(scenicId);}
+    public boolean deleteScenic(@RequestParam String scenicId) {return scenicService.deleteScenic(scenicId);}
 
     @ApiOperation(value = "修改景点")
     @PutMapping

@@ -157,7 +157,7 @@ public class ScenicService {
      * @param scenicId
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteScenic(String scenicId) {
+    public boolean deleteScenic(String scenicId) {
         UserContextHolder.validAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
         Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_SCENIC));
@@ -171,6 +171,7 @@ public class ScenicService {
         if (i == 0) {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
+        return true;
     }
 
     /**
