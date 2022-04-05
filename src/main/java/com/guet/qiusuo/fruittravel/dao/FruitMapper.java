@@ -298,7 +298,7 @@ public interface FruitMapper {
             "on tbl_child_fruit.id = tbl_cart.child_fruit_id",
             "left join tbl_evaluate",
             "on tbl_child_fruit.id = tbl_evaluate.product_id",
-            "where tbl_fruit.fruit_name like ’%#{nameLike}%‘",
+            "where tbl_fruit.fruit_name like concat('%',#{nameLike},'%')",
             "order by (tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25)"
     })
     @Results(id = "SortResult", value = {
@@ -311,6 +311,10 @@ public interface FruitMapper {
             @Result(column = "quantity", property = "quantity", jdbcType = JdbcType.INTEGER),
             @Result(column = "grade", property = "grade", jdbcType = JdbcType.SMALLINT)
     })
+    /**
+     * @param nameLike
+     * @return
+     */
     List<Fruit> selectFruitSort(@Param("nameLike") String nameLike);
 
     @Select({
@@ -322,7 +326,7 @@ public interface FruitMapper {
             "on tbl_cart.child_fruit_id = tbl_child_fruit.id",
             "left join tbl_evaluate",
             "on tbl_child_fruit.id = tbl_evaluate.product_id",
-            "where tbl_child_fruit.fruit_name like ’%#{nameLike}%‘",
+            "where tbl_child_fruit.fruit_name like concat('%',#{nameLike},'%')",
             "group by tbl_child_fruit.fruit_name,description,departure_point,quantity,grade,tbl_child_fruit.fruit_price",
             "order by tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25"
     })
