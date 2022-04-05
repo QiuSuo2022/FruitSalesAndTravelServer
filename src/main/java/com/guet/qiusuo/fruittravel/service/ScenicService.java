@@ -164,8 +164,10 @@ public class ScenicService {
         scenic.setStatus(SystemConstants.STATUS_NEGATIVE);
         scenic.setUpdateUserId(UserContextHolder.getUserId());
         scenic.setUpdateTime(System.currentTimeMillis());
-        //先删除ticket
-        ticketService.deleteTicket(scenic.getId());
+        //先删除ticket(若ticket存在)
+        if(ticketService.searchTicket(scenic.getId()) != null) {
+            ticketService.deleteTicket(scenic.getId());
+        }
         //再删除scenic
         int i = scenicMapper.deleteByPrimaryKey(scenic.getId());
         if (i == 0) {
