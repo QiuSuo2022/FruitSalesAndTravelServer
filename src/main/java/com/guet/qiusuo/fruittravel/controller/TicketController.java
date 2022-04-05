@@ -29,6 +29,6 @@ public class TicketController {
 
     @ApiOperation(value = "查找景区门票")
     @GetMapping
-    public void searchTicket(@RequestParam String scenicId) {ticketService.searchTicket(scenicId);}
+    public Ticket searchTicket(@RequestParam String scenicId) {return ticketService.searchTicket(scenicId);}
 
 }
