@@ -1,9 +1,13 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 
+import com.guet.qiusuo.fruittravel.bean.vo.FruitAndChildFruitsVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
+import com.guet.qiusuo.fruittravel.config.ErrorCode;
+import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.model.Fruit;
+import com.guet.qiusuo.fruittravel.service.ChildFruitService;
 import com.guet.qiusuo.fruittravel.service.FruitService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -12,17 +16,22 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Api(tags = "水果商品表")
 @RestController
-@RequestMapping("/fruits")
+@RequestMapping("/fruit")
 public class FruitController {
+
     private FruitService fruitService;
+
+    private ChildFruitService childFruitService;
+
     @Autowired
     public void  setFruitService(FruitService fruitService){
         this.fruitService = fruitService;
     }
+
+    @Autowired
+    public void setChildFruitService(ChildFruitService childFruitService) { this.childFruitService = childFruitService; }
 
     @ApiOperation(value = "添加水果")
     @PostMapping
@@ -107,6 +116,18 @@ public class FruitController {
     @GetMapping
     public Fruit getFruit(String fruitId){
         return fruitService.getFruit(fruitId);
+    }
+
+    @ApiOperation(value = "获取水果以及该水果的子项")
+    @GetMapping("/getFruitAndChildFruits")
+    public FruitAndChildFruitsVO getFruitAndChildFruits(@RequestParam String fruitId){
+        if (fruitId.isEmpty()){
+            throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        FruitAndChildFruitsVO fruitAndChildFruitsVO = new FruitAndChildFruitsVO();
+        fruitAndChildFruitsVO.setFruit(getFruit(fruitId));
+        fruitAndChildFruitsVO.setChildFruits(childFruitService.getChildFruitListByFruitId(fruitId));
+        return fruitAndChildFruitsVO;
     }
 }
 
