@@ -47,8 +47,8 @@ public class ChildFruitController {
 
     @ApiOperation(value = "获取水果子项列表")
     @GetMapping
-    public List<ChildFruit> getChildFruit(@RequestParam String childFruitId){
-        return childFruitService.getChildFruitListByFruitId(childFruitId);
+    public List<ChildFruit> getChildFruit(@RequestParam String fruitId){
+        return childFruitService.getChildFruitListByFruitId(fruitId);
     }
 
 }
