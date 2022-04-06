@@ -79,6 +79,12 @@ public class SystemConstants {
      * 支付状态
      */
     public static final short UNPAID = 0;
+    public static final short PAID = 1;
+    public static final short UNSHIPPED = 2;
+    public static final short SHIPPED = 3;
+    public static final short FINISHED = 4;
+    public static final short REFUND = 5;
+
 
     /**
      * 评价类型

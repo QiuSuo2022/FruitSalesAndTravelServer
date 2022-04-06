@@ -46,6 +46,6 @@
         <!--        <table tableName="tbl_scenic" domainObjectName="Scenic"/>-->
         <!--        <table tableName="tbl_ticket" domainObjectName="Ticket"/>-->
         <!--        <table tableName="tbl_user_role" domainObjectName="UserRole"/>-->
-        <!--        <table tableName="tbl_order_form" domainObjectName="OrderForm"/>-->
+<!--                <table tableName="tbl_order_form" domainObjectName="OrderForm"/>-->
     </context>
 </generatorConfiguration>
