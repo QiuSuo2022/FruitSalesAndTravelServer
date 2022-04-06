@@ -157,20 +157,23 @@ public class ScenicService {
      * @param scenicId
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteScenic(String scenicId) {
+    public boolean deleteScenic(String scenicId) {
         UserContextHolder.validAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
         Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_SCENIC));
         scenic.setStatus(SystemConstants.STATUS_NEGATIVE);
         scenic.setUpdateUserId(UserContextHolder.getUserId());
         scenic.setUpdateTime(System.currentTimeMillis());
-        //先删除ticket
-        ticketService.deleteTicket(scenic.getId());
+        //先删除ticket(若ticket存在)
+        if(ticketService.searchTicket(scenic.getId()) != null) {
+            ticketService.deleteTicket(scenic.getId());
+        }
         //再删除scenic
         int i = scenicMapper.deleteByPrimaryKey(scenic.getId());
         if (i == 0) {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
+        return true;
     }
 
     /**
@@ -178,7 +181,7 @@ public class ScenicService {
      *
      * @param scenic
      */
-    public void updateScenic(Scenic scenic) {
+    public boolean updateScenic(Scenic scenic) {
         UserContextHolder.validAdmin();
         scenic.setUpdateTime(System.currentTimeMillis());
         scenic.setUpdateUserId(UserContextHolder.getUserId());
@@ -186,6 +189,7 @@ public class ScenicService {
         if (i == 0) {
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        return true;
     }
 
     /**
