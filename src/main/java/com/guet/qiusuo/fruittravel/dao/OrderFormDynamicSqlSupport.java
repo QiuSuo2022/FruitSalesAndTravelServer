@@ -6,137 +6,137 @@ import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
 public final class OrderFormDynamicSqlSupport {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2924174+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2576685+08:00", comments="Source Table: tbl_order_form")
     public static final OrderForm orderForm = new OrderForm();
 
     /**
      * Database Column Remarks:
      *   订单编号uuid
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2924174+08:00", comments="Source field: tbl_order_form.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2586686+08:00", comments="Source field: tbl_order_form.id")
     public static final SqlColumn<String> id = orderForm.id;
-
-    /**
-     * Database Column Remarks:
-     *   用户id
-     */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.user_id")
-    public static final SqlColumn<String> userId = orderForm.userId;
 
     /**
      * Database Column Remarks:
      *   收货地址
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.address")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2586686+08:00", comments="Source field: tbl_order_form.address")
     public static final SqlColumn<String> address = orderForm.address;
 
     /**
      * Database Column Remarks:
      *   物流信息
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.express")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2586686+08:00", comments="Source field: tbl_order_form.express")
     public static final SqlColumn<String> express = orderForm.express;
+
+    /**
+     * Database Column Remarks:
+     *   产品名称
+     */
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.name")
+    public static final SqlColumn<String> name = orderForm.name;
 
     /**
      * Database Column Remarks:
      *   水果id
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.fruit_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.fruit_id")
     public static final SqlColumn<String> fruitId = orderForm.fruitId;
 
     /**
      * Database Column Remarks:
      *   景区id
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.scenic_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.scenic_id")
     public static final SqlColumn<String> scenicId = orderForm.scenicId;
 
     /**
      * Database Column Remarks:
      *   数目
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.amount")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.amount")
     public static final SqlColumn<Integer> amount = orderForm.amount;
 
     /**
      * Database Column Remarks:
-     *   实际付款金额
+     *   实际付款金额(单位:分)
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.payment")
-    public static final SqlColumn<Double> payment = orderForm.payment;
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.fee")
+    public static final SqlColumn<Integer> fee = orderForm.fee;
 
     /**
      * Database Column Remarks:
-     *   订单状态:未支付-0 已支付-1 待发货-2 已发货-3 已完成-4
+     *   订单状态:未支付-0 已支付-1 待发货-2 已发货-3 已完成-4 已退款-5
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.order_form_status")
-    public static final SqlColumn<Short> orderFormStatus = orderForm.orderFormStatus;
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.pay_status")
+    public static final SqlColumn<Short> payStatus = orderForm.payStatus;
 
     /**
      * Database Column Remarks:
      *   是否已经评价:未评价-0 已评价-1
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.has_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.has_evaluate")
     public static final SqlColumn<Short> hasEvaluate = orderForm.hasEvaluate;
 
     /**
      * Database Column Remarks:
      *   评价表的id
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.293417+08:00", comments="Source field: tbl_order_form.bind_evaluate_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.bind_evaluate_id")
     public static final SqlColumn<String> bindEvaluateId = orderForm.bindEvaluateId;
 
     /**
      * Database Column Remarks:
      *   状态,0:禁用 1:启用
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2944067+08:00", comments="Source field: tbl_order_form.STATUS")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.STATUS")
     public static final SqlColumn<Short> status = orderForm.status;
 
     /**
      * Database Column Remarks:
      *   支付时间
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2944067+08:00", comments="Source field: tbl_order_form.pay_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.pay_time")
     public static final SqlColumn<Long> payTime = orderForm.payTime;
 
     /**
      * Database Column Remarks:
      *   创建时间
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2944067+08:00", comments="Source field: tbl_order_form.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.create_time")
     public static final SqlColumn<Long> createTime = orderForm.createTime;
 
     /**
      * Database Column Remarks:
      *   更新时间
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2944067+08:00", comments="Source field: tbl_order_form.update_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2596644+08:00", comments="Source field: tbl_order_form.update_time")
     public static final SqlColumn<Long> updateTime = orderForm.updateTime;
 
     /**
      * Database Column Remarks:
      *   记录创建人ID
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2944067+08:00", comments="Source field: tbl_order_form.create_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2606603+08:00", comments="Source field: tbl_order_form.create_user_id")
     public static final SqlColumn<String> createUserId = orderForm.createUserId;
 
     /**
      * Database Column Remarks:
      *   记录修改人ID
      */
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2944067+08:00", comments="Source field: tbl_order_form.update_user_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2606603+08:00", comments="Source field: tbl_order_form.update_user_id")
     public static final SqlColumn<String> updateUserId = orderForm.updateUserId;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-28T19:50:20.2924174+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2586686+08:00", comments="Source Table: tbl_order_form")
     public static final class OrderForm extends SqlTable {
         public final SqlColumn<String> id = column("id", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> userId = column("user_id", JDBCType.VARCHAR);
 
         public final SqlColumn<String> address = column("address", JDBCType.VARCHAR);
 
         public final SqlColumn<String> express = column("express", JDBCType.VARCHAR);
+
+        public final SqlColumn<String> name = column("name", JDBCType.VARCHAR);
 
         public final SqlColumn<String> fruitId = column("fruit_id", JDBCType.VARCHAR);
 
@@ -144,9 +144,9 @@ public final class OrderFormDynamicSqlSupport {
 
         public final SqlColumn<Integer> amount = column("amount", JDBCType.INTEGER);
 
-        public final SqlColumn<Double> payment = column("payment", JDBCType.DOUBLE);
+        public final SqlColumn<Integer> fee = column("fee", JDBCType.INTEGER);
 
-        public final SqlColumn<Short> orderFormStatus = column("order_form_status", JDBCType.SMALLINT);
+        public final SqlColumn<Short> payStatus = column("pay_status", JDBCType.SMALLINT);
 
         public final SqlColumn<Short> hasEvaluate = column("has_evaluate", JDBCType.SMALLINT);
 

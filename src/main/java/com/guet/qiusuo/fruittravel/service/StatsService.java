@@ -8,12 +8,11 @@ import com.guet.qiusuo.fruittravel.dao.OrderFormMapper;
 import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import com.guet.qiusuo.fruittravel.model.Scenic;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.*;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -391,7 +390,7 @@ public class StatsService {
     private Long getSalesByFruitIdSql(String fruitId,long past) {
         //fruitId获取fruit, 根据fruitId检索已经支付的订单
         Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
-                .where(OrderFormDynamicSqlSupport.orderFormStatus,isNotEqualTo(SystemConstants.UNPAID))
+                .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
                 .and(OrderFormDynamicSqlSupport.fruitId,isEqualTo(fruitId))
@@ -410,7 +409,7 @@ public class StatsService {
      */
     private long getSalesByScenicIdSql(String scenicId,long past) {
         Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
-                .where(OrderFormDynamicSqlSupport.orderFormStatus,isNotEqualTo(SystemConstants.UNPAID))
+                .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
                 .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
