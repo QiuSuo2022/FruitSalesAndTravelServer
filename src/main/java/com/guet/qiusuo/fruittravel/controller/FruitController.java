@@ -2,6 +2,7 @@ package com.guet.qiusuo.fruittravel.controller;
 
 
 import com.guet.qiusuo.fruittravel.bean.vo.FruitAndChildFruitsVO;
+import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -98,18 +99,17 @@ public class FruitController {
 
     @ApiOperation(value = "获取水果推荐列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "nameLike",value = "水果名称模糊词",dataType = "String", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
     })
     @GetMapping("/fruitRecommendList")
-    public PageList<Fruit> getFruitRecommendList(@RequestParam(required = false) String nameLike,
+    public PageList<FruitVO> getFruitRecommendList(
                                                  @RequestParam(required = false,defaultValue =
                                                          SystemConstants.DEFAULT_PAGE) Integer page,
                                                  @RequestParam(required = false,defaultValue =
                                                          SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
 
-        return fruitService.getFruitRecommendList(nameLike, page, pageSize);
+        return fruitService.getFruitRecommendList(page, pageSize);
     }
 
     @ApiOperation(value = "获取单个水果")

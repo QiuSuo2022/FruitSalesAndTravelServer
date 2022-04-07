@@ -380,19 +380,15 @@ public class FruitService {
 
     /**
      * 获取水果推荐列表
-     * @param nameLike
      * @param page
      * @param pageSize
      * @return
      */
-    public PageList<Fruit> getFruitRecommendList(String nameLike, Integer page, Integer pageSize) {
-        if (nameLike == null || nameLike.length() == 0) {
-            nameLike = "";
-        }
+    public PageList<FruitVO> getFruitRecommendList(Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
-        List<Fruit> fruitList;
-        fruitList = fruitMapper.FruitRecommend(nameLike);
-        PageList<Fruit> pageList = new PageList<>();
+        List<FruitVO> fruitList;
+        fruitList = fruitMapper.FruitRecommend();
+        PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitList);
         pageList.setPageInfo(new PageInfo<>(fruitList));
         return pageList;
