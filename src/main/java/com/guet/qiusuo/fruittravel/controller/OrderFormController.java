@@ -8,9 +8,9 @@ import com.guet.qiusuo.fruittravel.service.OrderFormService;
 import com.guet.qiusuo.fruittravel.service.PayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -44,7 +44,7 @@ public class OrderFormController {
      */
     @ApiOperation(value = "创建预付订单,返回请求wx支付的Object")
     @PostMapping("/createOrder")
-    public JSONObject createOrder (HttpServletRequest request,@RequestBody OrderForm order) throws JSONException {
+    public JSONObject createOrder (HttpServletRequest request, @RequestBody OrderForm order) throws JSONException {
         if (order == null){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
