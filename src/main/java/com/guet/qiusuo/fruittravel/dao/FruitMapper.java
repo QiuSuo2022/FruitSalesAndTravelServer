@@ -318,24 +318,20 @@ public interface FruitMapper {
     List<Fruit> selectFruitSort(@Param("nameLike") String nameLike);
 
     @Select({
-            "select tbl_child_fruit.fruit_name,min(tbl_child_fruit.fruit_price),description,departure_point,quantity",
-            "from tbl_fruit",
-            "left join tbl_child_fruit",
-            "on tbl_child_fruit.fruit_id = tbl_fruit.id",
-            "left join tbl_cart",
-            "on tbl_cart.child_fruit_id = tbl_child_fruit.id",
-            "left join tbl_evaluate",
-            "on tbl_child_fruit.id = tbl_evaluate.product_id",
-            "where tbl_child_fruit.fruit_name like concat('%',#{nameLike},'%')",
-            "group by tbl_child_fruit.fruit_name,description,departure_point,quantity,grade,tbl_child_fruit.fruit_price",
-            "order by tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25"
+            "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description FROM tbl_child_fruit",
+            "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id ",
+            "LEFT JOIN tbl_evaluate ON tbl_child_fruit.id = tbl_evaluate.product_id",
+            "LEFT JOIN tbl_order_form ON tbl_fruit.id = tbl_order_form.fruit_id",
+            "WHERE order_form_status = 1",
+            "GROUP BY tbl_child_fruit.fruit_name,description,grade",
+            "ORDER BY child_fruit_lowest_price*0.25 + grade*0.25 + sales*0.5"
     })
     @Results(id = "FruitRecommend", value = {
-            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.INTEGER),
+            @Result(column = "fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "child_fruit_lowest_price", property = "childFruitLowestPrice", jdbcType = JdbcType.INTEGER),
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
             @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "quantity", property = "quantity", jdbcType = JdbcType.INTEGER)
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
     })
-    List<Fruit> FruitRecommend(@Param("nameLike") String nameLike);
+    List<FruitVO> FruitRecommend();
 }

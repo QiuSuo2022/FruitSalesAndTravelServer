@@ -14,4 +14,10 @@ public class FruitVO extends Fruit {
 
     @ApiModelProperty(value = "水果子类名称")
     private String childFruitName;
+
+    @ApiModelProperty(value = "水果子类最低价格")
+    private Integer childFruitLowestPrice;
+
+    @ApiModelProperty(value = "销量")
+    private Integer sales;
 }
