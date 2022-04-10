@@ -67,8 +67,9 @@ create table tbl_child_fruit
 create table tbl_image_file
 (
     id              varchar(44)     not null comment 'uuid',
+    product_id      varchar(44)     null comment '用于绑定景区/水果',
     image_name      varchar(255)    null comment '图片名',
-    type            smallint        null comment '图片类别: 0--轮播图, 1--水果商品图, 2--商品评价图',
+    type            smallint        null comment '图片类别: 0--轮播图, 1--水果商品图, 2--景区图, 3--商品评价图',
     image_size      smallint        null comment '文件大小',
     image_url       varchar(255)    null comment '文件存储路径',
     remark          varchar(255)    null comment '备注',
@@ -105,11 +106,11 @@ create table tbl_evaluate
 (
     id                 varchar(44)     not null comment 'uuid',
     user_id            varchar(44)     null comment '用户id',
-    child_fruit_id     varchar(44)     null comment '水果商品子项id',
+    product_id         varchar(44)     null comment '产品id',
     evaluate_id        varchar(44)     null comment '评价id',
     detail             varchar(512)    null comment '评价详情',
     grade              smallint        null comment '对商品的整体评价, 0-5星评分',
-    type               smallint        null comment '0-评价商品 1-对评价的评论',
+    type               smallint        null comment '0-评价水果 1评价景区 2-对评价的评论',
     status             smallint        null comment '状态, 0: 无效 1: 有效',
     create_time        bigint          null comment '创建时间',
     update_time        bigint          null comment '最后更新时间',
@@ -117,7 +118,6 @@ create table tbl_evaluate
     update_user_id     varchar(44)     null comment '最后更新此条数据的用户id',
     constraint tbl_evaluate_pk primary key (id),
     constraint tbl_evaluate_user_id_fk foreign key (user_id) references tbl_user (id),
-    constraint tbl_evaluate_child_fruit_id_fk foreign key (child_fruit_id) references tbl_child_fruit (id),
     constraint tbl_evaluate_evaluate_id_fk foreign key (evaluate_id) references tbl_evaluate (id),
     constraint tbl_evaluate_create_user_id_fk foreign key (create_user_id) references tbl_user (id),
     constraint tbl_evaluate_update_user_id_fk foreign key (update_user_id) references tbl_user (id)
