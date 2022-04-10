@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,8 +28,12 @@ public class OrderFormService {
     private OrderFormMapper orderFormMapper;
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    @Resource
     private PayService payService;
+
+    @Autowired
+    public void setPayService(PayService payService) {
+        this.payService = payService;
+    }
 
     @Autowired
     public void setOrderFormMapper(OrderFormMapper orderFormMapper) {

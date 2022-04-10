@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/OrderForm")
 public class OrderFormController {
 
-    @Resource
     private PayService payService;
 
     private OrderFormService orderFormService;
@@ -33,6 +31,11 @@ public class OrderFormController {
     @Autowired
     public void setOrderFormService(OrderFormService orderFormService) {
         this.orderFormService = orderFormService;
+    }
+
+    @Autowired
+    public void setPayService(PayService payService) {
+        this.payService = payService;
     }
 
     /**

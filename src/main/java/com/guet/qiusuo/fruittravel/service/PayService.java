@@ -7,9 +7,9 @@ import com.guet.qiusuo.fruittravel.model.OrderForm;
 import com.guet.qiusuo.fruittravel.utils.PayUtil;
 import org.json.JSONObject;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
@@ -27,12 +27,20 @@ public class PayService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    @Resource
     private WxPayConfig wxPayConfig;
 
-    @Resource
+
     private OrderFormMapper orderFormMapper;
 
+    @Autowired
+    public void setWxPayConfig(WxPayConfig wxPayConfig) {
+        this.wxPayConfig = wxPayConfig;
+    }
+
+    @Autowired
+    public void setOrderFormMapper(OrderFormMapper orderFormMapper) {
+        this.orderFormMapper = orderFormMapper;
+    }
 
     /**
      * 请求wx下单接口
