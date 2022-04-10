@@ -5,9 +5,9 @@ import com.guet.qiusuo.fruittravel.config.WxPayConfig;
 import com.guet.qiusuo.fruittravel.dao.OrderFormMapper;
 import com.guet.qiusuo.fruittravel.model.OrderForm;
 import com.guet.qiusuo.fruittravel.utils.PayUtil;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
