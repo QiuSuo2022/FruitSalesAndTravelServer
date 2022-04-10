@@ -1,23 +1,7 @@
 package com.guet.qiusuo.fruittravel.dao;
 
-import static com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport.*;
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
-
 import com.guet.qiusuo.fruittravel.model.Evaluate;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Generated;
-
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
@@ -35,34 +19,42 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 import org.springframework.stereotype.Repository;
 
-@Repository
+import javax.annotation.Generated;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport.*;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
+
 @Mapper
+@Repository
 public interface EvaluateMapper {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7685842+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.375+08:00", comments="Source Table: tbl_evaluate")
     BasicColumn[] selectList = BasicColumn.columnList(id, userId, productId, evaluateId, detail, grade, type, status, createTime, updateTime, createUserId, updateUserId);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7585285+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.367+08:00", comments="Source Table: tbl_evaluate")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    Long count(SelectStatementProvider selectStatement);
+    long count(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7600556+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.368+08:00", comments="Source Table: tbl_evaluate")
     @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
     int delete(DeleteStatementProvider deleteStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7600556+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.368+08:00", comments="Source Table: tbl_evaluate")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
     int insert(InsertStatementProvider<Evaluate> insertStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7610496+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.369+08:00", comments="Source Table: tbl_evaluate")
     @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
     int insertMultiple(MultiRowInsertStatementProvider<Evaluate> multipleInsertStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7610496+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.369+08:00", comments="Source Table: tbl_evaluate")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @ResultMap("EvaluateResult")
     Optional<Evaluate> selectOne(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.762051+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.37+08:00", comments="Source Table: tbl_evaluate")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="EvaluateResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
@@ -80,28 +72,28 @@ public interface EvaluateMapper {
     })
     List<Evaluate> selectMany(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7630514+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.371+08:00", comments="Source Table: tbl_evaluate")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
     int update(UpdateStatementProvider updateStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7640505+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.371+08:00", comments="Source Table: tbl_evaluate")
     default long count(CountDSLCompleter completer) {
         return MyBatis3Utils.countFrom(this::count, evaluate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7640505+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.371+08:00", comments="Source Table: tbl_evaluate")
     default int delete(DeleteDSLCompleter completer) {
         return MyBatis3Utils.deleteFrom(this::delete, evaluate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7640505+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.372+08:00", comments="Source Table: tbl_evaluate")
     default int deleteByPrimaryKey(String id_) {
         return delete(c -> 
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7650751+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.372+08:00", comments="Source Table: tbl_evaluate")
     default int insert(Evaluate record) {
         return MyBatis3Utils.insert(this::insert, record, evaluate, c ->
             c.map(id).toProperty("id")
@@ -119,7 +111,7 @@ public interface EvaluateMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7657477+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.373+08:00", comments="Source Table: tbl_evaluate")
     default int insertMultiple(Collection<Evaluate> records) {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, evaluate, c ->
             c.map(id).toProperty("id")
@@ -137,7 +129,7 @@ public interface EvaluateMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7675842+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.374+08:00", comments="Source Table: tbl_evaluate")
     default int insertSelective(Evaluate record) {
         return MyBatis3Utils.insert(this::insert, record, evaluate, c ->
             c.map(id).toPropertyWhenPresent("id", record::getId)
@@ -155,34 +147,34 @@ public interface EvaluateMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.769584+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.375+08:00", comments="Source Table: tbl_evaluate")
     default Optional<Evaluate> selectOne(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectOne(this::selectOne, selectList, evaluate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.769584+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.376+08:00", comments="Source Table: tbl_evaluate")
     default List<Evaluate> select(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectList(this::selectMany, selectList, evaluate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.769584+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.376+08:00", comments="Source Table: tbl_evaluate")
     default List<Evaluate> selectDistinct(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectDistinct(this::selectMany, selectList, evaluate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7705939+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.376+08:00", comments="Source Table: tbl_evaluate")
     default Optional<Evaluate> selectByPrimaryKey(String id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7705939+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.377+08:00", comments="Source Table: tbl_evaluate")
     default int update(UpdateDSLCompleter completer) {
         return MyBatis3Utils.update(this::update, evaluate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7705939+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.377+08:00", comments="Source Table: tbl_evaluate")
     static UpdateDSL<UpdateModel> updateAllColumns(Evaluate record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
                 .set(userId).equalTo(record::getUserId)
@@ -198,7 +190,7 @@ public interface EvaluateMapper {
                 .set(updateUserId).equalTo(record::getUpdateUserId);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7715852+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.377+08:00", comments="Source Table: tbl_evaluate")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(Evaluate record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
                 .set(userId).equalToWhenPresent(record::getUserId)
@@ -214,7 +206,7 @@ public interface EvaluateMapper {
                 .set(updateUserId).equalToWhenPresent(record::getUpdateUserId);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7725852+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.378+08:00", comments="Source Table: tbl_evaluate")
     default int updateByPrimaryKey(Evaluate record) {
         return update(c ->
             c.set(userId).equalTo(record::getUserId)
@@ -232,7 +224,7 @@ public interface EvaluateMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-03-27T22:41:24.7725852+08:00", comments="Source Table: tbl_evaluate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-10T15:20:17.378+08:00", comments="Source Table: tbl_evaluate")
     default int updateByPrimaryKeySelective(Evaluate record) {
         return update(c ->
             c.set(userId).equalToWhenPresent(record::getUserId)

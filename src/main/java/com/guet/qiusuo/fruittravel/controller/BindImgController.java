@@ -24,11 +24,11 @@ public class BindImgController {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @PostMapping
-    public void bindImg(@RequestParam("fk_id") String fk_id,@RequestBody ImageFile imageFile){
-        if (!fk_id.isEmpty()){
+    public void bindImg(@RequestParam("prodId") String prodId,@RequestBody ImageFile imageFile){
+        if (!prodId.isEmpty()){
             long now = System.currentTimeMillis();
             UserContextHolder.validAdmin();
-            imageFile.setFk_id(fk_id);
+            imageFile.setProductId(prodId);
             imageFile.setUpdateTime(now);
             imageFile.setUpdateUserId(UserContextHolder.getUserId());
         }else {

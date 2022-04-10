@@ -52,7 +52,7 @@ public class UploadImageController {
         if (bindId.isEmpty() || img == null){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
-        img.setFk_id(bindId);
+        img.setProductId(bindId);
         img.setUpdateTime(System.currentTimeMillis());
         img.setUpdateUserId(UserContextHolder.getUserId());
         return true;
