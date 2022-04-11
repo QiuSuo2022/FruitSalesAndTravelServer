@@ -1,11 +1,15 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 
+import com.guet.qiusuo.fruittravel.bean.vo.OrderAndProductVO;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.model.OrderForm;
-import com.guet.qiusuo.fruittravel.service.*;
+import com.guet.qiusuo.fruittravel.service.FruitService;
+import com.guet.qiusuo.fruittravel.service.OrderFormService;
+import com.guet.qiusuo.fruittravel.service.PayService;
+import com.guet.qiusuo.fruittravel.service.ScenicService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,16 +93,18 @@ public class OrderFormController {
 
     @ApiOperation(value = "获取订单以及商品信息")
     @PostMapping("/getOrderAndProduct")
-    public JSONObject getOrderAndProduct(@RequestParam String orderFormId) throws JSONException {
-        JSONObject object = new JSONObject();
+    public OrderAndProductVO getOrderAndProduct(@RequestParam String orderFormId) throws JSONException {
+        OrderAndProductVO object = new OrderAndProductVO();
         OrderForm orderForm = orderFormService.getOrderForm(orderFormId);
-        object.put("orderInfo",orderForm);
+        object.setOrderForm(orderForm);
         if (orderForm.getScenicId().equals(SystemConstants.nullFlag)){
             //如果是水果订单
-            object.put("productInfo", fruitService.getFruit(orderForm.getFruitId()));
+            object.setFruit(fruitService.getFruit(orderForm.getFruitId()));
+            object.setScenic(null);
         }else if (orderForm.getFruitId().equals(SystemConstants.nullFlag)){
             //如果是景区订单
-            object.put("productInfo",scenicService.getScenicVOByScenicId(orderForm.getScenicId()));
+            object.setScenic(scenicService.getScenicVOByScenicId(orderForm.getScenicId()));
+            object.setFruit(null);
         }
         return object;
     }
