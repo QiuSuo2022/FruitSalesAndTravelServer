@@ -37,7 +37,7 @@ public class UploadImageController {
     @PostMapping(value = "/uploadImg")
     public ImageFile uploadImg(@RequestParam MultipartFile file,
                                @RequestParam Short imgType,
-                               @RequestParam String remark)  {
+                               @RequestParam(required = false) String remark)  {
         UserContextHolder.validAdmin();
         if (file.isEmpty()) {
             LOG.info("图片文件异常!");
