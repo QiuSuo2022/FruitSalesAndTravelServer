@@ -33,7 +33,8 @@ public enum ErrorCode {
     PARAM_NULL_ERROR(-1,"system.error.param.null"),
     NO_FOUND_ORDER_FOMR(-1,"system.error.no_found.order_form"),
     PAY_ERROR(-1,"system.error.pay.error"),
-    UNPAID_ERROR(-1,"system.error.unpaid")
+    UNPAID_ERROR(-1,"system.error.unpaid"),
+    ORDERBYTYPE_ERROR(-1,"system.error.no_found.order_by_type")
     ;
 
     @Override

@@ -176,8 +176,11 @@ public class FruitService {
             );
         }
         //综合排序,先按照加权平均计算,销量权重占0.5,价格和评分各占0.25
-        else {
+        else if(orderByType.equals(SystemConstants.SORT_ALL)) {
             fruitList = fruitMapper.selectFruitSort(nameLike);
+        }
+        else {
+            throw new SystemException(ErrorCode.ORDERBYTYPE_ERROR);
         }
         PageList<Fruit> pageList = new PageList<>();
         pageList.setList(fruitList);
