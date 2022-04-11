@@ -90,6 +90,12 @@ public class OrderFormService {
         orderForm.setUpdateUserId(UserContextHolder.getUserId());
         orderForm.setPayStatus(SystemConstants.UNPAID);
         orderForm.setStatus(SystemConstants.STATUS_ACTIVE);
+        //防止外键约束错误
+        if (orderForm.getFruitId().isEmpty()){
+            orderForm.setFruitId(SystemConstants.nullFlag);
+        }else if (orderForm.getScenicId().isEmpty()){
+            orderForm.setScenicId(SystemConstants.nullFlag);
+        }
         int i = orderFormMapper.insert(orderForm);
         if (i == 0){
             throw new SystemException(ErrorCode.INSERT_ERROR);
