@@ -1,11 +1,11 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 
+import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.model.OrderForm;
-import com.guet.qiusuo.fruittravel.service.OrderFormService;
-import com.guet.qiusuo.fruittravel.service.PayService;
+import com.guet.qiusuo.fruittravel.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,18 @@ public class OrderFormController {
     private PayService payService;
 
     private OrderFormService orderFormService;
+
+    private ScenicService scenicService;
+
+    private FruitService fruitService;
+
+    @Autowired
+    public void setFruitService(FruitService fruitService) {
+        this.fruitService = fruitService;
+    }
+
+    @Autowired
+    public void setScenicService(ScenicService scenicService) { this.scenicService = scenicService; }
 
     @Autowired
     public void setOrderFormService(OrderFormService orderFormService) {
@@ -70,9 +82,25 @@ public class OrderFormController {
     }
 
     @ApiOperation(value = "获取订单信息")
-    @PostMapping("/getOderForm")
+    @PostMapping("/getOrderInfo")
     public OrderForm getOrderInfo(@RequestParam String orderFormId){
         return orderFormService.getOrderForm(orderFormId);
+    }
+
+    @ApiOperation(value = "获取订单以及商品信息")
+    @PostMapping("/getOrderAndProduct")
+    public JSONObject getOrderAndProduct(@RequestParam String orderFormId) throws JSONException {
+        JSONObject object = new JSONObject();
+        OrderForm orderForm = orderFormService.getOrderForm(orderFormId);
+        object.put("orderInfo",orderForm);
+        if (orderForm.getScenicId().equals(SystemConstants.nullFlag)){
+            //如果是水果订单
+            object.put("productInfo", fruitService.getFruit(orderForm.getFruitId()));
+        }else if (orderForm.getFruitId().equals(SystemConstants.nullFlag)){
+            //如果是景区订单
+            object.put("productInfo",scenicService.getScenicVOByScenicId(orderForm.getScenicId()));
+        }
+        return object;
     }
 
     @ApiOperation(value = "查询数据库中订单支付状态")
@@ -94,7 +122,7 @@ public class OrderFormController {
     }
 
     @ApiOperation(value = "设置订单完成状态")
-    @PostMapping("/orderStatus")
+    @PostMapping("/setOrderStatus")
     public boolean payStatus(@RequestParam String orderId,@RequestParam Short orderStatus){
         return orderFormService.setOrderStatus(orderId,orderStatus);
     }
