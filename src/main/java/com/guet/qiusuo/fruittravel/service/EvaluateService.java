@@ -1,6 +1,8 @@
 package com.guet.qiusuo.fruittravel.service;
 
 import com.guet.qiusuo.fruittravel.bean.vo.FruitEvaluateVO;
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
@@ -123,11 +125,11 @@ public class EvaluateService {
     }
 
     /**
-     * 修改水果评价
+     * 修改评价
      *
      * @param evaluate
      */
-    public void updateFruitEvaluate(Evaluate evaluate) {
+    public void updateEvaluate(Evaluate evaluate) {
         UserContextHolder.validUser(UserContextHolder.getUserId());
         evaluate.setUpdateTime(System.currentTimeMillis());
         evaluate.setUpdateUserId(UserContextHolder.getUserId());
@@ -138,12 +140,12 @@ public class EvaluateService {
     }
 
     /**
-     * 根据evaluateId查询水果追评
+     * 根据evaluateId查询追评
      *
      * @param evaluateId
      * @return
      */
-    public List<Evaluate> searchFruitReevaluate(String evaluateId) {
+    public List<Evaluate> searchReevaluate(String evaluateId) {
          return evaluateMapper.selectMany(select(
                 EvaluateDynamicSqlSupport.id,
                 EvaluateDynamicSqlSupport.userId,
@@ -189,7 +191,7 @@ public class EvaluateService {
                         .from(EvaluateDynamicSqlSupport.evaluate)
                         .where(EvaluateDynamicSqlSupport.id, isEqualTo(evaluateId))
                         .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
-                        .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.EVALUATE_TYPE))
+                        .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.FRUIT_EVALUATE_TYPE))
                         .orderBy(EvaluateDynamicSqlSupport.createTime)
                         .build().render(RenderingStrategies.MYBATIS3));
         if (evaluateList.isEmpty()) {
@@ -209,12 +211,65 @@ public class EvaluateService {
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
 
-        if(!searchFruitReevaluate(evaluateId).isEmpty()) {
-            fruitEvaluateVO.setFruitReevaluate(searchFruitReevaluate(evaluateId));
+        if(!searchReevaluate(evaluateId).isEmpty()) {
+            fruitEvaluateVO.setFruitReevaluate(searchReevaluate(evaluateId));
         }
         else {
             fruitEvaluateVO.setFruitReevaluate(null);
         }
         return fruitEvaluateVO;
+    }
+
+    /**
+     * 查询景区评价(包括主评和追评)
+     *
+     * @param evaluateId
+     * @return
+     */
+    public ScenicEvaluateVO searchScenicEvaluate(String evaluateId) {
+        List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
+                EvaluateDynamicSqlSupport.id,
+                EvaluateDynamicSqlSupport.userId,
+                EvaluateDynamicSqlSupport.productId,
+                EvaluateDynamicSqlSupport.evaluateId,
+                EvaluateDynamicSqlSupport.detail,
+                EvaluateDynamicSqlSupport.grade,
+                EvaluateDynamicSqlSupport.type,
+                EvaluateDynamicSqlSupport.status,
+                EvaluateDynamicSqlSupport.createTime,
+                EvaluateDynamicSqlSupport.updateTime,
+                EvaluateDynamicSqlSupport.createUserId,
+                EvaluateDynamicSqlSupport.updateUserId
+        )
+                .from(EvaluateDynamicSqlSupport.evaluate)
+                .where(EvaluateDynamicSqlSupport.id, isEqualTo(evaluateId))
+                .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.SCENIC_EVALUATE_TYPE))
+                .orderBy(EvaluateDynamicSqlSupport.createTime)
+                .build().render(RenderingStrategies.MYBATIS3));
+        if (evaluateList.isEmpty()) {
+            return null;
+        }
+        //获取符合查询条件的水果主评
+        Evaluate evaluate = evaluateList.get(0);
+        ScenicEvaluateVO scenicEvaluateVO = new ScenicEvaluateVO();
+        scenicEvaluateVO.setId(evaluate.getId());
+        scenicEvaluateVO.setEvaluateId(evaluate.getEvaluateId());
+        scenicEvaluateVO.setProductId(evaluate.getProductId());
+        scenicEvaluateVO.setDetail(evaluate.getDetail());
+        scenicEvaluateVO.setGrade(evaluate.getGrade());
+        scenicEvaluateVO.setType(evaluate.getType());
+        scenicEvaluateVO.setStatus(evaluate.getStatus());
+        scenicEvaluateVO.setCreateTime(evaluate.getCreateTime());
+        scenicEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
+        scenicEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
+
+        if(!searchReevaluate(evaluateId).isEmpty()) {
+            scenicEvaluateVO.setScenicReevaluate(searchReevaluate(evaluateId));
+        }
+        else {
+            scenicEvaluateVO.setScenicReevaluate(null);
+        }
+        return scenicEvaluateVO;
     }
 }

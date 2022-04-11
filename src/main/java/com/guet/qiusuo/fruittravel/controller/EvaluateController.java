@@ -1,6 +1,7 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 import com.guet.qiusuo.fruittravel.bean.vo.FruitEvaluateVO;
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
 import com.guet.qiusuo.fruittravel.service.EvaluateService;
 import io.swagger.annotations.Api;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "水果评价表")
+@Api(tags = "评价表")
 @RestController
-@RequestMapping("/fruitsEvaluate")
+@RequestMapping("/evaluate")
 public class EvaluateController {
     private EvaluateService evaluateService;
     @Autowired
@@ -47,18 +48,24 @@ public class EvaluateController {
     @ApiOperation(value = "修改评价")
     @PutMapping
     public void updateEvaluate(@RequestBody Evaluate evaluate) {
-        evaluateService.updateFruitEvaluate(evaluate);
+        evaluateService.updateEvaluate(evaluate);
     }
 
     @ApiOperation(value = "查询追评")
     @GetMapping("/searchReevaluate")
     public List<Evaluate> searchReevaluate(@RequestParam String evaluateId) {
-        return evaluateService.searchFruitReevaluate(evaluateId);
+        return evaluateService.searchReevaluate(evaluateId);
     }
 
-    @ApiOperation(value = "查询评价")
-    @GetMapping("/searchEvaluate")
-    public FruitEvaluateVO searchEvaluate(@RequestParam String evaluateId) {
+    @ApiOperation(value = "查询水果评价")
+    @GetMapping("/searchFruitEvaluate")
+    public FruitEvaluateVO searchFruitEvaluate(@RequestParam String evaluateId) {
         return evaluateService.searchFruitEvaluate(evaluateId);
+    }
+
+    @ApiOperation(value = "查询景区评价")
+    @GetMapping("/searchScenicEvaluate")
+    public ScenicEvaluateVO searchScenicEvaluate(@RequestParam String evaluateId) {
+        return evaluateService.searchScenicEvaluate(evaluateId);
     }
 }

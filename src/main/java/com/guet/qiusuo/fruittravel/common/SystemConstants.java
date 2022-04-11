@@ -32,9 +32,11 @@ public class SystemConstants {
     public static final Short SCENIC_INFO_NOT_COMPLETE = new Short("2");
 
     //评价类型
-    public static final Short EVALUATE_TYPE = new Short("0");
+    public static final Short FRUIT_EVALUATE_TYPE = new Short("0");
 
-    public static final Short REEVALUATE_TYPE = new Short("1");
+    public static final Short SCENIC_EVALUATE_TYPE = new Short("1");
+
+    public static final Short REEVALUATE_TYPE = new Short("2");
 
     //分页
     public static final String DEFAULT_PAGE = "1";

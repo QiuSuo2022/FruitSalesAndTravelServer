@@ -12,7 +12,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class FruitEvaluateVO extends Evaluate {
-    @ApiModelProperty(value = "水果追评详细")
-    private List<Evaluate> fruitReevaluate;
+public class ScenicEvaluateVO extends Evaluate {
+    @ApiModelProperty(value = "景区追评详细")
+    private List<Evaluate> scenicReevaluate;
 }
