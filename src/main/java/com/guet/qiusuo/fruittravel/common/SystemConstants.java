@@ -94,4 +94,5 @@ public class SystemConstants {
     public static final short BAD_EVALUATION    = 3;
 
 
+    public static final String nullFlag = "-1";
 }
