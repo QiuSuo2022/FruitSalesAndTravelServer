@@ -48,7 +48,7 @@ public class AutoDeployment {
 
         Runtime run = Runtime.getRuntime();
         try {
-            run.exec(new String[]{"/bin/sh", "-c", "cd /root/project/fruitSaleAndTravel && ./deploy.sh"});
+            run.exec(new String[]{"/bin/sh", "-c", "cd /root/project/temp && ./deploy.sh"});
         } catch (IOException e) {
             e.printStackTrace();
         }
