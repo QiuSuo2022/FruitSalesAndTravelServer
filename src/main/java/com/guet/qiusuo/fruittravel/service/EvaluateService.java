@@ -1,8 +1,11 @@
 package com.guet.qiusuo.fruittravel.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitEvaluateVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
+import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
@@ -10,6 +13,7 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateMapper;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
+import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,5 +275,113 @@ public class EvaluateService {
             scenicEvaluateVO.setScenicReevaluate(null);
         }
         return scenicEvaluateVO;
+    }
+
+    /**
+     * 获取水果评价列表
+     * @param productId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public PageList<FruitEvaluateVO> getFruitEvaluateVOList(String productId, Integer page, Integer pageSize) {
+        PageHelper.startPage(page, pageSize);
+        List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
+                EvaluateDynamicSqlSupport.id,
+                EvaluateDynamicSqlSupport.userId,
+                EvaluateDynamicSqlSupport.productId,
+                EvaluateDynamicSqlSupport.evaluateId,
+                EvaluateDynamicSqlSupport.detail,
+                EvaluateDynamicSqlSupport.grade,
+                EvaluateDynamicSqlSupport.type,
+                EvaluateDynamicSqlSupport.status,
+                EvaluateDynamicSqlSupport.createTime,
+                EvaluateDynamicSqlSupport.updateTime,
+                EvaluateDynamicSqlSupport.createUserId,
+                EvaluateDynamicSqlSupport.updateUserId
+        )
+                .from(EvaluateDynamicSqlSupport.evaluate)
+                .where(EvaluateDynamicSqlSupport.productId, isEqualTo(productId))
+                .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.FRUIT_EVALUATE_TYPE))
+                .orderBy(EvaluateDynamicSqlSupport.createTime)
+                .build().render(RenderingStrategies.MYBATIS3));
+        if (evaluateList.isEmpty()) {
+            return null;
+        }
+        List<FruitEvaluateVO> fruitEvaluateVOList = new ArrayList<>();
+        for (Evaluate evaluate : evaluateList) {
+            FruitEvaluateVO fruitEvaluateVO = new FruitEvaluateVO();
+            fruitEvaluateVO.setId(evaluate.getId());
+            fruitEvaluateVO.setEvaluateId(evaluate.getEvaluateId());
+            fruitEvaluateVO.setProductId(evaluate.getProductId());
+            fruitEvaluateVO.setDetail(evaluate.getDetail());
+            fruitEvaluateVO.setGrade(evaluate.getGrade());
+            fruitEvaluateVO.setType(evaluate.getType());
+            fruitEvaluateVO.setStatus(evaluate.getStatus());
+            fruitEvaluateVO.setCreateTime(evaluate.getCreateTime());
+            fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
+            fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
+            fruitEvaluateVO.setFruitReevaluate(searchReevaluate(evaluate.getEvaluateId()));
+            fruitEvaluateVOList.add(fruitEvaluateVO);
+        }
+        PageList<FruitEvaluateVO> pageList = new PageList<>();
+        pageList.setList(fruitEvaluateVOList);
+        pageList.setPageInfo(new PageInfo<>(fruitEvaluateVOList));
+        return pageList;
+    }
+
+    /**
+     * 获取景区评价列表
+     * @param productId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+        public PageList<ScenicEvaluateVO> getScenicEvaluateVOList(String productId, Integer page, Integer pageSize) {
+            PageHelper.startPage(page,pageSize);
+            List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
+                    EvaluateDynamicSqlSupport.id,
+                    EvaluateDynamicSqlSupport.userId,
+                    EvaluateDynamicSqlSupport.productId,
+                    EvaluateDynamicSqlSupport.evaluateId,
+                    EvaluateDynamicSqlSupport.detail,
+                    EvaluateDynamicSqlSupport.grade,
+                    EvaluateDynamicSqlSupport.type,
+                    EvaluateDynamicSqlSupport.status,
+                    EvaluateDynamicSqlSupport.createTime,
+                    EvaluateDynamicSqlSupport.updateTime,
+                    EvaluateDynamicSqlSupport.createUserId,
+                    EvaluateDynamicSqlSupport.updateUserId
+            )
+                    .from(EvaluateDynamicSqlSupport.evaluate)
+                    .where(EvaluateDynamicSqlSupport.productId, isEqualTo(productId))
+                    .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                    .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.SCENIC_EVALUATE_TYPE))
+                    .orderBy(EvaluateDynamicSqlSupport.createTime)
+                    .build().render(RenderingStrategies.MYBATIS3));
+            if (evaluateList.isEmpty()) {
+                return null;
+            }
+            List<ScenicEvaluateVO> scenicEvaluateVOList = new ArrayList<>();
+            for(Evaluate evaluate : evaluateList) {
+                ScenicEvaluateVO scenicEvaluateVO = new ScenicEvaluateVO();
+                scenicEvaluateVO.setId(evaluate.getId());
+                scenicEvaluateVO.setEvaluateId(evaluate.getEvaluateId());
+                scenicEvaluateVO.setProductId(evaluate.getProductId());
+                scenicEvaluateVO.setDetail(evaluate.getDetail());
+                scenicEvaluateVO.setGrade(evaluate.getGrade());
+                scenicEvaluateVO.setType(evaluate.getType());
+                scenicEvaluateVO.setStatus(evaluate.getStatus());
+                scenicEvaluateVO.setCreateTime(evaluate.getCreateTime());
+                scenicEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
+                scenicEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
+                scenicEvaluateVO.setScenicReevaluate(searchReevaluate(evaluate.getEvaluateId()));
+                scenicEvaluateVOList.add(scenicEvaluateVO);
+            }
+            PageList<ScenicEvaluateVO> pageList = new PageList<>();
+            pageList.setList(scenicEvaluateVOList);
+            pageList.setPageInfo(new PageInfo<>(scenicEvaluateVOList));
+            return pageList;
     }
 }

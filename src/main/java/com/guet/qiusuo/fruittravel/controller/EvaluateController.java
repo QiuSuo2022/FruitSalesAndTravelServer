@@ -2,9 +2,13 @@ package com.guet.qiusuo.fruittravel.controller;
 
 import com.guet.qiusuo.fruittravel.bean.vo.FruitEvaluateVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
+import com.guet.qiusuo.fruittravel.common.PageList;
+import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
 import com.guet.qiusuo.fruittravel.service.EvaluateService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +71,36 @@ public class EvaluateController {
     @GetMapping("/searchScenicEvaluate")
     public ScenicEvaluateVO searchScenicEvaluate(@RequestParam String evaluateId) {
         return evaluateService.searchScenicEvaluate(evaluateId);
+    }
+
+    @ApiOperation("获取水果评价列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "productId", value = "产品Id", dataType = "String", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
+    })
+    @GetMapping("/fruitEvaluateList")
+    public PageList<FruitEvaluateVO> getFruitEvaluateVOList(@RequestParam String productId,
+                                                            @RequestParam(required = false,defaultValue =
+                                                                    SystemConstants.DEFAULT_PAGE) Integer page,
+                                                            @RequestParam(required = false,defaultValue =
+                                                                    SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize
+                                                            ) {
+        return evaluateService.getFruitEvaluateVOList(productId,page,pageSize);
+    }
+
+    @ApiOperation("获取景区评价列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "productId", value = "产品Id", dataType = "String", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
+    })
+    @GetMapping("/scenicEvaluateList")
+    public PageList<ScenicEvaluateVO> getScenicEvaluateVOList(@RequestParam String productId,
+                                                              @RequestParam(required = false,defaultValue =
+                                                                      SystemConstants.DEFAULT_PAGE) Integer page,
+                                                              @RequestParam(required = false,defaultValue =
+                                                                      SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
+        return evaluateService.getScenicEvaluateVOList(productId, page, pageSize);
     }
 }
