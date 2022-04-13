@@ -1,17 +1,7 @@
 package com.guet.qiusuo.fruittravel.dao;
 
-import static com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport.*;
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
-
 import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.model.Fruit;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Generated;
-
-import com.guet.qiusuo.fruittravel.model.Scenic;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
@@ -29,6 +19,14 @@ import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Generated;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport.*;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 
 @Repository
 @Mapper
@@ -319,10 +317,10 @@ public interface FruitMapper {
 
     @Select({
             "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description FROM tbl_child_fruit",
-            "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id ",
-            "LEFT JOIN tbl_evaluate ON tbl_child_fruit.id = tbl_evaluate.product_id",
-            "LEFT JOIN tbl_order_form ON tbl_fruit.id = tbl_order_form.fruit_id",
-            "WHERE order_form_status = 1",
+            "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_fruit.status = 1",
+            "LEFT JOIN tbl_evaluate ON tbl_evaluate.product_id = tbl_child_fruit.id and tbl_evaluate.status = 1",
+            "LEFT JOIN tbl_order_form ON tbl_order_form.fruit_id = tbl_fruit.id and tbl_order_form.status = 1 ",
+            "where tbl_child_fruit.status = 1",
             "GROUP BY tbl_child_fruit.fruit_name,description,grade",
             "ORDER BY child_fruit_lowest_price*0.25 + grade*0.25 + sales*0.5"
     })
