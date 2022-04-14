@@ -15,15 +15,15 @@ public class TicketController {
     @Autowired
     public void setTicketService(TicketService ticketService) {this.ticketService = ticketService;}
 
-    @ApiOperation(value = "添加景点门票")
+    @ApiOperation(value = "添加景点门票",notes = "门票类型, 1--成人票, 2--儿童票, 3--老人票")
     @PostMapping
     public void addTicket(@RequestBody Ticket ticket) {ticketService.addTicket(ticket);}
 
-    @ApiOperation(value = "删除景点门票")
+    @ApiOperation(value = "删除景点门票",notes = "门票类型, 1--成人票, 2--儿童票, 3--老人票")
     @DeleteMapping
     public void deleteTicket(@RequestParam String scenicId) {ticketService.deleteTicket(scenicId);}
 
-    @ApiOperation(value = "修改景区门票")
+    @ApiOperation(value = "修改景区门票",notes = "门票类型, 1--成人票, 2--儿童票, 3--老人票")
     @PutMapping
     public void updateTicket(@RequestBody Ticket ticket) {ticketService.updateTicket(ticket);}
 

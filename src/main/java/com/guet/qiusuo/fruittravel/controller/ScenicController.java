@@ -24,7 +24,7 @@ public class ScenicController {
         this.scenicService = scenicService;
     }
 
-    @ApiOperation(value = "添加景点")
+    @ApiOperation(value = "添加景点",notes = "景区类型, 1-文化古迹, 2-园林花园, 3-古镇古村, 4-城堡教堂'")
     @PostMapping
     public void addScenic(@RequestBody Scenic scenic) {scenicService.addScenic(scenic);}
 
@@ -32,7 +32,7 @@ public class ScenicController {
     @DeleteMapping
     public boolean deleteScenic(@RequestParam String scenicId) {return scenicService.deleteScenic(scenicId);}
 
-    @ApiOperation(value = "修改景点")
+    @ApiOperation(value = "修改景点",notes = "景区类型, 1-文化古迹, 2-园林花园, 3-古镇古村, 4-城堡教堂'")
     @PutMapping
     public boolean updateScenic(@RequestBody Scenic scenic) {return scenicService.updateScenic(scenic);}
 
