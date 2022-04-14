@@ -72,36 +72,10 @@ public class FruitService {
         PageHelper.startPage(page,pageSize);
         List<Fruit> fruitList;
         if(orderByType.equals(SystemConstants.PRICE_ASC)) {
-            fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.fruitName,
-                            FruitDynamicSqlSupport.fruitPrice,
-                            FruitDynamicSqlSupport.description,
-                            FruitDynamicSqlSupport.departurePoint,
-                            FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.createTime
-                    )
-                            .from(FruitDynamicSqlSupport.fruit)
-                            .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .orderBy(FruitDynamicSqlSupport.fruitPrice)
-                            .build().render(RenderingStrategies.MYBATIS3)
-            );
+            fruitList = fruitMapper.selectFruitSortByPriceASC(fruitPrice,nameLike);
         }
         else if(orderByType.equals(SystemConstants.PRICE_DESC)) {
-            fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.fruitName,
-                            FruitDynamicSqlSupport.fruitPrice,
-                            FruitDynamicSqlSupport.description,
-                            FruitDynamicSqlSupport.departurePoint,
-                            FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.createTime
-                    )
-                            .from(FruitDynamicSqlSupport.fruit)
-                            .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .orderBy(FruitDynamicSqlSupport.fruitPrice.descending())
-                            .build().render(RenderingStrategies.MYBATIS3)
-            );
+            fruitList = fruitMapper.selectFruitSortByPriceDESC(fruitPrice,nameLike);
         }
         else if(orderByType.equals(SystemConstants.SALE_ASC)) {
             fruitList = fruitMapper.selectFruit(select(

@@ -332,4 +332,37 @@ public interface FruitMapper {
             @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
     })
     List<FruitVO> FruitRecommend();
+
+    @Select({
+            "SELECT* from tbl_fruit",
+            "WHERE status = 1",
+            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "order by (fruit_price+0)"
+    })
+    @Results(id = "FruitPriceASCSortResult", value = {
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Fruit> selectFruitSortByPriceASC(@Param("fruitPrice") String fruitPrice,@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT* from tbl_fruit",
+            "WHERE status = 1",
+            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "order by (fruit_price+0) DESC"
+    })
+    @Results(id = "FruitPriceDESCSortResult", value = {
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Fruit> selectFruitSortByPriceDESC(@Param("fruitPrice") String fruitPrice,@Param("nameLike") String nameLike);
+
 }
