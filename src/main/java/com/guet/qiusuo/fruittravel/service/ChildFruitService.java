@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import static org.slf4j.LoggerFactory.getLogger;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -55,14 +56,14 @@ public class ChildFruitService {
     }
 
     /**
-     * 删除childFruit
+     * 删除所有childFruit
      * @param fruitId
      */
-    public boolean deleteChildFruit(String fruitId){
+    public void deleteAll(String fruitId){
         UserContextHolder.validAdmin();
         List<ChildFruit> childFruitList = getChildFruitListByFruitId(fruitId);
         if (childFruitList.isEmpty()){
-            throw new SystemException(ErrorCode.NO_FOUND_CHILD_FRUIT);
+            LOG.info("该水果没有子项");
         }
         for (ChildFruit childFruit:childFruitList
              ) {
@@ -73,11 +74,32 @@ public class ChildFruitService {
             if (i == 0){
                 throw new SystemException(ErrorCode.DELETE_ERROR);
             }
-            LOG.info("删除水果子项成功,Id:{}",fruitId);
         }
-        return true;
+        LOG.info("删除所有水果子项成功");
     }
 
+    /**
+     * 删除单个水果子项
+     * @param childFruitId
+     * @return
+     */
+    public void deleteOne(String childFruitId){
+        UserContextHolder.validAdmin();
+        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(childFruitId);
+        ChildFruit childFruit = optionalChildFruit.orElse(null);
+        if (childFruit == null){
+            LOG.info("无该水果子项");
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
+        childFruit.setStatus(SystemConstants.STATUS_NEGATIVE);
+        childFruit.setUpdateTime(System.currentTimeMillis());
+        childFruit.setUpdateUserId(UserContextHolder.getUserId());
+        int i = childFruitMapper.updateByPrimaryKeySelective(childFruit);
+        if (i == 0){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
+        LOG.info("删除水果子项{}成功",childFruitId);
+    }
     /**
      * 修改childFruit
      * @param childFruit

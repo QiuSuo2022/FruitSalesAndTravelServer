@@ -27,10 +27,10 @@ public class ChildFruitController {
         return childFruitService.addChildFruit(childFruit);
     }
 
-    @ApiOperation(value = "删除水果子项")
+    @ApiOperation(value = "删除单个水果子项")
     @DeleteMapping
-    public boolean deleteChildFruit(@RequestParam String fruitId){
-        return childFruitService.deleteChildFruit(fruitId);
+    public void deleteChildFruit(@RequestParam String childFruitId){
+        childFruitService.deleteOne(childFruitId);
     }
 
     @ApiOperation(value = "修改水果子项")
