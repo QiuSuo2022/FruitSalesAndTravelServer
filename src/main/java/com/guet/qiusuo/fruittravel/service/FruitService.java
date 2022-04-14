@@ -246,25 +246,23 @@ public class FruitService {
      * @param fruitId
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteFruit(String fruitId){
+    public void deleteFruit(String fruitId){
         UserContextHolder.validAdmin();
-        List<Fruit> fruitList = getFruitByName(fruitId);
-        if (fruitList.isEmpty()){
+        Optional<Fruit> optionalFruit = fruitMapper.selectByPrimaryKey(fruitId);
+        Fruit check = optionalFruit.orElse(null);
+        if (check == null){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
-        Fruit fruit = new Fruit();
-        fruit = fruitList.get(0);
-        fruit.setStatus(SystemConstants.STATUS_NEGATIVE);
-        fruit.setUpdateTime(System.currentTimeMillis());
-        fruit.setUpdateUserId(UserContextHolder.getUserId());
-        //先删除childFruit
-        childFruitService.deleteChildFruit(fruit.getId());
+        //先删除所有childFruit
+        childFruitService.deleteAll(check.getId());
+        check.setStatus(SystemConstants.STATUS_NEGATIVE);
+        check.setUpdateTime(System.currentTimeMillis());
+        check.setUpdateUserId(UserContextHolder.getUserId());
         //删除Fruit
-        int i = fruitMapper.deleteByPrimaryKey(fruit.getId());
+        int i = fruitMapper.updateByPrimaryKey(check);
         if (i == 0){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
-        return true;
     }
 
     /**

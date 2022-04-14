@@ -42,8 +42,8 @@ public class FruitController {
 
     @ApiOperation(value = "删除水果")
     @DeleteMapping
-    public boolean deleteFruit(@RequestParam String fruitId){
-        return fruitService.deleteFruit(fruitId);
+    public void deleteFruit(@RequestParam String fruitId){
+         fruitService.deleteFruit(fruitId);
     }
 
     @ApiOperation(value = "修改水果")
