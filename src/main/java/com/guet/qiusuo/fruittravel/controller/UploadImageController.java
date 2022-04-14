@@ -7,6 +7,7 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.model.ImageFile;
 import com.guet.qiusuo.fruittravel.service.UploadImgService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,6 +48,7 @@ public class UploadImageController {
     }
 
     @PostMapping(value = "/bindImg")
+    @ApiOperation(value = "绑定图片",notes = "图片类别: 0--轮播图, 1--水果商品图, 2--景区图, 3--商品评价图")
     public boolean bindImg(@RequestParam String bindId,@RequestParam ImageFile img){
         UserContextHolder.validAdmin();
         if (bindId.isEmpty() || img == null){

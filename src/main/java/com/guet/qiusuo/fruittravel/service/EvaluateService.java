@@ -94,16 +94,38 @@ public class EvaluateService {
      */
     public void deleteFruitReEvaluate(String evaluateId) {
         UserContextHolder.validUser(UserContextHolder.getUserId());
-        Optional<Evaluate> optionalEvaluate = evaluateMapper.selectByPrimaryKey(evaluateId);
-        Evaluate evaluate = optionalEvaluate.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_REEVALUATE));
-        evaluate.setStatus(SystemConstants.STATUS_NEGATIVE);
-        evaluate.setUpdateUserId(UserContextHolder.getUserId());
-        evaluate.setUpdateTime(System.currentTimeMillis());
-        int i = evaluateMapper.deleteByPrimaryKey(evaluateId);
-        if (i == 0) {
-            throw new SystemException(ErrorCode.DELETE_ERROR);
+        List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
+                EvaluateDynamicSqlSupport.id,
+                EvaluateDynamicSqlSupport.userId,
+                EvaluateDynamicSqlSupport.productId,
+                EvaluateDynamicSqlSupport.evaluateId,
+                EvaluateDynamicSqlSupport.detail,
+                EvaluateDynamicSqlSupport.grade,
+                EvaluateDynamicSqlSupport.type,
+                EvaluateDynamicSqlSupport.status,
+                EvaluateDynamicSqlSupport.createTime,
+                EvaluateDynamicSqlSupport.updateTime,
+                EvaluateDynamicSqlSupport.createUserId,
+                EvaluateDynamicSqlSupport.updateUserId
+        )
+                .from(EvaluateDynamicSqlSupport.evaluate)
+                .where(EvaluateDynamicSqlSupport.evaluateId, isEqualTo(evaluateId))
+                .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.REEVALUATE_TYPE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        if (evaluateList.isEmpty()) {
+            throw new SystemException(ErrorCode.NO_FOUND_EVALUATE);
         }
-        LOG.info("删除追评成功,Id:{}", evaluateId);
+        for(Evaluate evaluate : evaluateList) {
+            evaluate.setStatus(SystemConstants.STATUS_NEGATIVE);
+            evaluate.setUpdateUserId(UserContextHolder.getUserId());
+            evaluate.setUpdateTime(System.currentTimeMillis());
+            int i = evaluateMapper.updateByPrimaryKeySelective(evaluate);
+            if (i == 0) {
+                throw new SystemException(ErrorCode.DELETE_ERROR);
+            }
+            LOG.info("删除追评成功,Id:{}", evaluateId);
+        }
     }
 
 
@@ -122,7 +144,7 @@ public class EvaluateService {
         //先删除追评
         deleteFruitReEvaluate(evaluate.getId());
         //再删除主评
-        int i = evaluateMapper.deleteByPrimaryKey(evaluate.getId());
+        int i = evaluateMapper.updateByPrimaryKeySelective(evaluate);
         if (i == 0) {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }

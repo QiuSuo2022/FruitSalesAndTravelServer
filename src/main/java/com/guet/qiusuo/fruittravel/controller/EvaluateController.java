@@ -25,13 +25,13 @@ public class EvaluateController {
         this.evaluateService = evaluateService;
     }
 
-    @ApiOperation(value = "增加主评")
+    @ApiOperation(value = "增加主评",notes = "0-评价水果 1评价景区 2-对评价的评论")
     @PostMapping("/addEvaluate")
     public void addFruitEvaluate(@RequestBody Evaluate evaluate) {
         evaluateService.addFruitEvaluate(evaluate);
     }
 
-    @ApiOperation(value = "增加追评")
+    @ApiOperation(value = "增加追评",notes = "0-评价水果 1评价景区 2-对评价的评论")
     @PostMapping("/addReevaluate")
     public void addFruitReevaluate(@RequestParam String evaluateId) {
         evaluateService.addFruitReevaluate(evaluateId);

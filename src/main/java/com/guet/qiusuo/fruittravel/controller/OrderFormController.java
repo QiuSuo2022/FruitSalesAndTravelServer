@@ -127,7 +127,7 @@ public class OrderFormController {
         return orderFormService.fakeRefund(orderId);
     }
 
-    @ApiOperation(value = "设置订单完成状态")
+    @ApiOperation(value = "设置订单完成状态",notes = "订单状态:未支付-0 已支付-1 待发货-2 已发货-3 已完成-4 已退款-5")
     @PostMapping("/setOrderStatus")
     public boolean payStatus(@RequestParam String orderId,@RequestParam Short orderStatus){
         return orderFormService.setOrderStatus(orderId,orderStatus);

@@ -56,7 +56,7 @@ public class TicketService {
         ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
         ticket.setUpdateUserId(UserContextHolder.getUserId());
         ticket.setUpdateTime(System.currentTimeMillis());
-        int i = ticketMapper.deleteByPrimaryKey(scenicId);
+        int i = ticketMapper.updateByPrimaryKey(ticket);
         if(i == 0){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
