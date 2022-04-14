@@ -97,4 +97,6 @@ public class SystemConstants {
 
 
     public static final String nullFlag = "-1";
+
+    public static final short defaultInfo = 3;
 }
