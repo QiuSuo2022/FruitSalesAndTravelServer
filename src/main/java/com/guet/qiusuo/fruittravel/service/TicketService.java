@@ -4,23 +4,18 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
-import com.guet.qiusuo.fruittravel.dao.TicketDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.TicketMapper;
 import com.guet.qiusuo.fruittravel.model.Ticket;
-import org.mybatis.dynamic.sql.render.RenderingStrategy;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
-import static org.slf4j.LoggerFactory.getLogger;
-
-import org.mybatis.dynamic.sql.render.RenderingStrategies;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 @Service
 public class TicketService {
     private TicketMapper ticketMapper;
@@ -53,6 +48,7 @@ public class TicketService {
      *删除景点门票
      * @param scenicId
      */
+    @Transactional(rollbackFor = Exception.class)
     public void deleteTicket(String scenicId){
         UserContextHolder.validAdmin();
         Optional<Ticket> optionalTicket = ticketMapper.selectByPrimaryKey(scenicId);
