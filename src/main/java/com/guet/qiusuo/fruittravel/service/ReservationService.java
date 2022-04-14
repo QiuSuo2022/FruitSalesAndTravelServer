@@ -66,7 +66,7 @@ public class ReservationService {
         reservation.setStatus(SystemConstants.STATUS_NEGATIVE);
         reservation.setUpdateUserId(UserContextHolder.getUserId());
         reservation.setUpdateTime(System.currentTimeMillis());
-        int i = reservationMapper.deleteByPrimaryKey(reservation.getId());
+        int i = reservationMapper.updateByPrimaryKeySelective(reservation);
         if (i == 0) {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }

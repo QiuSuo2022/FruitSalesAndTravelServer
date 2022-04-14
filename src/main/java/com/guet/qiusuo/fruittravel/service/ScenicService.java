@@ -169,7 +169,7 @@ public class ScenicService {
             ticketService.deleteTicket(scenic.getId());
         }
         //再删除scenic
-        int i = scenicMapper.deleteByPrimaryKey(scenic.getId());
+        int i = scenicMapper.updateByPrimaryKeySelective(scenic);
         if (i == 0) {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }

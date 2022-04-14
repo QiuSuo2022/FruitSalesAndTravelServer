@@ -260,7 +260,7 @@ public class FruitService {
         //先删除childFruit
         childFruitService.deleteChildFruit(fruit.getId());
         //删除Fruit
-        int i = fruitMapper.deleteByPrimaryKey(fruit.getId());
+        int i = fruitMapper.updateByPrimaryKeySelective(fruit);
         if (i == 0){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
