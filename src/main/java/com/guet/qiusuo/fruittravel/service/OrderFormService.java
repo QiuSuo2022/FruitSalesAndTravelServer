@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -132,6 +133,7 @@ public class OrderFormService {
      * 删除订单
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public void deleteOrderForm(String orderFormId){
         Optional<OrderForm> orderFormOptional = orderFormMapper.selectByPrimaryKey(orderFormId);
         OrderForm orderForm = orderFormOptional.orElseThrow(() -> new SystemException(ErrorCode.DELETE_ERROR));
