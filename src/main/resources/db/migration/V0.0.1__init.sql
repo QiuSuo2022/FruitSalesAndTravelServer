@@ -274,5 +274,21 @@ CREATE TABLE tbl_order_form
     CONSTRAINT tbl_order_form_scenic_id_fk FOREIGN KEY (scenic_id) REFERENCES tbl_scenic (id)
 ) COMMENT '订单表';
 
-
+create table tbl_deliveryInfo
+(
+    id                  varchar(44)  not null comment 'uuid',
+    user_id             varchar(44)  not null comment '用户id',
+    delivery_name       varchar(32)  null comment '收货人姓名',
+    delivery_phone      varchar(32)  null comment '收货人电话',
+    delivery_address    varchar(128) null comment '收货人地址',
+    status              smallint     null comment '状态，0：不启用；1：启用',
+    create_time         bigint       null comment '创建时间',
+    update_time         bigint       null comment '最后更新时间',
+    create_user_id      varchar(44)  null comment '增加此条数据的用户id',
+    update_user_id      varchar(44)  null comment '最后更新此条数据的用户id',
+    constraint tbl_deliveryInfo_pk primary key (id),
+    constraint tbl_deliveryInfo_user_id_fk foreign key (user_id) references tbl_user (id),
+    constraint tbl_deliveryInfo_create_user_id_fk foreign key (create_user_id) references tbl_user (id),
+    constraint tbl_deliveryInfo_update_user_id_fk foreign key (update_user_id) references tbl_user (id)
+) comment '收货地址信息表';
 
