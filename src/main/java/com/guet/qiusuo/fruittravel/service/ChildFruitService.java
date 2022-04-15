@@ -129,6 +129,7 @@ public class ChildFruitService {
     public List<ChildFruit> getChildFruitListByFruitId(String FruitId){
         return childFruitMapper.selectMany(select(
                 ChildFruitDynamicSqlSupport.id,
+                ChildFruitDynamicSqlSupport.fruitId,
                 ChildFruitDynamicSqlSupport.fruitName,
                 ChildFruitDynamicSqlSupport.status,
                 ChildFruitDynamicSqlSupport.updateTime)
@@ -142,6 +143,7 @@ public class ChildFruitService {
     public List<ChildFruit> getAllChildFruits(){
         List<ChildFruit> list  = childFruitMapper.selectMany(select(
                 ChildFruitDynamicSqlSupport.id,
+                ChildFruitDynamicSqlSupport.fruitId,
                 ChildFruitDynamicSqlSupport.fruitName,
                 ChildFruitDynamicSqlSupport.status,
                 ChildFruitDynamicSqlSupport.updateTime)
