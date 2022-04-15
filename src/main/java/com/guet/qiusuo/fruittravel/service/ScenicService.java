@@ -46,14 +46,14 @@ public class ScenicService {
     }
 
     public PageList<Scenic> getScenicList(String id,String scenicName,String location,String nameLike,Short type,String description,
-                                          String openingHours,Short ordeyByType, Integer page,Integer pageSize) {
+                                          String openingHours,Short orderByType, Integer page,Integer pageSize) {
         if (nameLike == null || nameLike.length() == 0) {
             nameLike = "";
         }
 
         PageHelper.startPage(page,pageSize);
         List<Scenic> scenicList;
-        if(ordeyByType.equals(SystemConstants.PRICE_ASC)) {
+        if(orderByType.equals(SystemConstants.PRICE_ASC)) {
             scenicList = scenicMapper.selectScenic(select(
                             ScenicDynamicSqlSupport.id,
                             ScenicDynamicSqlSupport.scenicName,
@@ -73,7 +73,7 @@ public class ScenicService {
                             .build().render(RenderingStrategies.MYBATIS3)
             );
         }
-        else  {
+        else /*(orderByType.equals(SystemConstants.PRICE_DESC))*/ {
             scenicList = scenicMapper.selectScenic(select(
                             ScenicDynamicSqlSupport.id,
                             ScenicDynamicSqlSupport.scenicName,
@@ -93,6 +93,8 @@ public class ScenicService {
                             .build().render(RenderingStrategies.MYBATIS3)
             );
         }
+
+        /*else if()*/
 
         PageList<Scenic> pageList = new PageList<>();
         pageList.setList(scenicList);
