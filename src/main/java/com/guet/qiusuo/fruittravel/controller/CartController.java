@@ -32,8 +32,8 @@ public class CartController {
 
     @ApiOperation(value = "删除购物车水果项")
     @DeleteMapping
-    public void deleteCart(@RequestParam String userId, @RequestParam String childFruitId){
-        cartService.deleteCart(userId,childFruitId);
+    public void deleteCart(@RequestParam String childFruitId){
+        cartService.deleteCart(childFruitId);
     }
 
     @ApiOperation(value = "修改购物车水果项")
@@ -43,7 +43,7 @@ public class CartController {
     }
     @ApiOperation(value = "获取购物车所有水果项")
     @GetMapping
-    public List<Cart> selectCarts(@RequestParam String userId){
-        return cartService.selectCarts(userId);
+    public List<Cart> selectCarts(){
+        return cartService.selectCarts();
     }
 }

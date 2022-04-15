@@ -76,20 +76,19 @@ public class CartService {
      * @param cart
      */
     public void addCart(Cart cart){
-        UserContextHolder.validUser(UserContextHolder.getUserId());
+        String userId = UserContextHolder.getUserId();
+        boolean flag = false;
         if (cart == null){
             LOG.info("参数为空!");
             throw new SystemException(ErrorCode.PARAM_ERROR);
         }
+
         //查找数据库中是否已经存在相同的水果
-        Cart c = getCartByUserId(cart.getUserId()).get(0);
-        if (c.getChildFruitId().equals(cart.getChildFruitId())){
-            //如果有,仅增加数目
-            int sum = c.getQuantity() + cart.getQuantity();
-            c.setQuantity(sum);
-            updateCart(c);
-        }else {
+        List<Cart> cartList = getCartByUserId(cart.getUserId());
+        //如果购物车为空
+        if (cartList.isEmpty()){
             cart.setId(UUID.randomUUID().toString().replace("-", ""));
+            cart.setUserId(userId);
             cart.setStatus(SystemConstants.STATUS_ACTIVE);
             cart.setCreateTime(System.currentTimeMillis());
             cart.setUpdateTime(System.currentTimeMillis());
@@ -99,30 +98,56 @@ public class CartService {
             if (i == 0){
                 throw new SystemException(ErrorCode.INSERT_ERROR);
             }
-            LOG.info("添加{}成功",cart.getChildFruitId());
+            flag = true;
+            LOG.info("添加水果子项{}进入购物车成功",cart.getChildFruitId());
+        }
+        //搜索是否已经有相同的childFruit在购物车
+        for (Cart c:cartList) {
+            if (c.getChildFruitId().equals(cart.getChildFruitId())){
+                int sum = c.getQuantity() + cart.getQuantity();
+                c.setQuantity(sum);
+                flag = true;
+                updateCart(c);
+                break;
+            }
+        }
+        if (!flag){
+            cart.setId(UUID.randomUUID().toString().replace("-", ""));
+            cart.setUserId(userId);
+            cart.setStatus(SystemConstants.STATUS_ACTIVE);
+            cart.setCreateTime(System.currentTimeMillis());
+            cart.setUpdateTime(System.currentTimeMillis());
+            cart.setCreateUserId(UserContextHolder.getUserId());
+            cart.setUpdateUserId(UserContextHolder.getUserId());
+            int i = cartMapper.insert(cart);
+            if (i == 0){
+                throw new SystemException(ErrorCode.INSERT_ERROR);
+            }
+            LOG.info("添加水果子项{}进入购物车成功",cart.getChildFruitId());
         }
     }
 
     /**
      * 从购物车删除水果
-     * @param userId
      * @param childFruitId
      */
-    public void deleteCart(String userId, String childFruitId){
-        UserContextHolder.validUser(UserContextHolder.getUserId());
-        Cart cart = getCartByUserIdAndChildFruitId(userId,childFruitId).get(0);
-        if (cart != null){
-            cart.setStatus(SystemConstants.STATUS_NEGATIVE);
-            cart.setUpdateTime(System.currentTimeMillis());
-            cart.setUpdateUserId(UserContextHolder.getUserId());
-            int i = cartMapper.updateByPrimaryKey(cart);
-            if (i == 0){
-                throw new SystemException(ErrorCode.DELETE_ERROR);
-            }
-        }else {
-            LOG.info("不存在该数据!");
+    public void deleteCart(String childFruitId){
+        List<Cart> cartList = getCartByUserIdAndChildFruitId(UserContextHolder.getUserId(), childFruitId);
+        if (cartList.isEmpty()){
+            LOG.info("购物车中没有数据");
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
+
+        Cart cart = cartList.get(0);
+        cart.setStatus(SystemConstants.STATUS_NEGATIVE);
+        cart.setUpdateTime(System.currentTimeMillis());
+        cart.setUpdateUserId(UserContextHolder.getUserId());
+        int i = cartMapper.updateByPrimaryKey(cart);
+        if (i == 0){
+            LOG.info("删除购物车内容失败");
+            throw new SystemException(ErrorCode.DELETE_ERROR);
+        }
+        LOG.info("删除购物车内容成功");
     }
 
     /**
@@ -130,22 +155,21 @@ public class CartService {
      * @param cart
      */
     public void updateCart(Cart cart){
-        UserContextHolder.validUser(UserContextHolder.getUserId());
         cart.setUpdateTime(System.currentTimeMillis());
         cart.setUpdateUserId(UserContextHolder.getUserId());
         int i = cartMapper.updateByPrimaryKey(cart);
         if (i == 0){
+            LOG.info("修改购物车内容失败");
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        LOG.info("修改购物车内容成功");
     }
 
     /**
      * 查找所有Cart
-     * @param userId
      * @return
      */
-    public List<Cart> selectCarts(String userId){
-        UserContextHolder.validUser(UserContextHolder.getUserId());
-        return getCartByUserId(userId);
+    public List<Cart> selectCarts(){
+        return getCartByUserId(UserContextHolder.getUserId());
     }
 }
