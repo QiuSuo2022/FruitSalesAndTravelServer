@@ -114,7 +114,7 @@ public class FruitController {
 
     @ApiOperation(value = "获取单个水果")
     @GetMapping
-    public Fruit getFruit(String fruitId){
+    public Fruit getFruit(@RequestParam String fruitId){
         return fruitService.getFruit(fruitId);
     }
 
