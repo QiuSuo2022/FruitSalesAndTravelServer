@@ -17,7 +17,6 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
-import org.springframework.stereotype.Repository;
 
 import javax.annotation.Generated;
 import java.util.Collection;
@@ -28,43 +27,42 @@ import static com.guet.qiusuo.fruittravel.dao.OrderFormDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 
 @Mapper
-@Repository
 public interface OrderFormMapper {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.271623+08:00", comments="Source Table: tbl_order_form")
-    BasicColumn[] selectList = BasicColumn.columnList(id, address, express, name, fruitId, scenicId, amount, fee, payStatus, hasEvaluate, bindEvaluateId, status, payTime, createTime, updateTime, createUserId, updateUserId);
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.176+08:00", comments="Source Table: tbl_order_form")
+    BasicColumn[] selectList = BasicColumn.columnList(id, address, express, price, fruitId, scenicId, amount, money, payStatus, hasEvaluate, bindEvaluateId, status, payTime, createTime, updateTime, createUserId, updateUserId);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2606603+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.168+08:00", comments="Source Table: tbl_order_form")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2616599+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.169+08:00", comments="Source Table: tbl_order_form")
     @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
     int delete(DeleteStatementProvider deleteStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2626546+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.17+08:00", comments="Source Table: tbl_order_form")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
     int insert(InsertStatementProvider<OrderForm> insertStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2636527+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.17+08:00", comments="Source Table: tbl_order_form")
     @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
     int insertMultiple(MultiRowInsertStatementProvider<OrderForm> multipleInsertStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2646472+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.171+08:00", comments="Source Table: tbl_order_form")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @ResultMap("OrderFormResult")
     Optional<OrderForm> selectOne(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2646472+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.171+08:00", comments="Source Table: tbl_order_form")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="OrderFormResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="address", property="address", jdbcType=JdbcType.VARCHAR),
         @Result(column="express", property="express", jdbcType=JdbcType.VARCHAR),
-        @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+        @Result(column="price", property="price", jdbcType=JdbcType.VARCHAR),
         @Result(column="fruit_id", property="fruitId", jdbcType=JdbcType.VARCHAR),
         @Result(column="scenic_id", property="scenicId", jdbcType=JdbcType.VARCHAR),
         @Result(column="amount", property="amount", jdbcType=JdbcType.INTEGER),
-        @Result(column="fee", property="fee", jdbcType=JdbcType.INTEGER),
+        @Result(column="money", property="money", jdbcType=JdbcType.INTEGER),
         @Result(column="pay_status", property="payStatus", jdbcType=JdbcType.SMALLINT),
         @Result(column="has_evaluate", property="hasEvaluate", jdbcType=JdbcType.SMALLINT),
         @Result(column="bind_evaluate_id", property="bindEvaluateId", jdbcType=JdbcType.VARCHAR),
@@ -77,38 +75,38 @@ public interface OrderFormMapper {
     })
     List<OrderForm> selectMany(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2656677+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.172+08:00", comments="Source Table: tbl_order_form")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
     int update(UpdateStatementProvider updateStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2666385+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.172+08:00", comments="Source Table: tbl_order_form")
     default long count(CountDSLCompleter completer) {
         return MyBatis3Utils.countFrom(this::count, orderForm, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2666385+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.173+08:00", comments="Source Table: tbl_order_form")
     default int delete(DeleteDSLCompleter completer) {
         return MyBatis3Utils.deleteFrom(this::delete, orderForm, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2676351+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.173+08:00", comments="Source Table: tbl_order_form")
     default int deleteByPrimaryKey(String id_) {
         return delete(c -> 
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2686338+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.173+08:00", comments="Source Table: tbl_order_form")
     default int insert(OrderForm record) {
         return MyBatis3Utils.insert(this::insert, record, orderForm, c ->
             c.map(id).toProperty("id")
             .map(address).toProperty("address")
             .map(express).toProperty("express")
-            .map(name).toProperty("name")
+            .map(price).toProperty("price")
             .map(fruitId).toProperty("fruitId")
             .map(scenicId).toProperty("scenicId")
             .map(amount).toProperty("amount")
-            .map(fee).toProperty("fee")
+            .map(money).toProperty("money")
             .map(payStatus).toProperty("payStatus")
             .map(hasEvaluate).toProperty("hasEvaluate")
             .map(bindEvaluateId).toProperty("bindEvaluateId")
@@ -121,17 +119,17 @@ public interface OrderFormMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2696302+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.175+08:00", comments="Source Table: tbl_order_form")
     default int insertMultiple(Collection<OrderForm> records) {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, orderForm, c ->
             c.map(id).toProperty("id")
             .map(address).toProperty("address")
             .map(express).toProperty("express")
-            .map(name).toProperty("name")
+            .map(price).toProperty("price")
             .map(fruitId).toProperty("fruitId")
             .map(scenicId).toProperty("scenicId")
             .map(amount).toProperty("amount")
-            .map(fee).toProperty("fee")
+            .map(money).toProperty("money")
             .map(payStatus).toProperty("payStatus")
             .map(hasEvaluate).toProperty("hasEvaluate")
             .map(bindEvaluateId).toProperty("bindEvaluateId")
@@ -144,17 +142,17 @@ public interface OrderFormMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2706261+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.175+08:00", comments="Source Table: tbl_order_form")
     default int insertSelective(OrderForm record) {
         return MyBatis3Utils.insert(this::insert, record, orderForm, c ->
             c.map(id).toPropertyWhenPresent("id", record::getId)
             .map(address).toPropertyWhenPresent("address", record::getAddress)
             .map(express).toPropertyWhenPresent("express", record::getExpress)
-            .map(name).toPropertyWhenPresent("name", record::getName)
+            .map(price).toPropertyWhenPresent("price", record::getPrice)
             .map(fruitId).toPropertyWhenPresent("fruitId", record::getFruitId)
             .map(scenicId).toPropertyWhenPresent("scenicId", record::getScenicId)
             .map(amount).toPropertyWhenPresent("amount", record::getAmount)
-            .map(fee).toPropertyWhenPresent("fee", record::getFee)
+            .map(money).toPropertyWhenPresent("money", record::getMoney)
             .map(payStatus).toPropertyWhenPresent("payStatus", record::getPayStatus)
             .map(hasEvaluate).toPropertyWhenPresent("hasEvaluate", record::getHasEvaluate)
             .map(bindEvaluateId).toPropertyWhenPresent("bindEvaluateId", record::getBindEvaluateId)
@@ -167,43 +165,43 @@ public interface OrderFormMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2726203+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.177+08:00", comments="Source Table: tbl_order_form")
     default Optional<OrderForm> selectOne(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectOne(this::selectOne, selectList, orderForm, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2726203+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.177+08:00", comments="Source Table: tbl_order_form")
     default List<OrderForm> select(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectList(this::selectMany, selectList, orderForm, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2736163+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.177+08:00", comments="Source Table: tbl_order_form")
     default List<OrderForm> selectDistinct(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectDistinct(this::selectMany, selectList, orderForm, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2736163+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.177+08:00", comments="Source Table: tbl_order_form")
     default Optional<OrderForm> selectByPrimaryKey(String id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2736163+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.178+08:00", comments="Source Table: tbl_order_form")
     default int update(UpdateDSLCompleter completer) {
         return MyBatis3Utils.update(this::update, orderForm, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2746138+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.178+08:00", comments="Source Table: tbl_order_form")
     static UpdateDSL<UpdateModel> updateAllColumns(OrderForm record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
                 .set(address).equalTo(record::getAddress)
                 .set(express).equalTo(record::getExpress)
-                .set(name).equalTo(record::getName)
+                .set(price).equalTo(record::getPrice)
                 .set(fruitId).equalTo(record::getFruitId)
                 .set(scenicId).equalTo(record::getScenicId)
                 .set(amount).equalTo(record::getAmount)
-                .set(fee).equalTo(record::getFee)
+                .set(money).equalTo(record::getMoney)
                 .set(payStatus).equalTo(record::getPayStatus)
                 .set(hasEvaluate).equalTo(record::getHasEvaluate)
                 .set(bindEvaluateId).equalTo(record::getBindEvaluateId)
@@ -215,16 +213,16 @@ public interface OrderFormMapper {
                 .set(updateUserId).equalTo(record::getUpdateUserId);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2746138+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.178+08:00", comments="Source Table: tbl_order_form")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(OrderForm record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
                 .set(address).equalToWhenPresent(record::getAddress)
                 .set(express).equalToWhenPresent(record::getExpress)
-                .set(name).equalToWhenPresent(record::getName)
+                .set(price).equalToWhenPresent(record::getPrice)
                 .set(fruitId).equalToWhenPresent(record::getFruitId)
                 .set(scenicId).equalToWhenPresent(record::getScenicId)
                 .set(amount).equalToWhenPresent(record::getAmount)
-                .set(fee).equalToWhenPresent(record::getFee)
+                .set(money).equalToWhenPresent(record::getMoney)
                 .set(payStatus).equalToWhenPresent(record::getPayStatus)
                 .set(hasEvaluate).equalToWhenPresent(record::getHasEvaluate)
                 .set(bindEvaluateId).equalToWhenPresent(record::getBindEvaluateId)
@@ -236,16 +234,16 @@ public interface OrderFormMapper {
                 .set(updateUserId).equalToWhenPresent(record::getUpdateUserId);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2756094+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.179+08:00", comments="Source Table: tbl_order_form")
     default int updateByPrimaryKey(OrderForm record) {
         return update(c ->
             c.set(address).equalTo(record::getAddress)
             .set(express).equalTo(record::getExpress)
-            .set(name).equalTo(record::getName)
+            .set(price).equalTo(record::getPrice)
             .set(fruitId).equalTo(record::getFruitId)
             .set(scenicId).equalTo(record::getScenicId)
             .set(amount).equalTo(record::getAmount)
-            .set(fee).equalTo(record::getFee)
+            .set(money).equalTo(record::getMoney)
             .set(payStatus).equalTo(record::getPayStatus)
             .set(hasEvaluate).equalTo(record::getHasEvaluate)
             .set(bindEvaluateId).equalTo(record::getBindEvaluateId)
@@ -259,16 +257,16 @@ public interface OrderFormMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-06T23:23:51.2766259+08:00", comments="Source Table: tbl_order_form")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2022-04-15T23:23:40.18+08:00", comments="Source Table: tbl_order_form")
     default int updateByPrimaryKeySelective(OrderForm record) {
         return update(c ->
             c.set(address).equalToWhenPresent(record::getAddress)
             .set(express).equalToWhenPresent(record::getExpress)
-            .set(name).equalToWhenPresent(record::getName)
+            .set(price).equalToWhenPresent(record::getPrice)
             .set(fruitId).equalToWhenPresent(record::getFruitId)
             .set(scenicId).equalToWhenPresent(record::getScenicId)
             .set(amount).equalToWhenPresent(record::getAmount)
-            .set(fee).equalToWhenPresent(record::getFee)
+            .set(money).equalToWhenPresent(record::getMoney)
             .set(payStatus).equalToWhenPresent(record::getPayStatus)
             .set(hasEvaluate).equalToWhenPresent(record::getHasEvaluate)
             .set(bindEvaluateId).equalToWhenPresent(record::getBindEvaluateId)
