@@ -2,6 +2,7 @@ package com.guet.qiusuo.fruittravel.controller;
 
 
 import com.guet.qiusuo.fruittravel.bean.vo.OrderAndProductVO;
+import com.guet.qiusuo.fruittravel.bean.vo.WxObject;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
@@ -14,7 +15,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,14 +63,14 @@ public class OrderFormController {
      */
     @ApiOperation(value = "创建预付订单,返回请求wx支付的Object")
     @PostMapping("/createOrder")
-    public JSONObject createOrder (HttpServletRequest request, @RequestBody OrderForm order) throws JSONException {
+    public WxObject createOrder (HttpServletRequest request, @RequestBody OrderForm order) throws JSONException {
         if (order == null){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
         return orderFormService.createOrderForm(request,order);
     }
 
-    @ApiOperation(value = "提交假订单")
+    @ApiOperation(value = "提交假订单: fee - 总付款金额  price - 商品单价 amount - 商品数目")
     @PostMapping("/createFakeOrder")
     public OrderForm createFakeOrder (@RequestBody OrderForm order){
         if (order == null){
