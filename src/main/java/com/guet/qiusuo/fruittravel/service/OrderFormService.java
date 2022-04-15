@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.service;
 
+import com.guet.qiusuo.fruittravel.bean.vo.WxObject;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
@@ -46,13 +47,15 @@ public class OrderFormService {
      * @param orderForm
      * @return
      */
-    public JSONObject createOrderForm(HttpServletRequest request, OrderForm orderForm) throws JSONException {
+    public WxObject createOrderForm(HttpServletRequest request, OrderForm orderForm) throws JSONException {
         OrderForm check = orderFormMapper.selectByPrimaryKey(orderForm.getId()).orElse(null);
         if(check != null){
             LOG.info("订单重复创建");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("hadCreated",true);
-            return jsonObject;
+            WxObject wxObject = new WxObject();
+            wxObject.setJsonObject(jsonObject);
+            return wxObject;
         }
         long now = System.currentTimeMillis();
         orderForm.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -74,7 +77,9 @@ public class OrderFormService {
         }
         LOG.info("创建系统订单成功");
         //返回需要创建的Object数据
-        return payService.wxPay(request,orderForm);
+        WxObject wxObject = new WxObject();
+        wxObject.setJsonObject(payService.wxPay(request,orderForm));
+        return wxObject;
     }
 
     public OrderForm createFakeOrder(OrderForm orderForm){
@@ -85,6 +90,7 @@ public class OrderFormService {
         }
         long now = System.currentTimeMillis();
         orderForm.setId(UUID.randomUUID().toString().replace("-", ""));
+        orderForm.setFee(orderForm.getAmount() * orderForm.getPrice());
         orderForm.setCreateTime(now);
         orderForm.setUpdateTime(now);
         orderForm.setCreateUserId(UserContextHolder.getUserId());
@@ -119,6 +125,9 @@ public class OrderFormService {
             LOG.info("不存在该订单号!");
             throw new SystemException(ErrorCode.PARAM_ERROR);
         }
+        if (orderStatus == null){
+            throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
+        }
         order.setPayStatus(orderStatus);
         order.setUpdateUserId(UserContextHolder.getUserId());
         order.setUpdateTime(System.currentTimeMillis());
@@ -126,6 +135,7 @@ public class OrderFormService {
         if (i == 0){
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        LOG.info("更改订单状态完成");
         return true;
     }
 
