@@ -11,14 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Generated;
 
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
@@ -296,4 +289,30 @@ public interface ScenicMapper {
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
     })
     List<Scenic> selectScenic(SelectStatementProvider selectStatement);
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,sum(amount) as sales",
+            "FROM tbl_scenic",
+            "LEFT JOIN tbl_ticket ON tbl_scenic.id = tbl_ticket.`scenic_id` AND tbl_ticket.`status` = 1",
+            "LEFT JOIN tbl_evaluate ON tbl_scenic.id = tbl_evaluate.`product_id` AND tbl_evaluate.`status` = 1",
+            "LEFT JOIN tbl_order_form ON tbl_scenic.id = tbl_order_form.`scenic_id` AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.pay_status = 1",
+            "where scenic_name like concat('%',#{nameLike},'%')",
+            "group by tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,price,grade",
+            "order by price*0.25 + grade * 0.25 + sales*0.5"
+    })
+    @Results(id = "ScenicSortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    /**
+     * @param nameLike
+     * @return
+     */
+    List<Scenic> selectScenicSort(@Param("nameLike") String nameLike);
 }

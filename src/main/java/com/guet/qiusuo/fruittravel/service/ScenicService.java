@@ -8,9 +8,7 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
-import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
-import com.guet.qiusuo.fruittravel.dao.TicketDynamicSqlSupport;
+import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.Scenic;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -69,11 +67,12 @@ public class ScenicService {
                             .on(TicketDynamicSqlSupport.scenicId, equalTo(ScenicDynamicSqlSupport.id))
                             .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                            .and(TicketDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .orderBy(TicketDynamicSqlSupport.price)
                             .build().render(RenderingStrategies.MYBATIS3)
             );
         }
-        else /*(orderByType.equals(SystemConstants.PRICE_DESC))*/ {
+        else if (orderByType.equals(SystemConstants.PRICE_DESC)) {
             scenicList = scenicMapper.selectScenic(select(
                             ScenicDynamicSqlSupport.id,
                             ScenicDynamicSqlSupport.scenicName,
@@ -89,12 +88,109 @@ public class ScenicService {
                             .on(TicketDynamicSqlSupport.scenicId, equalTo(ScenicDynamicSqlSupport.id))
                             .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                            .and(TicketDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .orderBy(TicketDynamicSqlSupport.price.descending())
                             .build().render(RenderingStrategies.MYBATIS3)
             );
         }
 
-        /*else if()*/
+        else if(orderByType.equals(SystemConstants.SALE_ASC)) {
+            scenicList = scenicMapper.selectScenic(select(
+                    ScenicDynamicSqlSupport.id,
+                    ScenicDynamicSqlSupport.scenicName,
+                    ScenicDynamicSqlSupport.location,
+                    ScenicDynamicSqlSupport.openingHours,
+                    ScenicDynamicSqlSupport.description,
+                    ScenicDynamicSqlSupport.type,
+                    ScenicDynamicSqlSupport.status,
+                    ScenicDynamicSqlSupport.createTime
+            )
+                    .from(ScenicDynamicSqlSupport.scenic)
+                    .leftJoin(OrderFormDynamicSqlSupport.orderForm)
+                    .on(ScenicDynamicSqlSupport.id,equalTo(OrderFormDynamicSqlSupport.scenicId))
+                    .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                    .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                    .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                    .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
+                    .orderBy(OrderFormDynamicSqlSupport.amount)
+                    .build().render(RenderingStrategies.MYBATIS3)
+            );
+        }
+
+        else if(orderByType.equals(SystemConstants.SALE_DESC)) {
+            scenicList = scenicMapper.selectScenic(select(
+                            ScenicDynamicSqlSupport.id,
+                            ScenicDynamicSqlSupport.scenicName,
+                            ScenicDynamicSqlSupport.location,
+                            ScenicDynamicSqlSupport.openingHours,
+                            ScenicDynamicSqlSupport.description,
+                            ScenicDynamicSqlSupport.type,
+                            ScenicDynamicSqlSupport.status,
+                            ScenicDynamicSqlSupport.createTime
+                    )
+                            .from(ScenicDynamicSqlSupport.scenic)
+                            .leftJoin(OrderFormDynamicSqlSupport.orderForm)
+                            .on(ScenicDynamicSqlSupport.id,equalTo(OrderFormDynamicSqlSupport.scenicId))
+                            .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                            .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
+                            .orderBy(OrderFormDynamicSqlSupport.amount.descending())
+                            .build().render(RenderingStrategies.MYBATIS3)
+            );
+        }
+
+        else if(orderByType.equals(SystemConstants.GRADE_ASC)) {
+            scenicList = scenicMapper.selectScenic(select(
+                    ScenicDynamicSqlSupport.id,
+                    ScenicDynamicSqlSupport.scenicName,
+                    ScenicDynamicSqlSupport.location,
+                    ScenicDynamicSqlSupport.openingHours,
+                    ScenicDynamicSqlSupport.description,
+                    ScenicDynamicSqlSupport.type,
+                    ScenicDynamicSqlSupport.status,
+                    ScenicDynamicSqlSupport.createTime
+            )
+                            .from(ScenicDynamicSqlSupport.scenic)
+                            .leftJoin(EvaluateDynamicSqlSupport.evaluate)
+                            .on(ScenicDynamicSqlSupport.id,equalTo(EvaluateDynamicSqlSupport.productId))
+                            .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                            .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .orderBy(EvaluateDynamicSqlSupport.grade)
+                            .build().render(RenderingStrategies.MYBATIS3)
+            );
+        }
+
+        else if (orderByType.equals(SystemConstants.GRADE_DESC)) {
+            scenicList = scenicMapper.selectScenic(select(
+                            ScenicDynamicSqlSupport.id,
+                            ScenicDynamicSqlSupport.scenicName,
+                            ScenicDynamicSqlSupport.location,
+                            ScenicDynamicSqlSupport.openingHours,
+                            ScenicDynamicSqlSupport.description,
+                            ScenicDynamicSqlSupport.type,
+                            ScenicDynamicSqlSupport.status,
+                            ScenicDynamicSqlSupport.createTime
+                    )
+                            .from(ScenicDynamicSqlSupport.scenic)
+                            .leftJoin(EvaluateDynamicSqlSupport.evaluate)
+                            .on(ScenicDynamicSqlSupport.id,equalTo(EvaluateDynamicSqlSupport.productId))
+                            .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
+                            .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .orderBy(EvaluateDynamicSqlSupport.grade.descending())
+                            .build().render(RenderingStrategies.MYBATIS3)
+            );
+        }
+
+        else if(orderByType.equals(SystemConstants.SORT_ALL)) {
+            scenicList = scenicMapper.selectScenicSort(nameLike);
+        }
+
+        else {
+            throw new SystemException(ErrorCode.ORDERBYTYPE_ERROR);
+        }
 
         PageList<Scenic> pageList = new PageList<>();
         pageList.setList(scenicList);
