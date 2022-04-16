@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.controller;
 
+import com.guet.qiusuo.fruittravel.bean.vo.CartVO;
 import com.guet.qiusuo.fruittravel.model.Cart;
 import com.guet.qiusuo.fruittravel.service.CartService;
 import io.swagger.annotations.Api;
@@ -41,9 +42,10 @@ public class CartController {
     public void updateCart(@RequestBody Cart cart){
         cartService.updateCart(cart);
     }
+
     @ApiOperation(value = "获取购物车所有水果项")
     @GetMapping
-    public List<Cart> selectCarts(){
+    public List<CartVO> selectCarts(){
         return cartService.selectCarts();
     }
 }

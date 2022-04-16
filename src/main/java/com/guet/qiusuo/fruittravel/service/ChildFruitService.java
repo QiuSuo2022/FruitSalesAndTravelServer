@@ -85,7 +85,7 @@ public class ChildFruitService {
      */
     public void deleteOne(String childFruitId){
         UserContextHolder.validAdmin();
-        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByFruitId(childFruitId);
+        Optional<ChildFruit> optionalChildFruit = childFruitMapper.selectByPrimaryKey(childFruitId);
         ChildFruit childFruit = optionalChildFruit.orElse(null);
         if (childFruit == null){
             LOG.info("无该水果子项");
