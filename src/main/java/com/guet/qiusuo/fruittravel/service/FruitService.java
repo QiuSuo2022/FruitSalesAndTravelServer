@@ -8,10 +8,7 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
-import com.guet.qiusuo.fruittravel.dao.CartDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.FruitMapper;
+import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -51,17 +48,6 @@ public class FruitService {
 
     /**
      * 获取水果列表
-     * @param id
-     * @param fruitName
-     * @param fruitPrice
-     * @param nameLike
-     * @param departurePoint
-     * @param description
-     * @param deliveryCost
-     * @param orderByType
-     * @param page
-     * @param pageSize
-     * @return
      */
     public PageList<Fruit> getFruitList(String id, String fruitName, String fruitPrice, String nameLike, String departurePoint
             , String description, Integer deliveryCost,Short orderByType, Integer page, Integer pageSize) {
@@ -72,10 +58,10 @@ public class FruitService {
         PageHelper.startPage(page,pageSize);
         List<Fruit> fruitList;
         if(orderByType.equals(SystemConstants.PRICE_ASC)) {
-            fruitList = fruitMapper.selectFruitSortByPriceASC(fruitPrice,nameLike);
+            fruitList = fruitMapper.selectFruitSortByPriceASC(nameLike);
         }
         else if(orderByType.equals(SystemConstants.PRICE_DESC)) {
-            fruitList = fruitMapper.selectFruitSortByPriceDESC(fruitPrice,nameLike);
+            fruitList = fruitMapper.selectFruitSortByPriceDESC(nameLike);
         }
         else if(orderByType.equals(SystemConstants.SALE_ASC)) {
             fruitList = fruitMapper.selectFruit(select(
@@ -87,11 +73,13 @@ public class FruitService {
                             FruitDynamicSqlSupport.createTime
                     )
                             .from(FruitDynamicSqlSupport.fruit)
-                            .leftJoin(CartDynamicSqlSupport.cart)
-                            .on(FruitDynamicSqlSupport.id, equalTo(CartDynamicSqlSupport.childFruitId))
+                            .leftJoin(OrderFormDynamicSqlSupport.orderForm)
+                            .on(FruitDynamicSqlSupport.id, equalTo(OrderFormDynamicSqlSupport.fruitId))
                             .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .orderBy(CartDynamicSqlSupport.quantity)
+                            .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                            .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
+                            .orderBy(OrderFormDynamicSqlSupport.amount)
                             .build().render(RenderingStrategies.MYBATIS3)
             );
         }
@@ -104,13 +92,15 @@ public class FruitService {
                             FruitDynamicSqlSupport.deliveryCost,
                             FruitDynamicSqlSupport.createTime
                     )
-                            .from(FruitDynamicSqlSupport.fruit)
-                            .leftJoin(CartDynamicSqlSupport.cart)
-                            .on(FruitDynamicSqlSupport.id, equalTo(CartDynamicSqlSupport.childFruitId))
-                            .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .orderBy(CartDynamicSqlSupport.quantity.descending())
-                            .build().render(RenderingStrategies.MYBATIS3)
+                        .from(FruitDynamicSqlSupport.fruit)
+                        .leftJoin(OrderFormDynamicSqlSupport.orderForm)
+                        .on(FruitDynamicSqlSupport.id, equalTo(OrderFormDynamicSqlSupport.fruitId))
+                        .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
+                        .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
+                        .orderBy(OrderFormDynamicSqlSupport.amount.descending())
+                        .build().render(RenderingStrategies.MYBATIS3)
             );
         }
         else if(orderByType.equals(SystemConstants.GRADE_ASC)) {
@@ -127,6 +117,7 @@ public class FruitService {
                             .on(FruitDynamicSqlSupport.id, equalTo(EvaluateDynamicSqlSupport.productId))
                             .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
+                            .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .orderBy(EvaluateDynamicSqlSupport.grade)
                             .build().render(RenderingStrategies.MYBATIS3)
             );
@@ -145,6 +136,7 @@ public class FruitService {
                             .on(FruitDynamicSqlSupport.id, equalTo(EvaluateDynamicSqlSupport.productId))
                             .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
+                            .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .orderBy(EvaluateDynamicSqlSupport.grade.descending())
                             .build().render(RenderingStrategies.MYBATIS3)
             );
