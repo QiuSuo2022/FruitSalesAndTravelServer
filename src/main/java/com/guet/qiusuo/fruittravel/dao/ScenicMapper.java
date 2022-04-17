@@ -298,7 +298,7 @@ public interface ScenicMapper {
             "LEFT JOIN tbl_order_form ON tbl_scenic.id = tbl_order_form.`scenic_id` AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.pay_status = 1",
             "where scenic_name like concat('%',#{nameLike},'%')",
             "group by tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,price,grade",
-            "order by price*0.25 + grade * 0.25 + sales*0.5"
+            "order by tbl_ticket.price*0.25 + grade * 0.25 + sales*0.5"
     })
     @Results(id = "ScenicSortResult", value = {
             @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
