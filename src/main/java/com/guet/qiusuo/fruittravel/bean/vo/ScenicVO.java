@@ -7,19 +7,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ScenicVO extends Scenic {
 
-    @ApiModelProperty(value = "景区门票Id")
-    private String ticketId;
+    private Map<String,Object> ticketMap;
 
-    @ApiModelProperty(value = "景区门票价格")
-    private Integer price;
-
-    @ApiModelProperty(value = "景区门票类型")
-    private Short ticketType;
-
-    @ApiModelProperty(value = "景区门票描述")
+    @ApiModelProperty(value = "景区门票描述")//默认同景区门票描述一致
     private String ticketDescription;
 }
+
