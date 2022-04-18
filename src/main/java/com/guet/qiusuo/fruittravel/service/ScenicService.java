@@ -3,6 +3,7 @@ package com.guet.qiusuo.fruittravel.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
+import com.guet.qiusuo.fruittravel.bean.vo.TicketArray;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -10,15 +11,14 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.Scenic;
+import com.guet.qiusuo.fruittravel.model.Ticket;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
@@ -374,16 +374,21 @@ public class ScenicService {
         scenicVO.setCreateUserId(scenic.getUpdateUserId());
 
         if(ticketService.searchTicket(scenic_id) == null) {
-            scenicVO.setTicketId(null);
-            scenicVO.setPrice(null);
-            scenicVO.setTicketType(null);
+            scenicVO.setTicketMap(null);
             scenicVO.setTicketDescription(null);
         }
         else {
-            scenicVO.setTicketId(ticketService.searchTicket(scenic_id).getScenicId());
-            scenicVO.setPrice(ticketService.searchTicket(scenic_id).getPrice());
-            scenicVO.setTicketType(ticketService.searchTicket(scenic_id).getType());
-            scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).getDescription());
+            scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).get(0).getDescription());
+            Map<String,Object> map = new HashMap<>();
+            for(Ticket ticket : ticketService.searchTicket(scenic_id)) {
+                TicketArray ticketArray = new TicketArray();
+                ArrayList<TicketArray> arrays = new ArrayList<>();
+                ticketArray.setPrice(ticket.getPrice());
+                ticketArray.setTicketType(ticket.getType());
+                arrays.add(ticketArray);
+                map.put(ticket.getId(),arrays);
+                scenicVO.setTicketMap(map);
+            }
         }
         return scenicVO;
     }
