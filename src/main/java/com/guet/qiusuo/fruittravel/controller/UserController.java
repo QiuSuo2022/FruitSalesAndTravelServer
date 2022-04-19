@@ -10,6 +10,7 @@ import com.guet.qiusuo.fruittravel.service.RoleService;
 import com.guet.qiusuo.fruittravel.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +51,7 @@ public class UserController {
         userService.addUser(user);
     }
 
-    /*@ApiOperation(value = "添加超级管理员")
+    @ApiOperation(value = "添加超级管理员",notes = "1 : user   2 : admin   3 : superAdmin")
     @PostMapping("/superAdmin")
     public void setSuperAdmin(@RequestBody User user) {
         userService.addUser(user);
@@ -63,7 +64,15 @@ public class UserController {
 
     @ApiOperation(value = "收回管理员权限")
     @PutMapping("/revokeAdmin")
-    public void revokeAdmin(@RequestBody UserRole userRole) { roleService.revokePermission(userRole); }*/
+    public void revokeAdmin(@RequestBody UserRole userRole) { roleService.revokePermission(userRole); }
+
+    @ApiOperation(value = "超级管理员封禁管理员和用户")
+    @DeleteMapping("/confineUserRoles")
+    public void confineUserRoles(@RequestBody UserRole userRole) { roleService.confineUserRoles(userRole); }
+
+    @ApiOperation(value = "管理员封禁普通用户")
+    @DeleteMapping("/confineUserRole")
+    public void confineUserRole(@RequestBody UserRole userRole) { roleService.confineUserRole(userRole); }
 
     @ApiOperation(value = "修改用户")
     @PutMapping
