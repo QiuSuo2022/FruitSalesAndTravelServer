@@ -99,4 +99,13 @@ public class SystemConstants {
     public static final String nullFlag = "-1";
 
     public static final short defaultInfo = 3;
+
+    /**
+     * 图片类型
+     */
+    public static final short IMG_ADVERTISING = 0;
+    public static final short IMG_FRUIT = 1;
+    public static final short IMG_SCENIC = 2;
+    public static final short IMG_EVAL = 3;
+
 }

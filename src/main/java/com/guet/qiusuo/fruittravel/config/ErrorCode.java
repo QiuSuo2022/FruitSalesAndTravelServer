@@ -34,7 +34,8 @@ public enum ErrorCode {
     NO_FOUND_ORDER_FOMR(-1,"system.error.no_found.order_form"),
     PAY_ERROR(-1,"system.error.pay.error"),
     UNPAID_ERROR(-1,"system.error.unpaid"),
-    ORDERBYTYPE_ERROR(-1,"system.error.no_found.order_by_type")
+    ORDERBYTYPE_ERROR(-1,"system.error.no_found.order_by_type"),
+    NO_FOUND_IMAGE_ERROR(-1,"system.error.no_found.image")
     ;
 
     @Override
