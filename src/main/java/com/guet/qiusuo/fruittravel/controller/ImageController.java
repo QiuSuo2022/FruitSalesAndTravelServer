@@ -13,10 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,7 +29,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date 2022/03/13
  */
 @Api(tags = "上传图片与绑定产品id")
-@RestController("/img")
+@RestController
+@RequestMapping("/img")
 public class ImageController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
