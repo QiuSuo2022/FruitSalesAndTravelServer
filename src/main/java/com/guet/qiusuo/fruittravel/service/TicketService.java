@@ -4,17 +4,23 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
+import com.guet.qiusuo.fruittravel.dao.TicketDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.TicketMapper;
 import com.guet.qiusuo.fruittravel.model.Ticket;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.mybatis.dynamic.sql.select.join.EqualTo;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
+import static org.mybatis.dynamic.sql.SqlBuilder.select;
 import static org.slf4j.LoggerFactory.getLogger;
 @Service
 public class TicketService {
@@ -81,7 +87,29 @@ public class TicketService {
      * 查找景点门票
      * @param scenicId
      */
-    public Ticket searchTicket(String scenicId){
-        return ticketMapper.selectByPrimaryKey(scenicId).orElse(null);
+    public List<Ticket> searchTicket(String scenicId){
+        List<Ticket> ticketList = ticketMapper.selectMany(select(
+                                        TicketDynamicSqlSupport.id,
+                                        TicketDynamicSqlSupport.scenicId,
+                                        TicketDynamicSqlSupport.type,
+                                        TicketDynamicSqlSupport.price,
+                                        TicketDynamicSqlSupport.description,
+                                        TicketDynamicSqlSupport.status,
+                                        TicketDynamicSqlSupport.createTime,
+                                        TicketDynamicSqlSupport.updateTime,
+                                        TicketDynamicSqlSupport.createUserId,
+                                        TicketDynamicSqlSupport.updateUserId
+                                    )
+                                    .from(TicketDynamicSqlSupport.ticket)
+                                    .where(TicketDynamicSqlSupport.scenicId, isEqualTo(scenicId))
+                                    .and(TicketDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                                    .build().render(RenderingStrategies.MYBATIS3));
+        if(ticketList == null) {
+            //throw new SystemException(ErrorCode.NO_FOUND_TICKET);
+            return null;
+        }
+        else {
+            return ticketList;
+        }
     }
 }

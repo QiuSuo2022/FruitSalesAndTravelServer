@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "景点门票表")
 @RestController
 @RequestMapping("/ticket")
@@ -29,6 +31,6 @@ public class TicketController {
 
     @ApiOperation(value = "查找景区门票")
     @GetMapping
-    public Ticket searchTicket(@RequestParam String scenicId) {return ticketService.searchTicket(scenicId);}
+    public List<Ticket> searchTicket(@RequestParam String scenicId) {return ticketService.searchTicket(scenicId);}
 
 }
