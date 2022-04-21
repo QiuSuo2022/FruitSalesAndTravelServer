@@ -132,7 +132,8 @@ public class ChildFruitService {
                 ChildFruitDynamicSqlSupport.fruitId,
                 ChildFruitDynamicSqlSupport.fruitName,
                 ChildFruitDynamicSqlSupport.status,
-                ChildFruitDynamicSqlSupport.updateTime)
+                ChildFruitDynamicSqlSupport.updateTime,
+                ChildFruitDynamicSqlSupport.imageUrl)
                 .from(ChildFruitDynamicSqlSupport.childFruit)
                 .where(ChildFruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(ChildFruitDynamicSqlSupport.fruitId,isEqualTo(FruitId))
@@ -146,7 +147,8 @@ public class ChildFruitService {
                 ChildFruitDynamicSqlSupport.fruitId,
                 ChildFruitDynamicSqlSupport.fruitName,
                 ChildFruitDynamicSqlSupport.status,
-                ChildFruitDynamicSqlSupport.updateTime)
+                ChildFruitDynamicSqlSupport.updateTime,
+                ChildFruitDynamicSqlSupport.imageUrl)
                 .from(ChildFruitDynamicSqlSupport.childFruit)
                 .where(ChildFruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
