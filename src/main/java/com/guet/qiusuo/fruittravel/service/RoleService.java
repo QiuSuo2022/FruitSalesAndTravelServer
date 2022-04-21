@@ -43,6 +43,9 @@ public class RoleService {
         this.roleMapper = roleMapper;
     }
 
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) { this.userMapper = userMapper; }
+
 
     List<UserRoleVO> selectUserRoleByUserId(String userId) {
         return userRoleMapper.selectUserRoleVo(select(
@@ -106,25 +109,48 @@ public class RoleService {
      */
     public void grantPermission(UserRole userRole) {
         UserContextHolder.validSuperAdmin();
-        userRole.setUpdateUserId(UserContextHolder.getUserId());
-        userRole.setUpdateTime(System.currentTimeMillis());
         if(userRole.getRoleId().equals(SysRole.USER)) {
+            userRole.setUpdateUserId(UserContextHolder.getUserId());
+            userRole.setUpdateTime(System.currentTimeMillis());
             userRole.setRoleId(SysRole.ADMIN);
+            int i = userRoleMapper.updateByPrimaryKeySelective(userRole);
+            if (i == 0){
+                throw new SystemException(ErrorCode.GRANT_ERROR);
+            }
             Optional<User> optionalUser = userMapper.selectByPrimaryKey(userRole.getUserId());
             User user = optionalUser.orElse(null);
             if(user == null) {
                 throw new SystemException(ErrorCode.USER_NOT_FOUND);
             }
+            user.setUpdateTime(System.currentTimeMillis());
+            user.setUpdateUserId(UserContextHolder.getUserId());
             user.setRoleId(SysRole.ADMIN);
+            int j = userMapper.updateByPrimaryKeySelective(user);
+            if (j == 0){
+                throw new SystemException(ErrorCode.GRANT_ERROR);
+            }
+            return;
         }
         if(userRole.getRoleId().equals(SysRole.ADMIN)) {
+            userRole.setUpdateUserId(UserContextHolder.getUserId());
+            userRole.setUpdateTime(System.currentTimeMillis());
             userRole.setRoleId(SysRole.SUPERADMIN);
+            int i = userRoleMapper.updateByPrimaryKeySelective(userRole);
+            if (i == 0){
+                throw new SystemException(ErrorCode.GRANT_ERROR);
+            }
             Optional<User> optionalUser = userMapper.selectByPrimaryKey(userRole.getUserId());
             User user = optionalUser.orElse(null);
             if(user == null) {
                 throw new SystemException(ErrorCode.USER_NOT_FOUND);
             }
+            user.setUpdateTime(System.currentTimeMillis());
+            user.setUpdateUserId(UserContextHolder.getUserId());
             user.setRoleId(SysRole.SUPERADMIN);
+            int j = userMapper.updateByPrimaryKeySelective(user);
+            if (j == 0){
+                throw new SystemException(ErrorCode.GRANT_ERROR);
+            }
         }
     }
 
@@ -134,16 +160,26 @@ public class RoleService {
      */
     public void revokePermission(UserRole userRole) {
         UserContextHolder.validSuperAdmin();
-        userRole.setUpdateUserId(UserContextHolder.getUserId());
-        userRole.setUpdateTime(System.currentTimeMillis());
         if(userRole.getRoleId().equals(SysRole.ADMIN)) {
+            userRole.setUpdateUserId(UserContextHolder.getUserId());
+            userRole.setUpdateTime(System.currentTimeMillis());
             userRole.setRoleId(SysRole.USER);
+            int i = userRoleMapper.updateByPrimaryKeySelective(userRole);
+            if (i == 0){
+                throw new SystemException(ErrorCode.REVOKE_ERROR);
+            }
             Optional<User> optionalUser = userMapper.selectByPrimaryKey(userRole.getUserId());
             User user = optionalUser.orElse(null);
             if(user == null) {
                 throw new SystemException(ErrorCode.USER_NOT_FOUND);
             }
             user.setRoleId(SysRole.USER);
+            user.setUpdateTime(System.currentTimeMillis());
+            user.setUpdateUserId(UserContextHolder.getUserId());
+            int j = userMapper.updateByPrimaryKeySelective(user);
+            if (j == 0){
+                throw new SystemException(ErrorCode.REVOKE_ERROR);
+            }
         }
     }
 
@@ -159,6 +195,10 @@ public class RoleService {
         userRole.setUpdateUserId(UserContextHolder.getUserId());
         userRole.setUpdateTime(System.currentTimeMillis());
         userRole.setStatus(SystemConstants.STATUS_NEGATIVE);
+        int i = userRoleMapper.updateByPrimaryKeySelective(userRole);
+        if (i == 0){
+            throw new SystemException(ErrorCode.CONFINE_ERROR);
+        }
         userService.deleteUser(userRole.getUserId());
     }
 
@@ -174,6 +214,10 @@ public class RoleService {
         userRole.setUpdateUserId(UserContextHolder.getUserId());
         userRole.setUpdateTime(System.currentTimeMillis());
         userRole.setStatus(SystemConstants.STATUS_NEGATIVE);
+        int i = userRoleMapper.updateByPrimaryKeySelective(userRole);
+        if (i == 0){
+            throw new SystemException(ErrorCode.CONFINE_ERROR);
+        }
         userService.deleteUser(userRole.getUserId());
     }
 }
