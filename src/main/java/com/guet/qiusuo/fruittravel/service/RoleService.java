@@ -6,16 +6,15 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
-import com.guet.qiusuo.fruittravel.dao.RoleDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.RoleMapper;
-import com.guet.qiusuo.fruittravel.dao.UserRoleDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.UserRoleMapper;
+import com.guet.qiusuo.fruittravel.dao.*;
+import com.guet.qiusuo.fruittravel.model.User;
 import com.guet.qiusuo.fruittravel.model.UserRole;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
@@ -29,6 +28,10 @@ public class RoleService {
     private UserRoleMapper userRoleMapper;
 
     private RoleMapper roleMapper;
+
+    private UserMapper userMapper;
+
+    private UserService userService;
 
     @Autowired
     public void setUserRoleMapper(UserRoleMapper userRoleMapper) {
@@ -89,6 +92,12 @@ public class RoleService {
         if (i == 0){
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        Optional<User> optionalUser = userMapper.selectByPrimaryKey(userRole.getUserId());
+        User user = optionalUser.orElse(null);
+        if(user == null) {
+            throw new SystemException(ErrorCode.USER_NOT_FOUND);
+        }
+        userService.updateUser(user);
     }
 
     /**
@@ -101,9 +110,21 @@ public class RoleService {
         userRole.setUpdateTime(System.currentTimeMillis());
         if(userRole.getRoleId().equals(SysRole.USER)) {
             userRole.setRoleId(SysRole.ADMIN);
+            Optional<User> optionalUser = userMapper.selectByPrimaryKey(userRole.getUserId());
+            User user = optionalUser.orElse(null);
+            if(user == null) {
+                throw new SystemException(ErrorCode.USER_NOT_FOUND);
+            }
+            user.setRoleId(SysRole.ADMIN);
         }
         if(userRole.getRoleId().equals(SysRole.ADMIN)) {
             userRole.setRoleId(SysRole.SUPERADMIN);
+            Optional<User> optionalUser = userMapper.selectByPrimaryKey(userRole.getUserId());
+            User user = optionalUser.orElse(null);
+            if(user == null) {
+                throw new SystemException(ErrorCode.USER_NOT_FOUND);
+            }
+            user.setRoleId(SysRole.SUPERADMIN);
         }
     }
 
@@ -117,6 +138,12 @@ public class RoleService {
         userRole.setUpdateTime(System.currentTimeMillis());
         if(userRole.getRoleId().equals(SysRole.ADMIN)) {
             userRole.setRoleId(SysRole.USER);
+            Optional<User> optionalUser = userMapper.selectByPrimaryKey(userRole.getUserId());
+            User user = optionalUser.orElse(null);
+            if(user == null) {
+                throw new SystemException(ErrorCode.USER_NOT_FOUND);
+            }
+            user.setRoleId(SysRole.USER);
         }
     }
 
@@ -132,6 +159,7 @@ public class RoleService {
         userRole.setUpdateUserId(UserContextHolder.getUserId());
         userRole.setUpdateTime(System.currentTimeMillis());
         userRole.setStatus(SystemConstants.STATUS_NEGATIVE);
+        userService.deleteUser(userRole.getUserId());
     }
 
     /**
@@ -146,5 +174,6 @@ public class RoleService {
         userRole.setUpdateUserId(UserContextHolder.getUserId());
         userRole.setUpdateTime(System.currentTimeMillis());
         userRole.setStatus(SystemConstants.STATUS_NEGATIVE);
+        userService.deleteUser(userRole.getUserId());
     }
 }
