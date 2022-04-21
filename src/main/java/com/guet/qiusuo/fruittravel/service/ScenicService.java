@@ -375,16 +375,15 @@ public class ScenicService {
 
         if(ticketService.searchTicket(scenic_id) == null) {
             scenicVO.setTicketMap(null);
-            scenicVO.setTicketDescription(null);
         }
         else {
-            scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).get(0).getDescription());
             Map<String,Object> map = new HashMap<>();
             for(Ticket ticket : ticketService.searchTicket(scenic_id)) {
                 TicketArray ticketArray = new TicketArray();
                 ArrayList<TicketArray> arrays = new ArrayList<>();
                 ticketArray.setPrice(ticket.getPrice());
                 ticketArray.setTicketType(ticket.getType());
+                ticketArray.setTicketDescription(ticket.getDescription());
                 arrays.add(ticketArray);
                 map.put(ticket.getId(),arrays);
                 scenicVO.setTicketMap(map);

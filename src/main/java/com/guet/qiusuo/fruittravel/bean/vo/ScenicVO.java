@@ -15,7 +15,6 @@ public class ScenicVO extends Scenic {
 
     private Map<String,Object> ticketMap;
 
-    @ApiModelProperty(value = "景区门票描述")//默认同景区门票描述一致
-    private String ticketDescription;
+
 }
 
