@@ -52,12 +52,12 @@ public class TicketService {
 
     /**
      *删除景点门票
-     * @param scenicId
+     * @param ticketId
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTicket(String scenicId){
+    public void deleteTicket(String ticketId){
         UserContextHolder.validAdmin();
-        Optional<Ticket> optionalTicket = ticketMapper.selectByPrimaryKey(scenicId);
+        Optional<Ticket> optionalTicket = ticketMapper.selectByPrimaryKey(ticketId);
         Ticket ticket = optionalTicket.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_TICKET));
         ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
         ticket.setUpdateUserId(UserContextHolder.getUserId());
@@ -66,7 +66,7 @@ public class TicketService {
         if(i == 0){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
-        LOG.info("删除景区门票成功,Id:{}",scenicId);
+        LOG.info("删除景区门票成功,Id:{}",ticketId);
     }
 
     /**
