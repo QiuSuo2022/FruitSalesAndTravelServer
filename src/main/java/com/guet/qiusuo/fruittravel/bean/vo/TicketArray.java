@@ -7,6 +7,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode()
 @Data
 public class TicketArray {
+    @ApiModelProperty("景区门票Id")
+    private String ticketId;
+
     @ApiModelProperty("景区门票价格")
     private Integer price;
 
@@ -26,6 +29,10 @@ public class TicketArray {
 
     public void setTicketDescription(String ticketDescription) {
         this.ticketDescription = ticketDescription;
+    }
+
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
     }
 
     public TicketArray(){}

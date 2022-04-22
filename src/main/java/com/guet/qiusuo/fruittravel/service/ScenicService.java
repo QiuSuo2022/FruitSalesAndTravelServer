@@ -374,19 +374,18 @@ public class ScenicService {
         scenicVO.setCreateUserId(scenic.getUpdateUserId());
 
         if(ticketService.searchTicket(scenic_id) == null) {
-            scenicVO.setTicketMap(null);
+            scenicVO.setTicketList(null);
         }
         else {
-            Map<String,Object> map = new HashMap<>();
+            ArrayList<TicketArray> arrays = new ArrayList<>();
             for(Ticket ticket : ticketService.searchTicket(scenic_id)) {
                 TicketArray ticketArray = new TicketArray();
-                ArrayList<TicketArray> arrays = new ArrayList<>();
                 ticketArray.setPrice(ticket.getPrice());
                 ticketArray.setTicketType(ticket.getType());
                 ticketArray.setTicketDescription(ticket.getDescription());
+                ticketArray.setTicketId(ticket.getId());
                 arrays.add(ticketArray);
-                map.put(ticket.getId(),arrays);
-                scenicVO.setTicketMap(map);
+                scenicVO.setTicketList(arrays);
             }
         }
         return scenicVO;
