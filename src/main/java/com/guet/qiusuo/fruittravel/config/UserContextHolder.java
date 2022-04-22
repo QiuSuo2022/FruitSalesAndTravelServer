@@ -37,7 +37,7 @@ public class UserContextHolder {
     }
 
     public static void validAdmin() {
-        if (!isAdmin()) {
+        if (!isAdmin() && !isSuperAdmin()) {
             throw new SystemException(ErrorCode.NO_ACCESS);
         }
     }
