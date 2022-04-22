@@ -288,16 +288,16 @@ public interface FruitMapper {
     List<Fruit> selectFruit(SelectStatementProvider selectStatement);
 
     @Select({
-            "select tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.create_time",
+            "SELECT tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.create_time,SUM(amount) AS sales,MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,AVG(grade) AS grades",
             "from tbl_fruit",
             "left join tbl_child_fruit",
-            "on tbl_fruit.id = tbl_child_fruit.fruit_id",
-            "left join tbl_cart",
-            "on tbl_child_fruit.id = tbl_cart.child_fruit_id",
+            "on tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_child_fruit.status = 1",
+            "LEFT JOIN tbl_order_form ON tbl_child_fruit.id = tbl_order_form.`fruit_id` and tbl_order_form.status = 1",
             "left join tbl_evaluate",
-            "on tbl_child_fruit.id = tbl_evaluate.product_id",
-            "where tbl_fruit.fruit_name like concat('%',#{nameLike},'%')",
-            "order by (tbl_child_fruit.fruit_price*0.25 + quantity*0.5 + grade*0.25)"
+            "on tbl_child_fruit.id = tbl_evaluate.product_id and tbl_evaluate.status = 1",
+            "where tbl_fruit.status = 1 and tbl_fruit.fruit_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.create_time",
+            "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
     })
     @Results(id = "FruitSortResult", value = {
             @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
@@ -306,8 +306,6 @@ public interface FruitMapper {
             @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
             @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "quantity", property = "quantity", jdbcType = JdbcType.INTEGER),
-            @Result(column = "grade", property = "grade", jdbcType = JdbcType.SMALLINT)
     })
     /**
      * @param nameLike
@@ -316,13 +314,13 @@ public interface FruitMapper {
     List<Fruit> selectFruitSort(@Param("nameLike") String nameLike);
 
     @Select({
-            "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description FROM tbl_child_fruit",
+            "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description,avg(grade) as grades FROM tbl_child_fruit",
             "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_fruit.status = 1",
             "LEFT JOIN tbl_evaluate ON tbl_evaluate.product_id = tbl_child_fruit.id and tbl_evaluate.status = 1",
-            "LEFT JOIN tbl_order_form ON tbl_order_form.fruit_id = tbl_fruit.id and tbl_order_form.payStatus = 1 ",
+            "LEFT JOIN tbl_order_form ON tbl_order_form.fruit_id = tbl_fruit.id and tbl_order_form.pay_status = 1 ",
             "where tbl_child_fruit.status = 1",
-            "GROUP BY tbl_child_fruit.fruit_name,description,grade",
-            "ORDER BY child_fruit_lowest_price*0.25 + grade*0.25 + sales*0.5"
+            "GROUP BY tbl_child_fruit.fruit_name,description",
+            "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
     })
     @Results(id = "FruitRecommend", value = {
             @Result(column = "fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR),
