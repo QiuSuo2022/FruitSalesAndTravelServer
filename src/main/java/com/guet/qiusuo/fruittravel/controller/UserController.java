@@ -54,8 +54,7 @@ public class UserController {
     @ApiOperation(value = "添加超级管理员",notes = "1 : user   2 : admin   3 : superAdmin")
     @PostMapping("/superAdmin")
     public void setSuperAdmin(@RequestBody User user) {
-        userService.addUser(user);
-        user.setRoleId(SysRole.SUPERADMIN);
+        userService.addSuperAdmin(user);
     }
 
     @ApiOperation(value = "分配管理员权限")

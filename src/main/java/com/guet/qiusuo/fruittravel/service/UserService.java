@@ -225,6 +225,28 @@ public class UserService {
     }
 
     /**
+     * 添加超级管理员
+     *
+     * @param user
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void addSuperAdmin(User user) {
+        user.setId(UUID.randomUUID().toString());
+        long now = System.currentTimeMillis();
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        user.setRoleId(SysRole.SUPERADMIN);
+        user.setStatus(SystemConstants.USER_INFO_NOT_COMPLETE);
+        user.setCreateUserId(UserContextHolder.getUserId());
+        int i = userMapper.insertSelective(user);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        roleService.insertUserRole(user.getId(), SysRole.SUPERADMIN);
+        LOG.info("超级管理员{}创建成功, Id: {}, 分配用户权限,", user.getUserName(), user.getId());
+    }
+
+    /**
      * 修改用户
      *
      * @param user
