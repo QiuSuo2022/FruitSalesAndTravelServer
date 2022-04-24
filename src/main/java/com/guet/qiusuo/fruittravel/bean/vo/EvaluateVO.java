@@ -5,9 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * @author user
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class EvaluteVO extends Evaluate {
+public class EvaluateVO extends Evaluate {
     @ApiModelProperty(value = "用户名")
     private String userName;
 }

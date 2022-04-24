@@ -13,6 +13,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ScenicEvaluateVO extends Evaluate {
+    @ApiModelProperty(value = "用户名")
+    private String userName;
+
     @ApiModelProperty(value = "景区追评详细")
-    private List<Evaluate> scenicReevaluate;
+    private List<EvaluateVO> scenicReevaluate;
 }

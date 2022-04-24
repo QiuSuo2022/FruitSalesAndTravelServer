@@ -11,6 +11,7 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.RoleDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserMapper;
+import com.guet.qiusuo.fruittravel.model.Fruit;
 import com.guet.qiusuo.fruittravel.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -201,6 +202,14 @@ public class UserService {
         return userVO;
     }
 
+    public String getUserNameByUserId(String userId) {
+        Optional<User> optionalUser = userMapper.selectByPrimaryKey(userId);
+        User user = optionalUser.orElse(null);
+        if (user == null) {
+            throw new SystemException(ErrorCode.USER_NOT_FOUND);
+        }
+        return user.getUserName();
+    }
 
     /**
      * 添加用户
