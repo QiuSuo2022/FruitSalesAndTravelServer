@@ -223,7 +223,7 @@ public class ScenicService {
      * @param scenic
      */
     public void addScenic(Scenic scenic) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validSuperAdmin();
         if (!getScenicByName(scenic.getScenicName()).isEmpty()) {
             //已经存在该景点
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
@@ -256,7 +256,7 @@ public class ScenicService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteScenic(String scenicId) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validSuperAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
         Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_SCENIC));
         scenic.setStatus(SystemConstants.STATUS_NEGATIVE);
@@ -280,7 +280,7 @@ public class ScenicService {
      * @param scenic
      */
     public boolean updateScenic(Scenic scenic) {
-        UserContextHolder.validAdmin();
+        UserContextHolder.validSuperAdmin();
         scenic.setUpdateTime(System.currentTimeMillis());
         scenic.setUpdateUserId(UserContextHolder.getUserId());
         int i = scenicMapper.updateByPrimaryKeySelective(scenic);
@@ -288,17 +288,6 @@ public class ScenicService {
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
         return true;
-    }
-
-    /**
-     * 查找Scenic
-     *
-     * @param scenicId
-     *
-     * @return
-     */
-    public Scenic searchScenic(String scenicId) {
-        return scenicMapper.selectByPrimaryKey(scenicId).orElse(null);
     }
 
     /**
