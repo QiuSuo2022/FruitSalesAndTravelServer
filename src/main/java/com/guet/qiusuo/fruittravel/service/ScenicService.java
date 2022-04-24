@@ -223,7 +223,7 @@ public class ScenicService {
      * @param scenic
      */
     public void addScenic(Scenic scenic) {
-        UserContextHolder.validSuperAdmin();
+        UserContextHolder.validAdmin();
         if (!getScenicByName(scenic.getScenicName()).isEmpty()) {
             //已经存在该景点
             throw new SystemException(ErrorCode.SCENIC_ALREADY_EXITS);
@@ -256,7 +256,7 @@ public class ScenicService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteScenic(String scenicId) {
-        UserContextHolder.validSuperAdmin();
+        UserContextHolder.validAdmin();
         Optional<Scenic> optionalScenic = scenicMapper.selectByPrimaryKey(scenicId);
         Scenic scenic = optionalScenic.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_SCENIC));
         scenic.setStatus(SystemConstants.STATUS_NEGATIVE);
@@ -280,7 +280,7 @@ public class ScenicService {
      * @param scenic
      */
     public boolean updateScenic(Scenic scenic) {
-        UserContextHolder.validSuperAdmin();
+        UserContextHolder.validAdmin();
         scenic.setUpdateTime(System.currentTimeMillis());
         scenic.setUpdateUserId(UserContextHolder.getUserId());
         int i = scenicMapper.updateByPrimaryKeySelective(scenic);

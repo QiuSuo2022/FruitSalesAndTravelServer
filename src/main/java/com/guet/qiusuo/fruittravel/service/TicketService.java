@@ -35,7 +35,7 @@ public class TicketService {
      * @param ticket
      */
     public void addTicket(Ticket ticket) {
-        UserContextHolder.validSuperAdmin();
+        UserContextHolder.validAdmin();
         long now = System.currentTimeMillis();
         ticket.setId(UUID.randomUUID().toString().replace("-", ""));
         ticket.setCreateTime(now);
@@ -56,7 +56,7 @@ public class TicketService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void deleteTicket(String ticketId){
-        UserContextHolder.validSuperAdmin();
+        UserContextHolder.validAdmin();
         Optional<Ticket> optionalTicket = ticketMapper.selectByPrimaryKey(ticketId);
         Ticket ticket = optionalTicket.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_TICKET));
         ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
@@ -74,7 +74,7 @@ public class TicketService {
      * @param ticket
      */
     public void updateTicket(Ticket ticket){
-        UserContextHolder.validSuperAdmin();
+        UserContextHolder.validAdmin();
         ticket.setUpdateTime(System.currentTimeMillis());
         ticket.setUpdateUserId(UserContextHolder.getUserId());
         int i = ticketMapper.updateByPrimaryKeySelective(ticket);
