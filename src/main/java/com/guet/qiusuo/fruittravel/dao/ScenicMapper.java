@@ -291,14 +291,14 @@ public interface ScenicMapper {
     List<Scenic> selectScenic(SelectStatementProvider selectStatement);
 
     @Select({
-            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,sum(amount) as sales",
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,sum(amount) as sales,avg(grade) as grades",
             "FROM tbl_scenic",
             "LEFT JOIN tbl_ticket ON tbl_scenic.id = tbl_ticket.`scenic_id` AND tbl_ticket.`status` = 1",
             "LEFT JOIN tbl_evaluate ON tbl_scenic.id = tbl_evaluate.`product_id` AND tbl_evaluate.`status` = 1",
             "LEFT JOIN tbl_order_form ON tbl_scenic.id = tbl_order_form.`scenic_id` AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.pay_status = 1",
             "where scenic_name like concat('%',#{nameLike},'%')",
-            "group by tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,price,grade",
-            "order by tbl_ticket.price*0.25 + grade * 0.25 + sales*0.5"
+            "group by tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,price",
+            "order by tbl_ticket.price*0.25 + grades * 0.25 + sales*0.5"
     })
     @Results(id = "ScenicSortResult", value = {
             @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),

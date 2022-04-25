@@ -23,7 +23,7 @@ public class TicketController {
 
     @ApiOperation(value = "删除景点门票",notes = "门票类型, 1--成人票, 2--儿童票, 3--老人票")
     @DeleteMapping
-    public void deleteTicket(@RequestParam String scenicId) {ticketService.deleteTicket(scenicId);}
+    public void deleteTicket(@RequestParam String ticketId) {ticketService.deleteTicket(ticketId);}
 
     @ApiOperation(value = "修改景区门票",notes = "门票类型, 1--成人票, 2--儿童票, 3--老人票")
     @PutMapping

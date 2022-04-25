@@ -13,6 +13,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class FruitEvaluateVO extends Evaluate {
+    @ApiModelProperty(value = "用户名")
+    private String userName;
+
     @ApiModelProperty(value = "水果追评详细")
-    private List<Evaluate> fruitReevaluate;
+    private List<EvaluateVO> fruitReevaluate;
 }

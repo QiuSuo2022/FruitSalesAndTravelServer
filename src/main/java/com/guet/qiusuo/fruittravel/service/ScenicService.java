@@ -291,17 +291,6 @@ public class ScenicService {
     }
 
     /**
-     * 查找Scenic
-     *
-     * @param scenicId
-     *
-     * @return
-     */
-    public Scenic searchScenic(String scenicId) {
-        return scenicMapper.selectByPrimaryKey(scenicId).orElse(null);
-    }
-
-    /**
      * 查找全部景点
      *
      * @return
@@ -374,20 +363,18 @@ public class ScenicService {
         scenicVO.setCreateUserId(scenic.getUpdateUserId());
 
         if(ticketService.searchTicket(scenic_id) == null) {
-            scenicVO.setTicketMap(null);
-            scenicVO.setTicketDescription(null);
+            scenicVO.setTicketList(null);
         }
         else {
-            scenicVO.setTicketDescription(ticketService.searchTicket(scenic_id).get(0).getDescription());
-            Map<String,Object> map = new HashMap<>();
+            ArrayList<TicketArray> arrays = new ArrayList<>();
             for(Ticket ticket : ticketService.searchTicket(scenic_id)) {
                 TicketArray ticketArray = new TicketArray();
-                ArrayList<TicketArray> arrays = new ArrayList<>();
                 ticketArray.setPrice(ticket.getPrice());
                 ticketArray.setTicketType(ticket.getType());
+                ticketArray.setTicketDescription(ticket.getDescription());
+                ticketArray.setTicketId(ticket.getId());
                 arrays.add(ticketArray);
-                map.put(ticket.getId(),arrays);
-                scenicVO.setTicketMap(map);
+                scenicVO.setTicketList(arrays);
             }
         }
         return scenicVO;

@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.controller;
 
+import com.guet.qiusuo.fruittravel.bean.vo.EvaluateVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitEvaluateVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
@@ -57,7 +58,7 @@ public class EvaluateController {
 
     @ApiOperation(value = "查询追评")
     @GetMapping("/searchReevaluate")
-    public List<Evaluate> searchReevaluate(@RequestParam String evaluateId) {
+    public List<EvaluateVO> searchReevaluate(@RequestParam String evaluateId) {
         return evaluateService.searchReevaluate(evaluateId);
     }
 

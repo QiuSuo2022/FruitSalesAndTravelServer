@@ -35,7 +35,11 @@ public enum ErrorCode {
     PAY_ERROR(-1,"system.error.pay.error"),
     UNPAID_ERROR(-1,"system.error.unpaid"),
     ORDERBYTYPE_ERROR(-1,"system.error.no_found.order_by_type"),
-    NO_FOUND_IMAGE_ERROR(-1,"system.error.no_found.image")
+    NO_FOUND_IMAGE_ERROR(-1,"system.error.no_found.image"),
+    USER_ROLE_NOT_FOUND(-1,"system.error.no_found.user_role"),
+    GRANT_ERROR(-1,"system.error.grant.error"),
+    REVOKE_ERROR(-1,"system.error.revoke.error"),
+    CONFINE_ERROR(-1,"system.error.confine.error")
     ;
 
     @Override

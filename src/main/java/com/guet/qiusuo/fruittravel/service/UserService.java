@@ -11,6 +11,7 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.RoleDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.UserMapper;
+import com.guet.qiusuo.fruittravel.model.Fruit;
 import com.guet.qiusuo.fruittravel.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -201,6 +202,14 @@ public class UserService {
         return userVO;
     }
 
+    public String getUserNameByUserId(String userId) {
+        Optional<User> optionalUser = userMapper.selectByPrimaryKey(userId);
+        User user = optionalUser.orElse(null);
+        if (user == null) {
+            throw new SystemException(ErrorCode.USER_NOT_FOUND);
+        }
+        return user.getUserName();
+    }
 
     /**
      * 添加用户
@@ -222,6 +231,28 @@ public class UserService {
         }
         roleService.insertUserRole(user.getId(), SysRole.USER);
         LOG.info("用户{}创建成功, Id: {}, 分配用户权限,", user.getUserName(), user.getId());
+    }
+
+    /**
+     * 添加超级管理员
+     *
+     * @param user
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void addSuperAdmin(User user) {
+        user.setId(UUID.randomUUID().toString());
+        long now = System.currentTimeMillis();
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        user.setRoleId(SysRole.SUPERADMIN);
+        user.setStatus(SystemConstants.USER_INFO_NOT_COMPLETE);
+        user.setCreateUserId(UserContextHolder.getUserId());
+        int i = userMapper.insertSelective(user);
+        if (i == 0) {
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        roleService.insertUserRole(user.getId(), SysRole.SUPERADMIN);
+        LOG.info("超级管理员{}创建成功, Id: {}, 分配用户权限,", user.getUserName(), user.getId());
     }
 
     /**

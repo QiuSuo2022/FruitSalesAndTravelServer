@@ -5,17 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 /**
- * @author dowelldoss
+ * @author user
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ScenicEvaluateVO extends Evaluate {
+public class EvaluateVO extends Evaluate {
     @ApiModelProperty(value = "用户名")
     private String userName;
-
-    @ApiModelProperty(value = "景区追评详细")
-    private List<EvaluateVO> scenicReevaluate;
 }

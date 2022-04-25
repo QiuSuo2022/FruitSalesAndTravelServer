@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitEvaluateVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
-import com.guet.qiusuo.fruittravel.bean.vo.ScenicEvaluateVO;
+import com.guet.qiusuo.fruittravel.bean.vo.EvaluateVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -12,6 +12,7 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.EvaluateMapper;
+import com.guet.qiusuo.fruittravel.dao.UserDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.model.Evaluate;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
@@ -37,6 +38,11 @@ public class EvaluateService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private EvaluateMapper evaluateMapper;
+
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) { this.userService = userService; }
 
     @Autowired
     public void setEvaluateMapper(EvaluateMapper evaluateMapper) {
@@ -171,8 +177,8 @@ public class EvaluateService {
      * @param evaluateId
      * @return
      */
-    public List<Evaluate> searchReevaluate(String evaluateId) {
-         return evaluateMapper.selectMany(select(
+    public List<EvaluateVO> searchReevaluate(String evaluateId) {
+         List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
                 EvaluateDynamicSqlSupport.id,
                 EvaluateDynamicSqlSupport.userId,
                 EvaluateDynamicSqlSupport.productId,
@@ -191,7 +197,26 @@ public class EvaluateService {
                          .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                         .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.REEVALUATE_TYPE))
                         .build().render(RenderingStrategies.MYBATIS3));
-
+         if (evaluateList == null) {
+             return null;
+         }
+         List<EvaluateVO> evaluateVOList = new ArrayList<>();
+         for(Evaluate evaluate : evaluateList) {
+             EvaluateVO evaluateVO = new EvaluateVO();
+             evaluateVO.setId(evaluate.getId());
+             evaluateVO.setEvaluateId(evaluate.getEvaluateId());
+             evaluateVO.setProductId(evaluate.getProductId());
+             evaluateVO.setDetail(evaluate.getDetail());
+             evaluateVO.setGrade(evaluate.getGrade());
+             evaluateVO.setType(evaluate.getType());
+             evaluateVO.setStatus(evaluate.getStatus());
+             evaluateVO.setCreateTime(evaluate.getCreateTime());
+             evaluateVO.setUpdateTime(evaluate.getUpdateTime());
+             evaluateVO.setCreateUserId(evaluate.getUpdateUserId());
+             evaluateVO.setUserName(userService.getUserNameByUserId(evaluate.getUserId()));
+             evaluateVOList.add(evaluateVO);
+         }
+        return evaluateVOList;
     }
     /**
      * 查询水果评价(包括主评和追评)
@@ -236,6 +261,7 @@ public class EvaluateService {
         fruitEvaluateVO.setCreateTime(evaluate.getCreateTime());
         fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
+        fruitEvaluateVO.setUserName(userService.getUserNameByUserId(evaluate.getUserId()));
 
         if(!searchReevaluate(evaluateId).isEmpty()) {
             fruitEvaluateVO.setFruitReevaluate(searchReevaluate(evaluateId));
@@ -289,6 +315,7 @@ public class EvaluateService {
         scenicEvaluateVO.setCreateTime(evaluate.getCreateTime());
         scenicEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
         scenicEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
+        scenicEvaluateVO.setUserName(userService.getUserNameByUserId(evaluate.getUserId()));
 
         if(!searchReevaluate(evaluateId).isEmpty()) {
             scenicEvaluateVO.setScenicReevaluate(searchReevaluate(evaluateId));
@@ -345,6 +372,7 @@ public class EvaluateService {
             fruitEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
             fruitEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
             fruitEvaluateVO.setFruitReevaluate(searchReevaluate(evaluate.getEvaluateId()));
+            fruitEvaluateVO.setUserName(userService.getUserNameByUserId(evaluate.getUserId()));
             fruitEvaluateVOList.add(fruitEvaluateVO);
         }
         PageList<FruitEvaluateVO> pageList = new PageList<>();
@@ -399,6 +427,7 @@ public class EvaluateService {
                 scenicEvaluateVO.setUpdateTime(evaluate.getUpdateTime());
                 scenicEvaluateVO.setCreateUserId(evaluate.getUpdateUserId());
                 scenicEvaluateVO.setScenicReevaluate(searchReevaluate(evaluate.getEvaluateId()));
+                scenicEvaluateVO.setUserName(userService.getUserNameByUserId(evaluate.getUserId()));
                 scenicEvaluateVOList.add(scenicEvaluateVO);
             }
             PageList<ScenicEvaluateVO> pageList = new PageList<>();
