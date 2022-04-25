@@ -49,7 +49,7 @@ public class ImageController {
         this.uploadImgService = uploadImgService;
     }
 
-    @ApiOperation(value = "绑定图片",notes = "图片类别: 0--轮播图, 1--水果商品图, 2--景区图, 3--商品评价图")
+    @ApiOperation(value = "上传图片",notes = "图片类别: 0--轮播图, 1--水果商品图, 2--景区图, 3--商品评价图")
     @PostMapping(value = "/upload")
     public ImageFile uploadImg(@RequestParam MultipartFile file,
                                @RequestParam(required = false) Short imgType,

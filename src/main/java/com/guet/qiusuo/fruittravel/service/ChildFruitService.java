@@ -130,6 +130,8 @@ public class ChildFruitService {
         return childFruitMapper.selectMany(select(
                 ChildFruitDynamicSqlSupport.id,
                 ChildFruitDynamicSqlSupport.fruitId,
+                ChildFruitDynamicSqlSupport.fruitPrice,
+                ChildFruitDynamicSqlSupport.stock,
                 ChildFruitDynamicSqlSupport.fruitName,
                 ChildFruitDynamicSqlSupport.status,
                 ChildFruitDynamicSqlSupport.updateTime,
