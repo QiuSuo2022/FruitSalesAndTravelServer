@@ -154,6 +154,30 @@ public class RoleService {
         }
     }
 
+    //获取所有的管理员
+    public List<User> getAllAdmin() {
+        return userMapper.selectMany(select(
+                UserDynamicSqlSupport.id,
+                UserDynamicSqlSupport.userName,
+                UserDynamicSqlSupport.realName,
+                UserDynamicSqlSupport.token,
+                UserDynamicSqlSupport.phone,
+                UserDynamicSqlSupport.gender,
+                UserDynamicSqlSupport.avatarUrl,
+                UserDynamicSqlSupport.openid,
+                UserDynamicSqlSupport.roleId,
+                UserDynamicSqlSupport.status,
+                UserDynamicSqlSupport.createTime,
+                UserDynamicSqlSupport.updateTime,
+                UserDynamicSqlSupport.createUserId,
+                UserDynamicSqlSupport.updateUserId
+        )
+                        .from(UserDynamicSqlSupport.user)
+                        .where(UserDynamicSqlSupport.status,isNotEqualTo(SystemConstants.STATUS_NEGATIVE))
+                        .and(UserDynamicSqlSupport.roleId,isIn(SysRole.SUPERADMIN,SysRole.ADMIN))
+                        .build().render(RenderingStrategies.MYBATIS3));
+    }
+
     /**
      * 超级管理员收回权限
      * @param userRole

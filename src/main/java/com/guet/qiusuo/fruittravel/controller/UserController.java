@@ -14,6 +14,8 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author libuyan
  * @date 2022/1/29 18:33
@@ -79,6 +81,10 @@ public class UserController {
         user.setId(UserContextHolder.getUserId());
         userService.updateUser(user);
     }
+
+    @ApiOperation(value = "获取管理员列表")
+    @GetMapping("/getAllAdmin")
+    public List<User> getAllAdmin() { return roleService.getAllAdmin(); }
 
     @DeleteMapping
     @ApiOperation(value = "删除用户")
