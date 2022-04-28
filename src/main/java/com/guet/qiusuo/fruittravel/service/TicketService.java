@@ -57,16 +57,35 @@ public class TicketService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteTicket(String ticketId){
         UserContextHolder.validAdmin();
-        Optional<Ticket> optionalTicket = ticketMapper.selectByPrimaryKey(ticketId);
-        Ticket ticket = optionalTicket.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_TICKET));
-        ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
-        ticket.setUpdateUserId(UserContextHolder.getUserId());
-        ticket.setUpdateTime(System.currentTimeMillis());
-        int i = ticketMapper.updateByPrimaryKey(ticket);
-        if(i == 0){
-            throw new SystemException(ErrorCode.DELETE_ERROR);
+        List<Ticket> ticketList = ticketMapper.selectMany(select(
+                TicketDynamicSqlSupport.id,
+                TicketDynamicSqlSupport.scenicId,
+                TicketDynamicSqlSupport.type,
+                TicketDynamicSqlSupport.price,
+                TicketDynamicSqlSupport.description,
+                TicketDynamicSqlSupport.status,
+                TicketDynamicSqlSupport.createTime,
+                TicketDynamicSqlSupport.updateTime,
+                TicketDynamicSqlSupport.createUserId,
+                TicketDynamicSqlSupport.updateUserId
+        )
+                        .from(TicketDynamicSqlSupport.ticket)
+                        .where(TicketDynamicSqlSupport.scenicId,isEqualTo(ticketId))
+                        .and(TicketDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                        .build().render(RenderingStrategies.MYBATIS3));
+        if(ticketList.isEmpty()) {
+            throw new SystemException(ErrorCode.NO_FOUND_TICKET);
         }
-        LOG.info("删除景区门票成功,Id:{}",ticketId);
+        for(Ticket ticket : ticketList) {
+            ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
+            ticket.setUpdateUserId(UserContextHolder.getUserId());
+            ticket.setUpdateTime(System.currentTimeMillis());
+            int i = ticketMapper.updateByPrimaryKey(ticket);
+            if(i == 0){
+                throw new SystemException(ErrorCode.DELETE_ERROR);
+            }
+        }
+        LOG.info("删除景区门票成功,ScenicId:{}",ticketId);
     }
 
     /**
@@ -104,7 +123,7 @@ public class TicketService {
                                     .where(TicketDynamicSqlSupport.scenicId, isEqualTo(scenicId))
                                     .and(TicketDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                                     .build().render(RenderingStrategies.MYBATIS3));
-        if(ticketList == null) {
+        if(ticketList.isEmpty()) {
             //throw new SystemException(ErrorCode.NO_FOUND_TICKET);
             return null;
         }
