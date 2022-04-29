@@ -10,12 +10,14 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.Fruit;
+import org.mybatis.dynamic.sql.SortSpecification;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,14 +51,14 @@ public class FruitService {
     /**
      * 获取水果列表
      */
-    public PageList<Fruit> getFruitList(String id, String fruitName, String fruitPrice, String nameLike, String departurePoint
+    public PageList<FruitVO> getFruitList(String id, String fruitName, String fruitPrice, String nameLike, String departurePoint
             , String description, Integer deliveryCost,Short orderByType, Integer page, Integer pageSize) {
         if (nameLike == null || nameLike.length() == 0) {
             nameLike = "";
         }
 
         PageHelper.startPage(page,pageSize);
-        List<Fruit> fruitList;
+        List<FruitVO> fruitList;
         if(orderByType.equals(SystemConstants.PRICE_ASC)) {
             fruitList = fruitMapper.selectFruitSortByPriceASC(nameLike);
         }
@@ -64,82 +66,16 @@ public class FruitService {
             fruitList = fruitMapper.selectFruitSortByPriceDESC(nameLike);
         }
         else if(orderByType.equals(SystemConstants.SALE_ASC)) {
-            fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.fruitName,
-                            FruitDynamicSqlSupport.fruitPrice,
-                            FruitDynamicSqlSupport.description,
-                            FruitDynamicSqlSupport.departurePoint,
-                            FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.createTime
-                    )
-                            .from(FruitDynamicSqlSupport.fruit)
-                            .leftJoin(OrderFormDynamicSqlSupport.orderForm)
-                            .on(FruitDynamicSqlSupport.id, equalTo(OrderFormDynamicSqlSupport.fruitId))
-                            .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
-                            .orderBy(OrderFormDynamicSqlSupport.amount)
-                            .build().render(RenderingStrategies.MYBATIS3)
-            );
+            fruitList = fruitMapper.selectFruitSortBySalesASC(nameLike);
         }
         else if(orderByType.equals(SystemConstants.SALE_DESC)) {
-            fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.fruitName,
-                            FruitDynamicSqlSupport.fruitPrice,
-                            FruitDynamicSqlSupport.description,
-                            FruitDynamicSqlSupport.departurePoint,
-                            FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.createTime
-                    )
-                        .from(FruitDynamicSqlSupport.fruit)
-                        .leftJoin(OrderFormDynamicSqlSupport.orderForm)
-                        .on(FruitDynamicSqlSupport.id, equalTo(OrderFormDynamicSqlSupport.fruitId))
-                        .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                        .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                        .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                        .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
-                        .orderBy(OrderFormDynamicSqlSupport.amount.descending())
-                        .build().render(RenderingStrategies.MYBATIS3)
-            );
+            fruitList = fruitMapper.selectFruitSortBySalesDESC(nameLike);
         }
         else if(orderByType.equals(SystemConstants.GRADE_ASC)) {
-            fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.fruitName,
-                            FruitDynamicSqlSupport.fruitPrice,
-                            FruitDynamicSqlSupport.description,
-                            FruitDynamicSqlSupport.departurePoint,
-                            FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.createTime
-                    )
-                            .from(FruitDynamicSqlSupport.fruit)
-                            .leftJoin(EvaluateDynamicSqlSupport.evaluate)
-                            .on(FruitDynamicSqlSupport.id, equalTo(EvaluateDynamicSqlSupport.productId))
-                            .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .orderBy(EvaluateDynamicSqlSupport.grade)
-                            .build().render(RenderingStrategies.MYBATIS3)
-            );
+            fruitList = fruitMapper.selectFruitSortByGradeASC(nameLike);
         }
         else if(orderByType.equals(SystemConstants.GRADE_DESC)) {
-            fruitList = fruitMapper.selectFruit(select(
-                            FruitDynamicSqlSupport.fruitName,
-                            FruitDynamicSqlSupport.fruitPrice,
-                            FruitDynamicSqlSupport.description,
-                            FruitDynamicSqlSupport.departurePoint,
-                            FruitDynamicSqlSupport.deliveryCost,
-                            FruitDynamicSqlSupport.createTime
-                    )
-                            .from(FruitDynamicSqlSupport.fruit)
-                            .leftJoin(EvaluateDynamicSqlSupport.evaluate)
-                            .on(FruitDynamicSqlSupport.id, equalTo(EvaluateDynamicSqlSupport.productId))
-                            .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .and(FruitDynamicSqlSupport.fruitName,isLike("%" + nameLike + "%"))
-                            .and(EvaluateDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                            .orderBy(EvaluateDynamicSqlSupport.grade.descending())
-                            .build().render(RenderingStrategies.MYBATIS3)
-            );
+            fruitList = fruitMapper.selectFruitSortByGradeDESC(nameLike);
         }
         //综合排序,先按照加权平均计算,销量权重占0.5,价格和评分各占0.25
         else if(orderByType.equals(SystemConstants.SORT_ALL)) {
@@ -148,7 +84,7 @@ public class FruitService {
         else {
             throw new SystemException(ErrorCode.ORDERBYTYPE_ERROR);
         }
-        PageList<Fruit> pageList = new PageList<>();
+        PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitList);
         pageList.setPageInfo(new PageInfo<>(fruitList));
         return pageList;
@@ -255,30 +191,12 @@ public class FruitService {
      * 查询全部Fruit
      * @return
      */
-    public PageList<Fruit> getAllFruits(Integer page, Integer pageSize){
+    public PageList<FruitVO> getAllFruits(Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize);
-        List<Fruit> fruitList;
-        fruitList = fruitMapper.selectMany(select(
-                FruitDynamicSqlSupport.id,
-                FruitDynamicSqlSupport.fruitName,
-                FruitDynamicSqlSupport.fruitPrice,
-                FruitDynamicSqlSupport.description,
-                FruitDynamicSqlSupport.departurePoint,
-                FruitDynamicSqlSupport.deliveryCost,
-                FruitDynamicSqlSupport.status,
-                FruitDynamicSqlSupport.createTime,
-                FruitDynamicSqlSupport.updateTime,
-                FruitDynamicSqlSupport.createUserId,
-                FruitDynamicSqlSupport.updateUserId
-        )
-                .from(FruitDynamicSqlSupport.fruit)
-                .where(FruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                .orderBy(FruitDynamicSqlSupport.createTime)
-                .build().render(RenderingStrategies.MYBATIS3));
-
-        PageList<Fruit> pageList = new PageList<>();
-        pageList.setList(fruitList);
-        pageList.setPageInfo(new PageInfo<>(fruitList));
+        List<FruitVO> fruitVOList = fruitMapper.getAllFruits();
+        PageList<FruitVO> pageList = new PageList<>();
+        pageList.setList(fruitVOList);
+        pageList.setPageInfo(new PageInfo<>(fruitVOList));
         return pageList;
     }
 

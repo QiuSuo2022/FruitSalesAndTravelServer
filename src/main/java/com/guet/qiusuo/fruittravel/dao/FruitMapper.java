@@ -260,24 +260,6 @@ public interface FruitMapper {
     }
 
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
-    @Results(id = "FruitVOResult", value = {
-            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
-            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
-            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
-            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
-            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.BIGINT),
-            @Result(column = "create_user_id", property = "createUserId", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "update_user_id", property = "updateUserId", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "stock", property = "stock", jdbcType = JdbcType.INTEGER),
-            @Result(column = "child_fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR)
-    })
-    List<FruitVO> selectFruitVOs(SelectStatementProvider selectStatement);
-
-    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @Results(id = "Fruit", value = {
             @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR, id = true),
             @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
@@ -288,15 +270,15 @@ public interface FruitMapper {
     List<Fruit> selectFruit(SelectStatementProvider selectStatement);
 
     @Select({
-            "SELECT tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.create_time,SUM(amount) AS sales,MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,AVG(grade) AS grades",
+            "SELECT tbl_fruit.id,tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.create_time,SUM(amount) AS sales,MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,AVG(grade) AS grades",
             "from tbl_fruit",
             "left join tbl_child_fruit",
             "on tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_child_fruit.status = 1",
-            "LEFT JOIN tbl_order_form ON tbl_child_fruit.id = tbl_order_form.`fruit_id` and tbl_order_form.status = 1",
+            "LEFT JOIN tbl_order_form ON tbl_fruit.id = tbl_order_form.`fruit_id` and tbl_order_form.status = 1 and tbl_order_form.pay_status = 1",
             "left join tbl_evaluate",
             "on tbl_child_fruit.id = tbl_evaluate.product_id and tbl_evaluate.status = 1",
             "where tbl_fruit.status = 1 and tbl_fruit.fruit_name like concat('%',#{nameLike},'%')",
-            "GROUP BY tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.create_time",
+            "GROUP BY tbl_fruit.id",
             "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
     })
     @Results(id = "FruitSortResult", value = {
@@ -306,12 +288,13 @@ public interface FruitMapper {
             @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
             @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
     })
     /**
      * @param nameLike
      * @return
      */
-    List<Fruit> selectFruitSort(@Param("nameLike") String nameLike);
+    List<FruitVO> selectFruitSort(@Param("nameLike") String nameLike);
 
     @Select({
             "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description,avg(grade) as grades FROM tbl_child_fruit",
@@ -332,9 +315,12 @@ public interface FruitMapper {
     List<FruitVO> FruitRecommend();
 
     @Select({
-            "SELECT* from tbl_fruit",
-            "WHERE status = 1",
+            "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
+            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
+            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "WHERE tbl_fruit.status = 1",
             "AND fruit_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_fruit.`id`",
             "order by (fruit_price+0)"
     })
     @Results(id = "FruitPriceASCSortResult", value = {
@@ -343,14 +329,18 @@ public interface FruitMapper {
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
             @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
             @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
-            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
     })
-    List<Fruit> selectFruitSortByPriceASC(@Param("nameLike") String nameLike);
+    List<FruitVO> selectFruitSortByPriceASC(@Param("nameLike") String nameLike);
 
     @Select({
-            "SELECT* from tbl_fruit",
-            "WHERE status = 1",
+            "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
+            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
+            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "WHERE tbl_fruit.status = 1",
             "AND fruit_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_fruit.`id`",
             "order by (fruit_price+0) DESC"
     })
     @Results(id = "FruitPriceDESCSortResult", value = {
@@ -359,8 +349,107 @@ public interface FruitMapper {
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
             @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
             @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
-            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
     })
-    List<Fruit> selectFruitSortByPriceDESC(@Param("nameLike") String nameLike);
+    List<FruitVO> selectFruitSortByPriceDESC(@Param("nameLike") String nameLike);
 
+    @Select({
+            "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
+            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
+            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "WHERE tbl_fruit.status = 1",
+            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_fruit.`id`",
+            "order by sales DESC"
+    })
+    @Results(id = "FruitSalesDESCSortResult", value = {
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
+    })
+    List<FruitVO> selectFruitSortBySalesDESC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
+            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
+            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "WHERE tbl_fruit.status = 1",
+            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_fruit.`id`",
+            "order by sales"
+    })
+    @Results(id = "FruitSalesASCSortResult", value = {
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
+    })
+    List<FruitVO> selectFruitSortBySalesASC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales,avg(grade) as grades",
+            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
+            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "LEFT JOIN tbl_child_fruit ON tbl_child_fruit.`fruit_id` = tbl_fruit.`id` AND tbl_child_fruit.`status` = 1",
+            "LEFT JOIN tbl_evaluate ON tbl_evaluate.`product_id` = tbl_child_fruit.`id` AND tbl_child_fruit.`status` = 1",
+            "WHERE tbl_fruit.status = 1",
+            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_fruit.`id`",
+            "order by grades"
+    })
+    List<FruitVO> selectFruitSortByGradeASC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales,avg(grade) as grades",
+            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
+            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "LEFT JOIN tbl_child_fruit ON tbl_child_fruit.`fruit_id` = tbl_fruit.`id` AND tbl_child_fruit.`status` = 1",
+            "LEFT JOIN tbl_evaluate ON tbl_evaluate.`product_id` = tbl_child_fruit.`id` AND tbl_child_fruit.`status` = 1",
+            "WHERE tbl_fruit.status = 1",
+            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_fruit.`id`",
+            "order by grades DESC"
+    })
+    @Results(id = "FruitGradesDESCSortResult", value = {
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
+    })
+    List<FruitVO> selectFruitSortByGradeDESC(@Param("nameLike") String nameLike);
+
+
+    @Select({
+            "SELECT tbl_fruit.`id`,fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`status`,tbl_fruit.`create_time`,tbl_fruit.`update_time`,tbl_fruit.`create_user_id`,tbl_fruit.`update_user_id`,SUM(amount) AS sales",
+            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
+            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "where tbl_fruit.`status` = 1",
+            "GROUP BY tbl_fruit.`id`"
+    })
+    @Results(id = "getAllFruitResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "departure_point", property = "departurePoint", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "delivery_cost", property = "deliveryCost", jdbcType = JdbcType.INTEGER),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "create_user_id", property = "createUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_user_id", property = "updateUserId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER)
+    })
+    List<FruitVO> getAllFruits();
 }
