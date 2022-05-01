@@ -5,6 +5,7 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
+import com.guet.qiusuo.fruittravel.dao.GoodsMapper;
 import com.guet.qiusuo.fruittravel.dao.OrderFormMapper;
 import com.guet.qiusuo.fruittravel.model.OrderForm;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class OrderFormService {
 
     private OrderFormMapper orderFormMapper;
     private static final Logger LOG = getLogger(lookup().lookupClass());
-
+    private GoodsService goodsService;
     private PayService payService;
 
     @Autowired
@@ -42,6 +43,8 @@ public class OrderFormService {
         this.orderFormMapper = orderFormMapper;
     }
 
+    @Autowired
+    public void setGoodsService(GoodsService goodsService) { this.goodsService = goodsService; }
     /**
      * 创建订单
      * @param orderForm
@@ -65,12 +68,6 @@ public class OrderFormService {
         orderForm.setUpdateUserId(UserContextHolder.getUserId());
         orderForm.setPayStatus(SystemConstants.UNPAID);
         orderForm.setStatus(SystemConstants.STATUS_ACTIVE);
-        //防止外键约束错误
-        if (orderForm.getFruitId() == null){
-            orderForm.setFruitId(SystemConstants.nullFlag);
-        }else if (orderForm.getScenicId() == null){
-            orderForm.setScenicId(SystemConstants.nullFlag);
-        }
         int i = orderFormMapper.insert(orderForm);
         if (i == 0){
             throw new SystemException(ErrorCode.INSERT_ERROR);
@@ -89,22 +86,16 @@ public class OrderFormService {
             throw new SystemException(ErrorCode.FRUIT_ALREADY_EXITS);
         }
         long now = System.currentTimeMillis();
+        orderForm.setFee(goodsService.selectGoodsByOrderId(orderForm.getId()).getAmount() * goodsService.selectGoodsByOrderId(orderForm.getId()).getPrice());
         orderForm.setId(UUID.randomUUID().toString().replace("-", ""));
-        orderForm.setFee(orderForm.getAmount() * orderForm.getPrice());
         orderForm.setCreateTime(now);
         orderForm.setUpdateTime(now);
         orderForm.setCreateUserId(UserContextHolder.getUserId());
         orderForm.setUpdateUserId(UserContextHolder.getUserId());
         orderForm.setPayStatus(SystemConstants.UNPAID);
         orderForm.setStatus(SystemConstants.STATUS_ACTIVE);
-        LOG.info(orderForm.getFruitId());
-        LOG.info(orderForm.getScenicId());
-        //防止外键约束错误
-        if (orderForm.getFruitId() == null){
-            orderForm.setFruitId(SystemConstants.nullFlag);
-        }else if (orderForm.getScenicId() == null){
-            orderForm.setScenicId(SystemConstants.nullFlag);
-        }
+        LOG.info(goodsService.selectGoodsByOrderId(orderForm.getId()).getFruitId());
+        LOG.info(goodsService.selectGoodsByOrderId(orderForm.getId()).getScenicId());
         int i = orderFormMapper.insert(orderForm);
         if (i == 0){
             throw new SystemException(ErrorCode.INSERT_ERROR);

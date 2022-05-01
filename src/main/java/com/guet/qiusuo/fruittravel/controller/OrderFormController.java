@@ -6,11 +6,9 @@ import com.guet.qiusuo.fruittravel.bean.vo.WxObject;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
+import com.guet.qiusuo.fruittravel.model.Goods;
 import com.guet.qiusuo.fruittravel.model.OrderForm;
-import com.guet.qiusuo.fruittravel.service.FruitService;
-import com.guet.qiusuo.fruittravel.service.OrderFormService;
-import com.guet.qiusuo.fruittravel.service.PayService;
-import com.guet.qiusuo.fruittravel.service.ScenicService;
+import com.guet.qiusuo.fruittravel.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,8 @@ public class OrderFormController {
 
     private FruitService fruitService;
 
+    private GoodsService goodsService;
+
     @Autowired
     public void setFruitService(FruitService fruitService) {
         this.fruitService = fruitService;
@@ -54,6 +54,8 @@ public class OrderFormController {
         this.payService = payService;
     }
 
+    @Autowired
+    public void setGoodsService(GoodsService goodsService) { this.goodsService = goodsService; }
     /**
      * 用户未取消支付订单情况下:
      * @param request
@@ -96,14 +98,15 @@ public class OrderFormController {
     public OrderAndProductVO getOrderAndProduct(@RequestParam String orderFormId) throws JSONException {
         OrderAndProductVO object = new OrderAndProductVO();
         OrderForm orderForm = orderFormService.getOrderForm(orderFormId);
+        Goods goods = goodsService.selectGoodsByOrderId(orderFormId);
         object.setOrderForm(orderForm);
-        if (orderForm.getScenicId().equals(SystemConstants.nullFlag)){
+        if (goods.getScenicId().equals(SystemConstants.nullFlag)){
             //如果是水果订单
-            object.setFruit(fruitService.getFruit(orderForm.getFruitId()));
+            object.setFruit(fruitService.getFruit(goods.getFruitId()));
             object.setScenic(null);
-        }else if (orderForm.getFruitId().equals(SystemConstants.nullFlag)){
+        }else if (goods.getFruitId().equals(SystemConstants.nullFlag)){
             //如果是景区订单
-            object.setScenic(scenicService.getScenicVOByScenicId(orderForm.getScenicId()));
+            object.setScenic(scenicService.getScenicVOByScenicId(goods.getScenicId()));
             object.setFruit(null);
         }
         return object;
