@@ -29,6 +29,7 @@ public class PayService {
 
     private WxPayConfig wxPayConfig;
 
+    private GoodsService goodsService;
 
     private OrderFormMapper orderFormMapper;
 
@@ -42,6 +43,8 @@ public class PayService {
         this.orderFormMapper = orderFormMapper;
     }
 
+    @Autowired
+    public void setGoodsService(GoodsService goodsService) { this.goodsService = goodsService; }
     /**
      * 请求wx下单接口
      * @param request
@@ -52,7 +55,7 @@ public class PayService {
             //商品名称
             //获取客户端的ip地址
             String spbill_create_ip = getIpAddr(request);
-            String product = orderForm.getName();
+            String product = goodsService.selectGoodsByOrderId(orderForm.getId()).getName();
             String orderFormId = orderForm.getId();
             String openid = request.getParameter("openid");
 

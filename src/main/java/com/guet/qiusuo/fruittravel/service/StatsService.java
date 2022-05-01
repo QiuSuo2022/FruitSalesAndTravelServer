@@ -1,10 +1,7 @@
 package com.guet.qiusuo.fruittravel.service;
 
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
-import com.guet.qiusuo.fruittravel.dao.EvaluateDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.EvaluateMapper;
-import com.guet.qiusuo.fruittravel.dao.OrderFormDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.OrderFormMapper;
+import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import com.guet.qiusuo.fruittravel.model.Scenic;
@@ -41,6 +38,7 @@ public class StatsService {
     private OrderFormMapper orderFormMapper;
     private ScenicService scenicService;
     private FruitService fruitService;
+    private GoodsMapper goodsMapper;
     @Autowired
     public void setEvaluateMapper(EvaluateMapper evaluateMapper) {
         this.evaluateMapper = evaluateMapper;
@@ -65,6 +63,9 @@ public class StatsService {
     public void setScenicService(ScenicService scenicService) {
         this.scenicService = scenicService;
     }
+
+    @Autowired
+    public void setGoodsMapper(GoodsMapper goodsMapper) { this.goodsMapper = goodsMapper; }
 
     /**
      * Controller调用 - 根据FruitId获取单个销量
@@ -389,11 +390,11 @@ public class StatsService {
      */
     private Long getSalesByFruitIdSql(String fruitId,long past) {
         //fruitId获取fruit, 根据fruitId检索已经支付的订单
-        Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
+        Long ans = goodsMapper.count(countFrom(GoodsDynamicSqlSupport.goods)
                 .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
-                .and(OrderFormDynamicSqlSupport.fruitId,isEqualTo(fruitId))
+                //.and(OrderFormDynamicSqlSupport.fruitId,isEqualTo(fruitId))
                 .build().render(RenderingStrategies.MYBATIS3));
         if (ans == null) {
             return 0L;
@@ -412,7 +413,7 @@ public class StatsService {
                 .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
-                .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
+                //.and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
                 .build().render(RenderingStrategies.MYBATIS3));
         if (ans == null) {
             return 0L;
