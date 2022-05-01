@@ -274,7 +274,8 @@ public interface FruitMapper {
             "from tbl_fruit",
             "left join tbl_child_fruit",
             "on tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_child_fruit.status = 1",
-            "LEFT JOIN tbl_order_form ON tbl_fruit.id = tbl_order_form.`fruit_id` and tbl_order_form.status = 1 and tbl_order_form.pay_status = 1",
+            "LEFT JOIN tbl_goods",
+            "ON tbl_goods.`fruit_id` = tbl_fruit.`id` AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "left join tbl_evaluate",
             "on tbl_child_fruit.id = tbl_evaluate.product_id and tbl_evaluate.status = 1",
             "where tbl_fruit.status = 1 and tbl_fruit.fruit_name like concat('%',#{nameLike},'%')",
@@ -300,7 +301,7 @@ public interface FruitMapper {
             "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description,avg(grade) as grades FROM tbl_child_fruit",
             "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_fruit.status = 1",
             "LEFT JOIN tbl_evaluate ON tbl_evaluate.product_id = tbl_child_fruit.id and tbl_evaluate.status = 1",
-            "LEFT JOIN tbl_order_form ON tbl_order_form.fruit_id = tbl_fruit.id and tbl_order_form.pay_status = 1 ",
+            "LEFT JOIN tbl_goods ON tbl_goods.`fruit_id` = tbl_fruit.`id` AND tbl_goods.`pay_status` = 4 AND tbl_goods.`STATUS` = 1",
             "where tbl_child_fruit.status = 1",
             "GROUP BY tbl_child_fruit.fruit_name,description",
             "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
@@ -316,8 +317,8 @@ public interface FruitMapper {
 
     @Select({
             "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
-            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
-            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
+            "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "WHERE tbl_fruit.status = 1",
             "AND fruit_name like concat('%',#{nameLike},'%')",
             "GROUP BY tbl_fruit.`id`",
@@ -336,8 +337,8 @@ public interface FruitMapper {
 
     @Select({
             "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
-            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
-            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
+            "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "WHERE tbl_fruit.status = 1",
             "AND fruit_name like concat('%',#{nameLike},'%')",
             "GROUP BY tbl_fruit.`id`",
@@ -356,8 +357,8 @@ public interface FruitMapper {
 
     @Select({
             "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
-            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
-            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
+            "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "WHERE tbl_fruit.status = 1",
             "AND fruit_name like concat('%',#{nameLike},'%')",
             "GROUP BY tbl_fruit.`id`",
@@ -376,8 +377,8 @@ public interface FruitMapper {
 
     @Select({
             "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
-            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
-            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
+            "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "WHERE tbl_fruit.status = 1",
             "AND fruit_name like concat('%',#{nameLike},'%')",
             "GROUP BY tbl_fruit.`id`",
@@ -396,12 +397,12 @@ public interface FruitMapper {
 
     @Select({
             "SELECT tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales,avg(grade) as grades",
-            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
-            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
+            "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "LEFT JOIN tbl_child_fruit ON tbl_child_fruit.`fruit_id` = tbl_fruit.`id` AND tbl_child_fruit.`status` = 1",
             "LEFT JOIN tbl_evaluate ON tbl_evaluate.`product_id` = tbl_child_fruit.`id` AND tbl_child_fruit.`status` = 1",
             "WHERE tbl_fruit.status = 1",
-            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "AND tbl_fruit.fruit_name like concat('%',#{nameLike},'%')",
             "GROUP BY tbl_fruit.`id`",
             "order by grades"
     })
@@ -409,12 +410,12 @@ public interface FruitMapper {
 
     @Select({
             "SELECT tbl_fruit.fruit_name,tbl_fruit.fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales,avg(grade) as grades",
-            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
-            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
+            "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "LEFT JOIN tbl_child_fruit ON tbl_child_fruit.`fruit_id` = tbl_fruit.`id` AND tbl_child_fruit.`status` = 1",
             "LEFT JOIN tbl_evaluate ON tbl_evaluate.`product_id` = tbl_child_fruit.`id` AND tbl_child_fruit.`status` = 1",
             "WHERE tbl_fruit.status = 1",
-            "AND fruit_name like concat('%',#{nameLike},'%')",
+            "AND tbl_fruit.fruit_name like concat('%',#{nameLike},'%')",
             "GROUP BY tbl_fruit.`id`",
             "order by grades DESC"
     })
@@ -432,8 +433,8 @@ public interface FruitMapper {
 
     @Select({
             "SELECT tbl_fruit.`id`,fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`status`,tbl_fruit.`create_time`,tbl_fruit.`update_time`,tbl_fruit.`create_user_id`,tbl_fruit.`update_user_id`,SUM(amount) AS sales",
-            "FROM tbl_fruit LEFT JOIN tbl_order_form ON tbl_fruit.`id` = tbl_order_form.`fruit_id`",
-            "AND tbl_order_form.`STATUS` = 1 AND tbl_order_form.`pay_status` = 1",
+            "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
+            "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "where tbl_fruit.`status` = 1",
             "GROUP BY tbl_fruit.`id`"
     })
