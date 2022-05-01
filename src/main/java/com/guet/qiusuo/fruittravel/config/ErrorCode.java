@@ -39,7 +39,8 @@ public enum ErrorCode {
     USER_ROLE_NOT_FOUND(-1,"system.error.no_found.user_role"),
     GRANT_ERROR(-1,"system.error.grant.error"),
     REVOKE_ERROR(-1,"system.error.revoke.error"),
-    CONFINE_ERROR(-1,"system.error.confine.error")
+    CONFINE_ERROR(-1,"system.error.confine.error"),
+    NO_FOUND_GOODS(-1,"system.error.no_found.goods")
     ;
 
     @Override
