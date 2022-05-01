@@ -106,13 +106,13 @@ public class ScenicService {
                     ScenicDynamicSqlSupport.createTime
             )
                     .from(ScenicDynamicSqlSupport.scenic)
-                    .leftJoin(OrderFormDynamicSqlSupport.orderForm)
-                    .on(ScenicDynamicSqlSupport.id,equalTo(OrderFormDynamicSqlSupport.scenicId))
+                    //.leftJoin(OrderFormDynamicSqlSupport.orderForm)
+                    //.on(ScenicDynamicSqlSupport.id,equalTo(OrderFormDynamicSqlSupport.scenicId))
                     .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                     .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
                     .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                     .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
-                    .orderBy(OrderFormDynamicSqlSupport.amount)
+                    //.orderBy(OrderFormDynamicSqlSupport.amount)
                     .build().render(RenderingStrategies.MYBATIS3)
             );
         }
@@ -129,13 +129,13 @@ public class ScenicService {
                             ScenicDynamicSqlSupport.createTime
                     )
                             .from(ScenicDynamicSqlSupport.scenic)
-                            .leftJoin(OrderFormDynamicSqlSupport.orderForm)
-                            .on(ScenicDynamicSqlSupport.id,equalTo(OrderFormDynamicSqlSupport.scenicId))
+                            //.leftJoin(OrderFormDynamicSqlSupport.orderForm)
+                            //.on(ScenicDynamicSqlSupport.id,equalTo(OrderFormDynamicSqlSupport.scenicId))
                             .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(ScenicDynamicSqlSupport.scenicName,isLike("%" + nameLike + "%"))
                             .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                             .and(OrderFormDynamicSqlSupport.payStatus,isEqualTo(SystemConstants.PAID))
-                            .orderBy(OrderFormDynamicSqlSupport.amount.descending())
+                            //.orderBy(OrderFormDynamicSqlSupport.amount.descending())
                             .build().render(RenderingStrategies.MYBATIS3)
             );
         }
@@ -295,10 +295,10 @@ public class ScenicService {
      *
      * @return
      */
-    public PageList<Scenic> searchAllScenic(Integer page,Integer pageSize) {
+    public PageList<ScenicVO> searchAllScenic(Integer page,Integer pageSize) {
         PageHelper.startPage(page,pageSize);
         List<Scenic> scenicList;
-        scenicList = scenicMapper.selectScenic(select(
+        scenicList = scenicMapper.selectMany(select(
                         ScenicDynamicSqlSupport.id,
                         ScenicDynamicSqlSupport.scenicName,
                         ScenicDynamicSqlSupport.location,
@@ -316,9 +316,41 @@ public class ScenicService {
                         .orderBy(ScenicDynamicSqlSupport.createTime)
                         .build().render(RenderingStrategies.MYBATIS3)
         );
-        PageList<Scenic> pageList = new PageList<>();
-        pageList.setList(scenicList);
-        pageList.setPageInfo(new PageInfo<>(scenicList));
+        List<ScenicVO> scenicVOList = new ArrayList<>();
+        for(Scenic scenic : scenicList) {
+            ScenicVO scenicVO = new ScenicVO();
+            scenicVO.setId(scenic.getId());
+            scenicVO.setScenicName(scenic.getScenicName());
+            scenicVO.setLocation(scenic.getLocation());
+            scenicVO.setOpeningHours(scenic.getOpeningHours());
+            scenicVO.setDescription(scenic.getDescription());
+            scenicVO.setType(scenic.getType());
+            scenicVO.setStatus(scenic.getStatus());
+            scenicVO.setCreateTime(scenic.getCreateTime());
+            scenicVO.setUpdateTime(scenic.getUpdateTime());
+            scenicVO.setCreateUserId(scenic.getCreateUserId());
+            scenicVO.setUpdateUserId(scenic.getUpdateUserId());
+            ArrayList<TicketArray> arrays = new ArrayList<>();
+            List<Ticket> tickets = ticketService.searchTicket(scenic.getId());
+            if(tickets == null) {
+                scenicVO.setTicketList(null);
+            }
+            else {
+                for (Ticket ticket : tickets) {
+                    TicketArray ticketArray = new TicketArray();
+                    ticketArray.setTicketId(ticket.getId());
+                    ticketArray.setTicketType(ticket.getType());
+                    ticketArray.setTicketDescription(ticket.getDescription());
+                    ticketArray.setPrice(ticket.getPrice());
+                    arrays.add(ticketArray);
+                }
+            }
+            scenicVO.setTicketList(arrays);
+            scenicVOList.add(scenicVO);
+        }
+        PageList<ScenicVO> pageList = new PageList<>();
+        pageList.setList(scenicVOList);
+        pageList.setPageInfo(new PageInfo<>(scenicVOList));
         return pageList;
     }
 

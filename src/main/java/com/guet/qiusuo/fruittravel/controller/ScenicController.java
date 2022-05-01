@@ -46,7 +46,7 @@ public class ScenicController {
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
     })
     @GetMapping("/getAllScenic")
-    public PageList<Scenic> searchAllScenic(@RequestParam(required = false,defaultValue =
+    public PageList<ScenicVO> searchAllScenic(@RequestParam(required = false,defaultValue =
                                                     SystemConstants.DEFAULT_PAGE) Integer page,
                                             @RequestParam(required = false,defaultValue =
                                                     SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {

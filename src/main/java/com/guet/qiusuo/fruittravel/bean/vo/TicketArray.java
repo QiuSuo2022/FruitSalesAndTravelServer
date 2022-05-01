@@ -16,7 +16,7 @@ public class TicketArray {
     @ApiModelProperty("景区门票类型")
     private Short ticketType;
 
-    @ApiModelProperty(value = "景区门票描述")//默认同景区门票描述一致
+    @ApiModelProperty(value = "景区门票描述")
     private String ticketDescription;
 
     public void setTicketType(Short ticketType) {
