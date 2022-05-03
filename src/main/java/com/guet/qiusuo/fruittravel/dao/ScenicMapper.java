@@ -293,10 +293,10 @@ public interface ScenicMapper {
     @Select({
             "SELECT tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,sum(amount) as sales,avg(grade) as grades",
             "FROM tbl_scenic",
-            "LEFT JOIN tbl_ticket ON tbl_scenic.id = tbl_ticket.`scenic_id` AND tbl_ticket.`status` = 1",
+            "LEFT JOIN tbl_ticket ON tbl_scenic.id = tbl_ticket.`scenic_id` AND tbl_ticket.`status` = 1 AND tbl_ticket.`type` = 1",
             "LEFT JOIN tbl_evaluate ON tbl_scenic.id = tbl_evaluate.`product_id` AND tbl_evaluate.`status` = 1",
             "LEFT JOIN tbl_goods ON tbl_scenic.id = tbl_goods.`scenic_id` AND tbl_goods.`STATUS` = 1 AND tbl_goods.pay_status = 4",
-            "where scenic_name like concat('%',#{nameLike},'%')",
+            "where scenic_name like concat('%',#{nameLike},'%') and tbl_scenic.status = 1",
             "group by tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,tbl_ticket.price",
             "order by tbl_ticket.price*0.25 + grades * 0.25 + sales*0.5"
     })
@@ -310,9 +310,119 @@ public interface ScenicMapper {
             @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
     })
-    /**
-     * @param nameLike
-     * @return
-     */
     List<Scenic> selectScenicSort(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,description,TYPE,tbl_scenic.status,tbl_scenic.create_time,SUM(amount) AS sales FROM tbl_scenic",
+            "LEFT JOIN tbl_goods ON tbl_goods.`scenic_id` = tbl_scenic.`id` AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
+            "WHERE tbl_scenic.`status` = 1 and scenic_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_scenic.`id`",
+            "ORDER BY sales"
+    })
+    @Results(id = "ScenicSalesASCSortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Scenic> selectScenicSortBySalesASC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,description,TYPE,tbl_scenic.status,tbl_scenic.create_time,SUM(amount) AS sales FROM tbl_scenic",
+            "LEFT JOIN tbl_goods ON tbl_goods.`scenic_id` = tbl_scenic.`id` AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
+            "WHERE tbl_scenic.`status` = 1 and scenic_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_scenic.`id`",
+            "ORDER BY sales DESC"
+    })
+    @Results(id = "ScenicSalesDESCSortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Scenic> selectScenicSortBySalesDESC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,description,tbl_scenic.TYPE,tbl_scenic.status,tbl_scenic.create_time,AVG(grade) AS grades FROM tbl_scenic",
+            "LEFT JOIN tbl_evaluate ON tbl_evaluate.`product_id` = tbl_scenic.`id` AND tbl_evaluate.`status` = 1",
+            "WHERE tbl_scenic.status = 1 and scenic_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_scenic.`id`",
+            "order by grades"
+    })
+    @Results(id = "ScenicGradesASCSortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Scenic> selectScenicSortByGradesASC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,description,tbl_scenic.TYPE,tbl_scenic.status,tbl_scenic.create_time,AVG(grade) AS grades FROM tbl_scenic",
+            "LEFT JOIN tbl_evaluate ON tbl_evaluate.`product_id` = tbl_scenic.`id` AND tbl_evaluate.`status` = 1",
+            "WHERE tbl_scenic.status = 1 and scenic_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_scenic.`id`",
+            "order by grades DESC"
+    })
+    @Results(id = "ScenicGradesDESCSortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Scenic> selectScenicSortByGradesDESC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.description,tbl_scenic.TYPE,tbl_scenic.status,tbl_scenic.create_time,AVG(price) AS prices FROM tbl_scenic",
+            "LEFT JOIN tbl_ticket ON tbl_ticket.`scenic_id` = tbl_scenic.`id` AND tbl_ticket.`status` = 1",
+            "WHERE tbl_scenic.status = 1 and scenic_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_scenic.`id`",
+            "ORDER BY prices"
+    })
+    @Results(id = "ScenicPricesASCSortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Scenic> selectScenicSortByPricesASC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.description,tbl_scenic.TYPE,tbl_scenic.status,tbl_scenic.create_time,AVG(price) AS prices FROM tbl_scenic",
+            "LEFT JOIN tbl_ticket ON tbl_ticket.`scenic_id` = tbl_scenic.`id` AND tbl_ticket.`status` = 1",
+            "WHERE tbl_scenic.status = 1 and scenic_name like concat('%',#{nameLike},'%')",
+            "GROUP BY tbl_scenic.`id`",
+            "ORDER BY prices DESC"
+    })
+    @Results(id = "ScenicPricesDESCSortResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Scenic> selectScenicSortByPricesDESC(@Param("nameLike") String nameLike);
 }

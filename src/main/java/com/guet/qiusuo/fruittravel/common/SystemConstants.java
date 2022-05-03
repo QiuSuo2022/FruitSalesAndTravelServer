@@ -50,6 +50,13 @@ public class SystemConstants {
 
     public static final Short NOTIFICATION_HAS_READ = new Short("0");
 
+    //门票类型
+    public static final Short ADULT = new Short("1");
+
+    public static final Short CHILD = new Short("2");
+
+    public static final Short OLD = new Short("3");
+
     /**
      * 用户信息不全
      */
