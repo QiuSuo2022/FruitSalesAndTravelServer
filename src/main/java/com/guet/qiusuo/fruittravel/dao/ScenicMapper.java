@@ -296,6 +296,28 @@ public interface ScenicMapper {
             "LEFT JOIN tbl_ticket ON tbl_scenic.id = tbl_ticket.`scenic_id` AND tbl_ticket.`status` = 1 AND tbl_ticket.`type` = 1",
             "LEFT JOIN tbl_evaluate ON tbl_scenic.id = tbl_evaluate.`product_id` AND tbl_evaluate.`status` = 1",
             "LEFT JOIN tbl_goods ON tbl_scenic.id = tbl_goods.`scenic_id` AND tbl_goods.`STATUS` = 1 AND tbl_goods.pay_status = 4",
+            "where tbl_scenic.status = 1",
+            "group by tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,tbl_ticket.price",
+            "order by tbl_ticket.price*0.25 + grades * 0.25 + sales*0.5"
+    })
+    @Results(id = "ScenicRecommend", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR, id = true),
+            @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "location", property = "location", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "opening_hours", property = "openingHours", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "type", property = "type", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
+    })
+    List<Scenic> ScenicRecommend();
+
+    @Select({
+            "SELECT tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,sum(amount) as sales,avg(grade) as grades",
+            "FROM tbl_scenic",
+            "LEFT JOIN tbl_ticket ON tbl_scenic.id = tbl_ticket.`scenic_id` AND tbl_ticket.`status` = 1 AND tbl_ticket.`type` = 1",
+            "LEFT JOIN tbl_evaluate ON tbl_scenic.id = tbl_evaluate.`product_id` AND tbl_evaluate.`status` = 1",
+            "LEFT JOIN tbl_goods ON tbl_scenic.id = tbl_goods.`scenic_id` AND tbl_goods.`STATUS` = 1 AND tbl_goods.pay_status = 4",
             "where scenic_name like concat('%',#{nameLike},'%') and tbl_scenic.status = 1",
             "group by tbl_scenic.id,scenic_name,location,opening_hours,tbl_scenic.`description`,tbl_scenic.`type`,tbl_scenic.`status`,tbl_scenic.`create_time`,tbl_ticket.price",
             "order by tbl_ticket.price*0.25 + grades * 0.25 + sales*0.5"

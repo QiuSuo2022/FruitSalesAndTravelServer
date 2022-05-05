@@ -313,4 +313,20 @@ public class ScenicService {
                         .build().render(RenderingStrategies.MYBATIS3)
         );
     }
+
+    /**
+     * 获取景区推荐列表
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public PageList<Scenic> getScenicRecommendList(Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        List<Scenic> scenicList;
+        scenicList = scenicMapper.ScenicRecommend();
+        PageList<Scenic> pageList = new PageList<>();
+        pageList.setList(scenicList);
+        pageList.setPageInfo(new PageInfo<>(scenicList));
+        return pageList;
+    }
 }

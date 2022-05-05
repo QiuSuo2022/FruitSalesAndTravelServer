@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.controller;
 
+import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
@@ -84,5 +85,20 @@ public class ScenicController {
             scenicName = null;
         }
         return scenicService.getScenicList(id, scenicName, location, nameLike, type, description, openingHours,orderByType, page, pageSize);
+    }
+
+    @ApiOperation(value = "获取景区推荐列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value = "页数",dataType = "int", dataTypeClass = Integer.class, required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
+    })
+    @GetMapping("/scenicRecommendList")
+    public PageList<Scenic> getScenicRecommendList(
+            @RequestParam(required = false,defaultValue =
+                    SystemConstants.DEFAULT_PAGE) Integer page,
+            @RequestParam(required = false,defaultValue =
+                    SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
+
+        return scenicService.getScenicRecommendList(page,pageSize);
     }
 }
