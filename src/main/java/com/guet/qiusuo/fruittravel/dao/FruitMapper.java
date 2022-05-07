@@ -298,15 +298,16 @@ public interface FruitMapper {
     List<FruitVO> selectFruitSort(@Param("nameLike") String nameLike);
 
     @Select({
-            "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description,avg(grade) as grades FROM tbl_child_fruit",
+            "SELECT tbl_fruit.id,MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description,avg(grade) as grades FROM tbl_child_fruit",
             "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_fruit.status = 1",
             "LEFT JOIN tbl_evaluate ON tbl_evaluate.product_id = tbl_child_fruit.id and tbl_evaluate.status = 1",
             "LEFT JOIN tbl_goods ON tbl_goods.`fruit_id` = tbl_fruit.`id` AND tbl_goods.`pay_status` = 4 AND tbl_goods.`STATUS` = 1",
             "where tbl_child_fruit.status = 1",
-            "GROUP BY tbl_child_fruit.fruit_name,description",
+            "GROUP BY tbl_child_fruit.fruit_name,description,tbl_fruit.id",
             "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
     })
     @Results(id = "FruitRecommend", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR,id = true),
             @Result(column = "fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "child_fruit_lowest_price", property = "childFruitLowestPrice", jdbcType = JdbcType.INTEGER),
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
