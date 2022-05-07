@@ -56,10 +56,16 @@ public class EvaluateController {
         evaluateService.updateEvaluate(evaluate);
     }
 
-    @ApiOperation(value = "查询追评")
-    @GetMapping("/searchReevaluate")
-    public List<EvaluateVO> searchReevaluate(@RequestParam String evaluateId) {
+    @ApiOperation(value = "通过评价id查询追评")
+    @GetMapping("/searchReevaluateByEvaluateId")
+    public List<EvaluateVO> searchReevaluateByEvaluateId(@RequestParam String evaluateId) {
         return evaluateService.searchReevaluate(evaluateId);
+    }
+
+    @ApiOperation(value = "通过产品id查询追评")
+    @GetMapping("/searchReevaluateByProductId")
+    public List<EvaluateVO> searchReevaluateByProductId(@RequestParam String productId) {
+        return evaluateService.searchReevaluate1(productId);
     }
 
     @ApiOperation(value = "查询水果评价")

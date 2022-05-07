@@ -435,4 +435,46 @@ public class EvaluateService {
             pageList.setPageInfo(new PageInfo<>(scenicEvaluateVOList));
             return pageList;
     }
+
+    public List<EvaluateVO> searchReevaluate1(String productId) {
+        List<Evaluate> evaluateList = evaluateMapper.selectMany(select(
+                EvaluateDynamicSqlSupport.id,
+                EvaluateDynamicSqlSupport.userId,
+                EvaluateDynamicSqlSupport.productId,
+                EvaluateDynamicSqlSupport.evaluateId,
+                EvaluateDynamicSqlSupport.detail,
+                EvaluateDynamicSqlSupport.grade,
+                EvaluateDynamicSqlSupport.type,
+                EvaluateDynamicSqlSupport.status,
+                EvaluateDynamicSqlSupport.createTime,
+                EvaluateDynamicSqlSupport.updateTime,
+                EvaluateDynamicSqlSupport.createUserId,
+                EvaluateDynamicSqlSupport.updateUserId
+        )
+                .from(EvaluateDynamicSqlSupport.evaluate)
+                .where(EvaluateDynamicSqlSupport.productId, isEqualTo(productId))
+                .and(EvaluateDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(EvaluateDynamicSqlSupport.type, isEqualTo(SystemConstants.REEVALUATE_TYPE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        if (evaluateList == null) {
+            return null;
+        }
+        List<EvaluateVO> evaluateVOList = new ArrayList<>();
+        for(Evaluate evaluate : evaluateList) {
+            EvaluateVO evaluateVO = new EvaluateVO();
+            evaluateVO.setId(evaluate.getId());
+            evaluateVO.setEvaluateId(evaluate.getEvaluateId());
+            evaluateVO.setProductId(evaluate.getProductId());
+            evaluateVO.setDetail(evaluate.getDetail());
+            evaluateVO.setGrade(evaluate.getGrade());
+            evaluateVO.setType(evaluate.getType());
+            evaluateVO.setStatus(evaluate.getStatus());
+            evaluateVO.setCreateTime(evaluate.getCreateTime());
+            evaluateVO.setUpdateTime(evaluate.getUpdateTime());
+            evaluateVO.setCreateUserId(evaluate.getUpdateUserId());
+            evaluateVO.setUserName(userService.getUserNameByUserId(evaluate.getUserId()));
+            evaluateVOList.add(evaluateVO);
+        }
+        return evaluateVOList;
+    }
 }
