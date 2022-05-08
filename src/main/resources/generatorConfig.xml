@@ -1,0 +1,52 @@
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<!--suppress MybatisGenerateCustomPluginInspection -->
+<generatorConfiguration>
+    <properties resource="application-dev.properties"/>
+
+    <context id="mbg" targetRuntime="MyBatis3DynamicSQL">
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="false"/>
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+springboot - java       控制sql - mybatis dynamic sql
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.guet.qiusuo.fruittravel.model"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <javaClientGenerator type="ANNOTATEDMAPPER"
+                             targetPackage="com.guet.qiusuo.fruittravel.dao"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+
+
+        <!--        <table tableName="tbl_user" domainObjectName="User"/>-->
+        <!--        <table tableName="tbl_cart" domainObjectName="Cart"/>-->
+        <!--        <table tableName="tbl_child_fruit" domainObjectName="ChildFruit"/>-->
+        <!--        <table tableName="tbl_evaluate" domainObjectName="Evaluate"/>-->
+        <!--        <table tableName="tbl_fruit" domainObjectName="Fruit"/>-->
+        <!--        <table tableName="tbl_image_file" domainObjectName="ImageFile"/>-->
+        <!--        <table tableName="tbl_permission" domainObjectName="Permission"/>-->
+        <!--        <table tableName="tbl_reservation" domainObjectName="Reservation"/>-->
+        <!--        <table tableName="tbl_role" domainObjectName="Role"/>-->
+        <!--        <table tableName="tbl_role_permission" domainObjectName="RolePermission"/>-->
+        <!--        <table tableName="tbl_scenic" domainObjectName="Scenic"/>-->
+        <!--        <table tableName="tbl_ticket" domainObjectName="Ticket"/>-->
+        <!--        <table tableName="tbl_user_role" domainObjectName="UserRole"/>-->
+        <!--        <table tableName="tbl_order_form" domainObjectName="OrderForm"/>-->
+        <!--        <table tableName="tbl_goods" domainObjectName="Goods"/>-->
+    </context>
+</generatorConfiguration>
