@@ -23,9 +23,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Service
 public class UploadImgService {
 
-    private static final String LOCAL_IP = "120.76.200.109";
+    private static final String REMOTE_IP = "120.76.200.109";
+    private static final String LOCAL_IP = "10.33.47.170";
 
-    private static final String LOCAL_BASEPATH = "/root/home/images/";
+    private static final String REMOTE_BASEPATH = "/root/home/images/";
+    private static final String LOCAL_BASEPATH = "D://Nginx/root/images/";
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -47,7 +49,7 @@ public class UploadImgService {
         String uuFileName = UUID.randomUUID().toString();
         String filePath = LOCAL_BASEPATH;
         String fileName = uuFileName + originalFilename ;
-        String url = NGINX_URL+fileName;
+        String url = NGINX_URL+"images/"+fileName;
         //存储图片信息
         long now = System.currentTimeMillis();
         UserContextHolder.validAdmin();
