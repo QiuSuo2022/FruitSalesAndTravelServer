@@ -2,6 +2,7 @@ package com.guet.qiusuo.fruittravel.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.guet.qiusuo.fruittravel.bean.vo.FruitRecVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
@@ -10,6 +11,7 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.Fruit;
+import com.guet.qiusuo.fruittravel.model.ImageFile;
 import org.mybatis.dynamic.sql.SortSpecification;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -34,8 +36,14 @@ public class FruitService {
 
     private ChildFruitService childFruitService;
 
-    private static final Logger LOG = getLogger(lookup().lookupClass());
+    private ImageFileMapper imageFileMapper;
 
+    @Autowired
+    public void setImageFileMapper(ImageFileMapper imageFileMapper) {
+        this.imageFileMapper = imageFileMapper;
+    }
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
     @Autowired
     public void setFruitMapper(FruitMapper fruitMapper) {
         this.fruitMapper = fruitMapper;
@@ -192,6 +200,21 @@ public class FruitService {
     public PageList<FruitVO> getAllFruits(Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize);
         List<FruitVO> fruitVOList = fruitMapper.getAllFruits();
+        if (fruitVOList.isEmpty()){
+            return null;
+        }
+        for (FruitVO fruitVO:fruitVOList) {
+            Optional<ImageFile> imageFile = imageFileMapper.selectByPrimaryKey(fruitVO.getId());
+            ImageFile imageFile1 = imageFile.orElse(null);
+            if (imageFile1 == null){
+                fruitVO.setImageUrl("https://img1.baidu.com/it/u=3220255444,3049275992&fm=253&fmt=auto&app=138&f=JPEG?w=691&h=500");
+                continue;
+            }
+            String productId = imageFile1.getProductId();
+            if (productId.equals(fruitVO.getId())){
+                fruitVO.setImageUrl(imageFile1.getImageUrl());
+            }
+        }
         PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitVOList);
         pageList.setPageInfo(new PageInfo<>(fruitVOList));
@@ -261,12 +284,6 @@ public class FruitService {
         return fruitVO;
     }
 
-    /**
-     * 获取水果推荐列表
-     * @param page
-     * @param pageSize
-     * @return
-     */
     public PageList<FruitVO> getFruitRecommendList(Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
         List<FruitVO> fruitList;
@@ -277,6 +294,20 @@ public class FruitService {
         return pageList;
     }
 
+    /**
+     * 获取水果推荐列表
+     */
+    public PageList<FruitRecVO> getFruitRec(Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        List<FruitRecVO> fruitRecList = fruitMapper.FruitRec();
+        for (FruitRecVO f:fruitRecList
+             ) {f.setSales(100);
+        }
+        PageList<FruitRecVO> pageList = new PageList<>();
+        pageList.setList(fruitRecList);
+        pageList.setPageInfo(new PageInfo<>(fruitRecList));
+        return pageList;
+    }
 }
 
 

@@ -109,7 +109,8 @@ public class FruitController {
                                                  @RequestParam(required = false,defaultValue =
                                                          SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
 
-        return fruitService.getFruitRecommendList(page, pageSize);
+//        return fruitService.getFruitRecommendList(page, pageSize);
+        return null;
     }
 
     @ApiOperation(value = "获取单个水果")

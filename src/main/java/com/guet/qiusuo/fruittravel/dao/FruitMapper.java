@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.dao;
 
+import com.guet.qiusuo.fruittravel.bean.vo.FruitRecVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.apache.ibatis.annotations.*;
@@ -298,15 +299,16 @@ public interface FruitMapper {
     List<FruitVO> selectFruitSort(@Param("nameLike") String nameLike);
 
     @Select({
-            "SELECT MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description,avg(grade) as grades FROM tbl_child_fruit",
+            "SELECT tbl_fruit.id,MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name,sum(amount) AS sales,description,avg(grade) as grades FROM tbl_child_fruit",
             "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_fruit.status = 1",
             "LEFT JOIN tbl_evaluate ON tbl_evaluate.product_id = tbl_child_fruit.id and tbl_evaluate.status = 1",
             "LEFT JOIN tbl_goods ON tbl_goods.`fruit_id` = tbl_fruit.`id` AND tbl_goods.`pay_status` = 4 AND tbl_goods.`STATUS` = 1",
             "where tbl_child_fruit.status = 1",
-            "GROUP BY tbl_child_fruit.fruit_name,description",
+            "GROUP BY tbl_child_fruit.fruit_name,description,tbl_fruit.id",
             "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
     })
     @Results(id = "FruitRecommend", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.VARCHAR,id = true),
             @Result(column = "fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "child_fruit_lowest_price", property = "childFruitLowestPrice", jdbcType = JdbcType.INTEGER),
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
@@ -315,8 +317,27 @@ public interface FruitMapper {
     })
     List<FruitVO> FruitRecommend();
 
+
     @Select({
-            "SELECT fruit_name,fruit_price,description,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
+            "SELECT tbl_child_fruit.`id` AS child_fruit_id,tbl_child_fruit.fruit_id,tbl_child_fruit.image_url,MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name AS child_fruit_name,sum(amount) AS sales,avg(grade) as grades FROM tbl_child_fruit",
+            "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_fruit.status = 1",
+            "LEFT JOIN tbl_evaluate ON tbl_evaluate.product_id = tbl_child_fruit.id and tbl_evaluate.status = 1",
+            "LEFT JOIN tbl_goods ON tbl_goods.`fruit_id` = tbl_fruit.`id` AND tbl_goods.`pay_status` = 4 AND tbl_goods.`STATUS` = 1",
+            "where tbl_child_fruit.status = 1",
+            "GROUP BY tbl_child_fruit.fruit_name",
+            "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
+    })
+    @Results(id = "FruitRec", value = {
+            @Result(column = "fruit_id", property = "fruitId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "child_fruit_id", property = "childFruitId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "child_fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "child_fruit_lowest_price", property = "childFruitLowestPrice", jdbcType = JdbcType.INTEGER),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER),
+            @Result(column = "image_url", property = "imageUrl", jdbcType = JdbcType.INTEGER)
+    })
+    List<FruitRecVO> FruitRec();
+    @Select({
+            "SELECT fruit_name,fruit_price,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
             "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
             "AND tbl_goods.`STATUS` = 1 AND tbl_goods.`pay_status` = 4",
             "WHERE tbl_fruit.status = 1",
@@ -325,7 +346,6 @@ public interface FruitMapper {
             "order by (fruit_price+0)"
     })
     @Results(id = "FruitPriceASCSortResult", value = {
-            @Result(column = "fruit_id", property = "fruitId", jdbcType = JdbcType.VARCHAR),
             @Result(column = "fruit_name", property = "fruitName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "fruit_price", property = "fruitPrice", jdbcType = JdbcType.VARCHAR),
             @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),

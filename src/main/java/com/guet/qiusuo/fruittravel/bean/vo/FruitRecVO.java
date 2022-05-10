@@ -1,17 +1,15 @@
 package com.guet.qiusuo.fruittravel.bean.vo;
 
-import com.guet.qiusuo.fruittravel.model.Fruit;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import net.bytebuddy.implementation.bind.annotation.SuperCall;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class FruitVO extends Fruit {
+public class FruitRecVO {
+    @ApiModelProperty(value = "水果父类id")
+    private String fruitId;
 
-    @ApiModelProperty(value = "水果库存数量")
-    private Integer stock;
+    @ApiModelProperty(value = "水果子类id")
+    private String childFruitId;
 
     @ApiModelProperty(value = "水果子类名称")
     private String childFruitName;
