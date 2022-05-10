@@ -2,6 +2,8 @@ package com.guet.qiusuo.fruittravel.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.guet.qiusuo.fruittravel.bean.vo.FruitRecVO;
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicRecVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.bean.vo.TicketArray;
 import com.guet.qiusuo.fruittravel.common.PageList;
@@ -312,5 +314,17 @@ public class ScenicService {
                         .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
+    }
+
+    /**
+     * 获取景区推荐列表
+     */
+    public PageList<ScenicRecVO> getScenicRec(Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize);
+        List<ScenicRecVO> scenicRec = scenicMapper.ScenicRec();
+        PageList<ScenicRecVO> pageList = new PageList<>();
+        pageList.setList(scenicRec);
+        pageList.setPageInfo(new PageInfo<>(scenicRec));
+        return pageList;
     }
 }

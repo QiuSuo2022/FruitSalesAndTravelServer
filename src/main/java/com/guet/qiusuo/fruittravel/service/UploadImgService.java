@@ -24,7 +24,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class UploadImgService {
 
     private static final String REMOTE_IP = "120.76.200.109";
-    private static final String LOCAL_IP = "10.33.47.170";
+    private static final String LOCAL_IP = "10.33.69.165";
 
     private static final String REMOTE_BASEPATH = "/root/home/images/";
     private static final String LOCAL_BASEPATH = "D://Nginx/root/images/";

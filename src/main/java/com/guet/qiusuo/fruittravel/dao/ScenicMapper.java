@@ -3,6 +3,7 @@ package com.guet.qiusuo.fruittravel.dao;
 import static com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicRecVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.model.Scenic;
 
@@ -425,4 +426,23 @@ public interface ScenicMapper {
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.BIGINT)
     })
     List<Scenic> selectScenicSortByPricesDESC(@Param("nameLike") String nameLike);
+
+    @Select({
+            "SELECT tbl_child_fruit.`id` AS child_fruit_id,tbl_child_fruit.fruit_id,tbl_child_fruit.image_url,MIN(tbl_child_fruit.fruit_price) AS child_fruit_lowest_price,tbl_child_fruit.fruit_name AS child_fruit_name,sum(amount) AS sales,avg(grade) as grades FROM tbl_child_fruit",
+            "LEFT JOIN tbl_fruit ON tbl_fruit.id = tbl_child_fruit.fruit_id and tbl_fruit.status = 1",
+            "LEFT JOIN tbl_evaluate ON tbl_evaluate.product_id = tbl_child_fruit.id and tbl_evaluate.status = 1",
+            "LEFT JOIN tbl_goods ON tbl_goods.`fruit_id` = tbl_fruit.`id` AND tbl_goods.`pay_status` = 4 AND tbl_goods.`STATUS` = 1",
+            "where tbl_child_fruit.status = 1",
+            "GROUP BY tbl_child_fruit.fruit_name",
+            "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
+    })
+    @Results(id = "FruitRec", value = {
+            @Result(column = "fruit_id", property = "fruitId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "child_fruit_id", property = "childFruitId", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "child_fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "child_fruit_lowest_price", property = "childFruitLowestPrice", jdbcType = JdbcType.INTEGER),
+            @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER),
+            @Result(column = "image_url", property = "imageUrl", jdbcType = JdbcType.INTEGER)
+    })
+    List<ScenicRecVO> ScenicRec();
 }
