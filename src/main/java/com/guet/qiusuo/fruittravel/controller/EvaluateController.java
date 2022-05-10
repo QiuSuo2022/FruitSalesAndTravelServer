@@ -40,7 +40,7 @@ public class EvaluateController {
 
     @ApiOperation(value = "删除追评")
     @DeleteMapping("/deleteReevaluate")
-    public void deleteReevaluate(@RequestParam String evaluateId) {
+    public void deleteRevaluate(@RequestParam String evaluateId) {
         evaluateService.deleteFruitReEvaluate(evaluateId);
     }
 
