@@ -70,20 +70,19 @@ public class TicketService {
                 TicketDynamicSqlSupport.updateUserId
         )
                         .from(TicketDynamicSqlSupport.ticket)
-                        .where(TicketDynamicSqlSupport.scenicId,isEqualTo(ticketId))
+                        .where(TicketDynamicSqlSupport.id,isEqualTo(ticketId))
                         .and(TicketDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                         .build().render(RenderingStrategies.MYBATIS3));
         if(ticketList.isEmpty()) {
             throw new SystemException(ErrorCode.NO_FOUND_TICKET);
         }
-        for(Ticket ticket : ticketList) {
-            ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
-            ticket.setUpdateUserId(UserContextHolder.getUserId());
-            ticket.setUpdateTime(System.currentTimeMillis());
-            int i = ticketMapper.updateByPrimaryKey(ticket);
-            if(i == 0){
-                throw new SystemException(ErrorCode.DELETE_ERROR);
-            }
+        Ticket ticket = ticketList.get(0);
+        ticket.setStatus(SystemConstants.STATUS_NEGATIVE);
+        ticket.setUpdateUserId(UserContextHolder.getUserId());
+        ticket.setUpdateTime(System.currentTimeMillis());
+        int i = ticketMapper.updateByPrimaryKey(ticket);
+        if(i == 0){
+            throw new SystemException(ErrorCode.DELETE_ERROR);
         }
         LOG.info("删除景区门票成功,ScenicId:{}",ticketId);
     }
