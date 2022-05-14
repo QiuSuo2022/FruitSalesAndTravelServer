@@ -14,8 +14,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Api(tags = "水果商品表")
 @RestController
@@ -25,6 +29,8 @@ public class FruitController {
     private FruitService fruitService;
 
     private ChildFruitService childFruitService;
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @Autowired
     public void  setFruitService(FruitService fruitService){
@@ -108,9 +114,7 @@ public class FruitController {
                                                          SystemConstants.DEFAULT_PAGE) Integer page,
                                                  @RequestParam(required = false,defaultValue =
                                                          SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize) {
-
-//        return fruitService.getFruitRecommendList(page, pageSize);
-        return null;
+        return fruitService.getFruitRecommendList(page, pageSize);
     }
 
     @ApiOperation(value = "获取单个水果")
@@ -128,6 +132,7 @@ public class FruitController {
         FruitAndChildFruitsVO fruitAndChildFruitsVO = new FruitAndChildFruitsVO();
         fruitAndChildFruitsVO.setFruit(getFruit(fruitId));
         fruitAndChildFruitsVO.setChildFruits(childFruitService.getChildFruitListByFruitId(fruitId));
+        LOG.info("获取id={}的水果以及该水果的子项成功",fruitId);
         return fruitAndChildFruitsVO;
     }
 }
