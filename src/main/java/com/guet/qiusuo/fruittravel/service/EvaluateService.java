@@ -41,6 +41,13 @@ public class EvaluateService {
 
     private UserService userService;
 
+    private OrderFormService orderFormService;
+
+    @Autowired
+    public void setOrderFormService(OrderFormService orderFormService) {
+        this.orderFormService = orderFormService;
+    }
+
     @Autowired
     public void setUserService(UserService userService) { this.userService = userService; }
 
@@ -54,7 +61,7 @@ public class EvaluateService {
      *
      * @param evaluate
      */
-    public void addFruitEvaluate(Evaluate evaluate) {
+    public void addFruitEvaluate(Evaluate evaluate,String orderId) {
         UserContextHolder.validUser(UserContextHolder.getUserId());
         long now = System.currentTimeMillis();
         evaluate.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -64,11 +71,16 @@ public class EvaluateService {
         evaluate.setStatus(SystemConstants.STATUS_ACTIVE);
         evaluate.setCreateUserId(UserContextHolder.getUserId());
         evaluate.setUpdateUserId(UserContextHolder.getUserId());
+
         int i = evaluateMapper.insertSelective(evaluate);
         if (i == 0) {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
         LOG.info("评价水果成功,Id:{}", evaluate.getId());
+
+        //增加主评成功时将订单设定为已评价(已完成)
+        orderFormService.finishOrder(orderId, evaluate.getId());
+        LOG.info("id={}的订单已完成",orderId);
     }
 
     /**
