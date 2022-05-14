@@ -4,13 +4,11 @@ package com.guet.qiusuo.fruittravel.controller;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
-import com.guet.qiusuo.fruittravel.dao.ImageFileDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ImageFileMapper;
 import com.guet.qiusuo.fruittravel.model.ImageFile;
 import com.guet.qiusuo.fruittravel.service.UploadImgService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
-import static org.mybatis.dynamic.sql.SqlBuilder.select;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -46,22 +42,20 @@ public class ImageController {
         this.uploadImgService = uploadImgService;
     }
 
-    @ApiOperation(value = "上传图片",notes = "图片类别: 0--轮播图, 1--水果商品图, 2--景区图, 3--商品评价图")
+    @ApiOperation(value = "上传多个图片")
     @PostMapping(value = "/upload")
-    public ImageFile uploadImg(@RequestParam MultipartFile file,
-                               @RequestParam(required = false) Short imgType,
-                               @RequestParam(required = false) String remark)  {
+    public List<ImageFile> uploadImg(@RequestParam MultipartFile[] files)  {
         UserContextHolder.validAdmin();
-        if (file.isEmpty()) {
+        if (files.length == 0) {
             LOG.info("图片文件异常!");
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
-        return uploadImgService.uploadImg(file, imgType, remark);
+        return uploadImgService.uploadImages(files);
     }
 
-    @ApiOperation(value = "根据图片url绑定产品",notes = "图片类别: 0--轮播图, 1--水果商品图, 2--景区图, 3--商品评价图")
+    @ApiOperation(value = "根据图片url绑定产品",notes = "图片类别: 0:水果/水果子项/景区图, 1:评价图, 2:轮播图")
     @PostMapping(value = "/bind")
-    public void bindImg(@RequestParam String productId,@RequestParam String imgId,@RequestParam short type){
+    public void bindImg(@RequestParam String productId,@RequestParam String imgId,@RequestParam short imgType){
         UserContextHolder.validAdmin();
         if (productId == null || imgId == null){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
@@ -72,7 +66,7 @@ public class ImageController {
             throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
         }
         imageFile.setProductId(productId);
-        imageFile.setType(type);
+        imageFile.setType(imgType);
         int i = imageFileMapper.updateByPrimaryKey(imageFile);
         if (i == 0){
             LOG.info("绑定图片失败");
@@ -82,22 +76,17 @@ public class ImageController {
     }
 
 
-    @ApiOperation(value = "获取图片url",notes = "图片类型(imgType) 0:轮播图 1:水果 2:景区 3:评论图片")
+    @ApiOperation(value = "获取图片url",notes = "图片类型(imgType) 0:水果/水果子项/景区图 1:评价图 2:轮播图")
     @GetMapping(value = "/getImg")
     public List<ImageFile> getImg(@RequestParam String productId, @RequestParam short imgType){
-         List<ImageFile>  imgList= imageFileMapper.selectMany(select(
-                ImageFileDynamicSqlSupport.id,
-                ImageFileDynamicSqlSupport.imageUrl
-        )
-                .from(ImageFileDynamicSqlSupport.imageFile)
-                .where(ImageFileDynamicSqlSupport.productId, isEqualTo(productId))
-                .and(ImageFileDynamicSqlSupport.type, isEqualTo(imgType))
-                .build().render(RenderingStrategies.MYBATIS3));
-
-        if (imgList.isEmpty()){
-            throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
-        }
-        return imgList;
+        return uploadImgService.getImages(productId,imgType);
     }
+
+    @ApiOperation(value = "获取用户评论某项产品的图片url",notes = "图片类型(imgType) 0:水果/水果子项/景区图 1:评价图 2:轮播图")
+    @GetMapping(value = "/getImgByUserId")
+    public List<ImageFile> getImg(@RequestParam String productId){
+        return uploadImgService.getImagesById(productId);
+    }
+
 
 }
