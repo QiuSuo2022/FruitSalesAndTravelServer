@@ -89,10 +89,9 @@ public class SystemConstants {
      */
     public static final short UNPAID = 0;
     public static final short PAID = 1;
-    public static final short UNSHIPPED = 2;
-    public static final short SHIPPED = 3;
-    public static final short FINISHED = 4;
-    public static final short REFUND = 5;
+    public static final short UNFINISHED = 2;
+    public static final short FINISHED = 3;
+    public static final short REFUND = 4;
 
 
     /**
@@ -110,9 +109,13 @@ public class SystemConstants {
     /**
      * 图片类型
      */
-    public static final short IMG_ADVERTISING = 0;
-    public static final short IMG_FRUIT = 1;
-    public static final short IMG_SCENIC = 2;
-    public static final short IMG_EVAL = 3;
+    public static final short IMG_COMMON = 0;
+    public static final short IMG_EVAL = 1;
+    public static final short IMG_SHOW= 2;
 
+    /**
+     * 评价状态
+     */
+    public static final short EVAL = 1;
+    public static final short UNEVAL = 0;
 }
