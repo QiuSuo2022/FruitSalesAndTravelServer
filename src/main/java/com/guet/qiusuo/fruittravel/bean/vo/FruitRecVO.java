@@ -20,6 +20,6 @@ public class FruitRecVO {
     @ApiModelProperty(value = "销量")
     private Integer sales;
 
-    @ApiModelProperty(value = "图片url")
+    @ApiModelProperty(value = "水果子类图片url")
     private String imageUrl;
 }
