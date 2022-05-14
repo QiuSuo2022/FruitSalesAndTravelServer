@@ -6,6 +6,8 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.GoodsDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.GoodsMapper;
+import com.guet.qiusuo.fruittravel.model.Cart;
+import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Goods;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -26,6 +28,12 @@ public class GoodsService {
 
     private GoodsMapper goodsMapper;
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private ChildFruitService childFruitService;
+    @Autowired
+    public void setChildFruitService(ChildFruitService childFruitService) {
+        this.childFruitService = childFruitService;
+    }
 
     @Autowired
     public void setGoodsMapper(GoodsMapper goodsMapper) { this.goodsMapper = goodsMapper; }
@@ -50,30 +58,31 @@ public class GoodsService {
 
     /**
      * 添加商品
-     * @param goods
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addGoods(Goods goods) {
+    public Goods addGood(Cart cart, String orderId) {
+        Goods good = new Goods();
         long now = System.currentTimeMillis();
-        goods.setId(UUID.randomUUID().toString().replace("-", ""));
-        goods.setCreateTime(now);
-        goods.setUpdateTime(now);
-        goods.setCreateUserId(UserContextHolder.getUserId());
-        goods.setUpdateUserId(UserContextHolder.getUserId());
-        //若goods与OrderForm一起提交
-        goods.setStatus(SystemConstants.STATUS_ACTIVE);
-        //防止外键约束错误
-        if(goods.getFruitId() == null) {
-            goods.setFruitId(SystemConstants.nullFlag);
-        }
-        else if(goods.getScenicId() == null) {
-            goods.setScenicId(SystemConstants.nullFlag);
-        }
-        int i = goodsMapper.insertSelective(goods);
+        ChildFruit c = childFruitService.getChildFruit(cart.getChildFruitId());
+        good.setId(UUID.randomUUID().toString().replace("-", ""));
+        good.setOrderId(orderId);
+        good.setName(c.getFruitName());
+        good.setPrice(c.getFruitPrice());
+        good.setFruitId(c.getFruitId());
+        good.setScenicId(null);
+        good.setAmount(cart.getQuantity());
+        good.setPayStatus(SystemConstants.UNPAID);
+        good.setStatus(SystemConstants.STATUS_ACTIVE);
+        good.setCreateTime(now);
+        good.setUpdateTime(now);
+        good.setCreateUserId(UserContextHolder.getUserId());
+        good.setUpdateUserId(UserContextHolder.getUserId());
+        int i = goodsMapper.insertSelective(good);
         if(i == 0) {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
-        LOG.info("商品{}添加成功",goods.getName());
+        LOG.info("创建订单映射商品{}成功",good.getName());
+        return good;
     }
 
     /**
