@@ -1,4 +1,0 @@
-开发框架 springboot
-控制数据库 mybatis dynamic sql
-
-generator Config.xml 生成 dao  model
