@@ -4,8 +4,10 @@ import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
+import com.guet.qiusuo.fruittravel.dao.ImageFileDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.ImageFileMapper;
 import com.guet.qiusuo.fruittravel.model.ImageFile;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
+import static org.mybatis.dynamic.sql.SqlBuilder.select;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -30,6 +36,7 @@ public class UploadImgService {
     private static final String LOCAL_BASEPATH = "D://Nginx/root/images/";
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+    private static String port = "80";
 
     private ImageFileMapper imageFileMapper;
     @Autowired
@@ -37,13 +44,19 @@ public class UploadImgService {
         this.imageFileMapper = imageFileMapper;
     }
 
+    public List<ImageFile> uploadImages(MultipartFile[] files){
+        ArrayList<ImageFile> list = null;
+        int i = 0;
+        //多个图片上传,返回的img对象存入list
+        for (MultipartFile f:files) {
+            ImageFile file = uploadImgUtil(f);
+                list.add(file);
+            i++;
+        }
+        return list;
+    }
 
-
-    String port = "80";
-
-    public ImageFile uploadImg(MultipartFile file,Short imgType,String remark){
-
-
+    private ImageFile uploadImgUtil(MultipartFile file){
         String NGINX_URL = "http://" + LOCAL_IP + ":" + port + "/";
         String originalFilename = file.getOriginalFilename() ;
         String uuFileName = UUID.randomUUID().toString();
@@ -56,10 +69,8 @@ public class UploadImgService {
         ImageFile img = new ImageFile();
         img.setId(uuFileName.replace("-", ""));
         img.setImageName(fileName);
-        img.setType(imgType);
         img.setImageSize((short)file.getSize());
         img.setImageUrl(url);
-        img.setRemark(remark);
         img.setCreateTime(now);
         img.setUpdateTime(now);
         img.setCreateUserId(UserContextHolder.getUserId());
@@ -80,18 +91,86 @@ public class UploadImgService {
                 // 保存文件
                 file.transferTo(dest);
                 img.setStatus(SystemConstants.STATUS_ACTIVE);
-                return img;
             } catch (Exception e) {
                 e.printStackTrace();
                 LOG.error("文件保存异常",e);
                 img.setStatus(SystemConstants.STATUS_NEGATIVE);
-                return img;
+                throw new SystemException(ErrorCode.UPLOAD_IMAGE_ERROR);
             }
              } catch (IOException e) {
                 LOG.error("文件上传异常",e);
                 img.setStatus(SystemConstants.STATUS_NEGATIVE);
              }
         imageFileMapper.updateByPrimaryKey(img);
-        return img;
-             }
+            return img;
     }
+
+    /**
+     * 根据产品id获取图片
+     * @param productId
+     * @param imgType
+     * @return
+     */
+    public List<ImageFile> getImages(String productId,short imgType){
+        List<ImageFile>  imgList= imageFileMapper.selectMany(select(
+                ImageFileDynamicSqlSupport.id,
+                ImageFileDynamicSqlSupport.imageUrl
+        )
+                .from(ImageFileDynamicSqlSupport.imageFile)
+                .where(ImageFileDynamicSqlSupport.productId, isEqualTo(productId))
+                .and(ImageFileDynamicSqlSupport.type, isEqualTo(imgType))
+                .and(ImageFileDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+
+        if (imgList.isEmpty()){
+            throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
+        }
+        return imgList;
+    }
+
+    /**
+     * 根据产品id获取url
+     * @param productId
+     * @return
+     */
+    public List<String> getUrlByProdId(String productId){
+        List<String> list = null;
+        List<ImageFile>  imgList= imageFileMapper.selectMany(select(
+                ImageFileDynamicSqlSupport.id,
+                ImageFileDynamicSqlSupport.imageUrl
+        )
+                .from(ImageFileDynamicSqlSupport.imageFile)
+                .where(ImageFileDynamicSqlSupport.productId, isEqualTo(productId))
+                .and(ImageFileDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        if (imgList.isEmpty()){
+            throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
+        }
+        for (ImageFile img:imgList) {
+            list.add(img.getImageUrl());
+        }
+        return list;
+    }
+    /**
+     * 根据用户id与产品id获取评论图片
+     * @param productId
+     * @return
+     */
+    public List<ImageFile> getImagesById(String productId){
+        List<ImageFile>  imgList= imageFileMapper.selectMany(select(
+                ImageFileDynamicSqlSupport.id,
+                ImageFileDynamicSqlSupport.imageUrl
+        )
+                .from(ImageFileDynamicSqlSupport.imageFile)
+                .where(ImageFileDynamicSqlSupport.productId, isEqualTo(productId))
+                .and(ImageFileDynamicSqlSupport.type, isEqualTo(SystemConstants.IMG_EVAL))
+                .and(ImageFileDynamicSqlSupport.createUserId,isEqualTo(UserContextHolder.getUserId()))
+                .and(ImageFileDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+
+        if (imgList.isEmpty()){
+            throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
+        }
+        return imgList;
+    }
+}
