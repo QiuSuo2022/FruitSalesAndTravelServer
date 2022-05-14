@@ -40,7 +40,8 @@ public enum ErrorCode {
     GRANT_ERROR(-1,"system.error.grant.error"),
     REVOKE_ERROR(-1,"system.error.revoke.error"),
     CONFINE_ERROR(-1,"system.error.confine.error"),
-    NO_FOUND_GOODS(-1,"system.error.no_found.goods")
+    NO_FOUND_GOODS(-1,"system.error.no_found.goods"),
+    UPLOAD_IMAGE_ERROR(-1,"system.error.upload.image.error")
     ;
 
     @Override
