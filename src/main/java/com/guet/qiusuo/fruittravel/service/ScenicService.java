@@ -2,10 +2,7 @@ package com.guet.qiusuo.fruittravel.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.guet.qiusuo.fruittravel.bean.vo.FruitRecVO;
-import com.guet.qiusuo.fruittravel.bean.vo.ScenicRecVO;
-import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
-import com.guet.qiusuo.fruittravel.bean.vo.TicketArray;
+import com.guet.qiusuo.fruittravel.bean.vo.*;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -34,7 +31,12 @@ public class ScenicService {
     private ScenicMapper scenicMapper;
 
     private TicketService ticketService;
+    @Autowired
+    public void setUploadImgService(UploadImgService uploadImgService) {
+        this.uploadImgService = uploadImgService;
+    }
 
+    private UploadImgService uploadImgService;
     @Autowired
     public void setScenicMapper(ScenicMapper scenicMapper) {
         this.scenicMapper = scenicMapper;
@@ -87,8 +89,15 @@ public class ScenicService {
         PageList<Scenic> pageList = new PageList<>();
         pageList.setList(scenicList);
         pageList.setPageInfo(new PageInfo<>(scenicList));
+        LOG.info("获取景区列表成功");
         return pageList;
     }
+
+    /**
+     * 根据景区名字获取门票
+     * @param scenicName
+     * @return
+     */
     private List<Scenic> getScenicByName(String scenicName) {
         return scenicMapper.selectMany(select(
                 ScenicDynamicSqlSupport.id,
@@ -163,6 +172,7 @@ public class ScenicService {
         if (i == 0) {
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
+        LOG.info("删除景区{}成功,id={}",scenic.getScenicName(),scenic.getId());
         return true;
     }
 
@@ -179,6 +189,7 @@ public class ScenicService {
         if (i == 0) {
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        LOG.info("修改景区{}成功,id={}",scenic.getScenicName(),scenic.getId());
         return true;
     }
 
@@ -222,6 +233,7 @@ public class ScenicService {
             scenicVO.setUpdateTime(scenic.getUpdateTime());
             scenicVO.setCreateUserId(scenic.getCreateUserId());
             scenicVO.setUpdateUserId(scenic.getUpdateUserId());
+            scenicVO.setImgUrl(uploadImgService.getUrlByProdId(scenicVO.getId()).get(0));
             ArrayList<TicketArray> arrays = new ArrayList<>();
             List<Ticket> tickets = ticketService.searchTicket(scenic.getId());
             if(tickets == null) {
@@ -243,6 +255,7 @@ public class ScenicService {
         PageList<ScenicVO> pageList = new PageList<>();
         pageList.setList(scenicVOList);
         pageList.setPageInfo(new PageInfo<>(scenicVOList));
+        LOG.info("查找所有景区成功");
         return pageList;
     }
 
@@ -285,7 +298,7 @@ public class ScenicService {
         scenicVO.setCreateTime(scenic.getCreateTime());
         scenicVO.setUpdateTime(scenic.getUpdateTime());
         scenicVO.setCreateUserId(scenic.getUpdateUserId());
-
+        scenicVO.setImgUrl(uploadImgService.getUrlByProdId(scenicVO.getId()).get(0));
         if(ticketService.searchTicket(scenic_id) == null) {
             scenicVO.setTicketList(null);
         }
@@ -301,10 +314,17 @@ public class ScenicService {
                 scenicVO.setTicketList(arrays);
             }
         }
+        LOG.info("查找景区{}成功,id={}",scenicVO.getScenicName(),scenicVO.getId());
         return scenicVO;
     }
-    public List<Scenic> getAllScenic(){
-        return  scenicMapper.selectScenic(select(
+
+    /**
+     * 获取全部景区对象
+     * @return
+     */
+    public List<ScenicUrlVO> getAllScenic(){
+        //从数据库中选取
+        List<Scenic> l = scenicMapper.selectScenic(select(
                 ScenicDynamicSqlSupport.id,
                 ScenicDynamicSqlSupport.scenicName,
                 ScenicDynamicSqlSupport.type,
@@ -314,6 +334,26 @@ public class ScenicService {
                         .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
+        //加入到vo类中,为了附加图片url
+        List<ScenicUrlVO> list = null;
+        for (Scenic s:l) {
+            ScenicUrlVO scenicUrlVO = new ScenicUrlVO();
+            scenicUrlVO.setId(s.getId());
+            scenicUrlVO.setScenicName(s.getScenicName());
+            scenicUrlVO.setImgUrl(uploadImgService.getUrlByProdId(s.getId()).get(0));
+            scenicUrlVO.setLocation(s.getLocation());
+            scenicUrlVO.setDescription(s.getDescription());
+            scenicUrlVO.setType(s.getType());
+            scenicUrlVO.setStatus(s.getStatus());
+            scenicUrlVO.setOpeningHours(s.getOpeningHours());
+            scenicUrlVO.setUpdateTime(s.getUpdateTime());
+            scenicUrlVO.setUpdateUserId(s.getUpdateUserId());
+            scenicUrlVO.setCreateTime(s.getCreateTime());
+            scenicUrlVO.setCreateUserId(s.getCreateUserId());
+            list.add(scenicUrlVO);
+        }
+        return list;
+
     }
 
     /**
@@ -321,7 +361,12 @@ public class ScenicService {
      */
     public PageList<ScenicRecVO> getScenicRec(Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
-        List<ScenicRecVO> scenicRec = scenicMapper.ScenicRec();
+        List<ScenicRecVO> scenicRec = scenicMapper.getScenicRec();
+        for (ScenicRecVO s:scenicRec) {
+            s.setImageUrl(uploadImgService.getUrlByProdId(s.getScenicId()).get(0));
+            List<Ticket> tickets = ticketService.searchTicket(s.getScenicName());s.setSales(100);
+            s.setTicketPrice(tickets.get(0).getPrice());
+        }
         PageList<ScenicRecVO> pageList = new PageList<>();
         pageList.setList(scenicRec);
         pageList.setPageInfo(new PageInfo<>(scenicRec));
