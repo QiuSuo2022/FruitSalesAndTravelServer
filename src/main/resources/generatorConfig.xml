@@ -12,7 +12,7 @@
             <property name="suppressAllComments" value="false"/>
             <property name="addRemarkComments" value="true"/>
         </commentGenerator>
-springboot - java       控制sql - mybatis dynamic sql
+
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
                         connectionURL="${spring.datasource.url}"
                         userId="${spring.datasource.username}"
@@ -46,7 +46,7 @@ springboot - java       控制sql - mybatis dynamic sql
         <!--        <table tableName="tbl_scenic" domainObjectName="Scenic"/>-->
         <!--        <table tableName="tbl_ticket" domainObjectName="Ticket"/>-->
         <!--        <table tableName="tbl_user_role" domainObjectName="UserRole"/>-->
-        <!--        <table tableName="tbl_order_form" domainObjectName="OrderForm"/>-->
+<!--                <table tableName="tbl_order_form" domainObjectName="OrderForm"/>-->
         <!--        <table tableName="tbl_goods" domainObjectName="Goods"/>-->
     </context>
 </generatorConfiguration>
