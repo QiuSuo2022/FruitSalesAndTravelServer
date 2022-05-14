@@ -16,6 +16,8 @@ public class ScenicVO extends Scenic {
 
     private ArrayList<TicketArray> ticketList;
 
+    @ApiModelProperty(value = "水果图片")
+    private String imgUrl;
 
 }
 
