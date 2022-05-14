@@ -24,11 +24,11 @@ public class GoodsController {
         return goodsService.searchAllGoods(orderId);
     }
 
-    @ApiOperation(value = "添加商品")
-    @PostMapping
-    public void addGoods(@RequestBody Goods goods) {
-        goodsService.addGoods(goods);
-    }
+//    @ApiOperation(value = "添加商品")
+//    @PostMapping
+//    public void addGoods(@RequestBody Goods goods) {
+//        goodsService.addGoods(goods);
+//    }
 
     @ApiOperation(value = "修改商品")
     @PutMapping
