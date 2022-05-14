@@ -67,9 +67,9 @@ create table tbl_child_fruit
 create table tbl_image_file
 (
     id              varchar(44)     not null comment 'uuid',
-    product_id      varchar(44)     null comment '用于绑定景区/水果',
+    product_id      varchar(44)     null comment '用于绑定景区/水果/评论',
     image_name      varchar(255)    null comment '图片名',
-    type            smallint        null comment '图片类别: 0--轮播图, 1--水果商品图, 2--景区图, 3--商品评价图',
+    type            smallint        null comment '图片类别: 0--景区/水果图, 1--评价图, 2--轮播图',
     image_size      smallint        null comment '文件大小',
     image_url       varchar(255)    null comment '文件存储路径',
     remark          varchar(255)    null comment '备注',
@@ -250,10 +250,11 @@ create table tbl_user_role
 CREATE TABLE tbl_order_form
 (
     id                  VARCHAR(44) NOT NULL COMMENT '订单编号uuid',
+    scenic_id           VARCHAR(44) NULL COMMENT '景区id',
     address             VARCHAR(255)  COMMENT '收货地址',
     express             VARCHAR(127) COMMENT '物流信息',
     fee                 INT(11) NULL COMMENT '实际付款金额(单位:分)',
-    pay_status          SMALLINT  NOT NULL COMMENT '订单状态:未支付-0 已支付-1 待发货-2 已发货-3 已完成-4 已退款-5',
+    pay_status          SMALLINT  NOT NULL COMMENT '订单状态:待支付-0 待发货-1 待收货-2 待评价(已完成)-3 售后-4',
     has_evaluate        SMALLINT  COMMENT '是否已经评价:未评价-0 已评价-1',
     bind_evaluate_id    VARCHAR(44)  COMMENT '评价表的id',
     STATUS              SMALLINT COMMENT '状态,0:禁用 1:启用',
