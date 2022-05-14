@@ -123,6 +123,11 @@ public class ChildFruitService {
         return childFruitMapper.selectByPrimaryKey(childFruitId).orElse(null);
     }
 
+    /**
+     * 根据水果id获取水果子项id
+     * @param FruitId
+     * @return
+     */
     public List<ChildFruit> getChildFruitListByFruitId(String FruitId){
         return childFruitMapper.selectMany(select(
                 ChildFruitDynamicSqlSupport.id,
