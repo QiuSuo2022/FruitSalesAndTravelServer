@@ -22,6 +22,6 @@ public class FruitVO extends Fruit {
     @ApiModelProperty(value = "销量")
     private Integer sales;
 
-    @ApiModelProperty(value = "图片url")
+    @ApiModelProperty(value = "水果子项图片url")
     private String imageUrl;
 }

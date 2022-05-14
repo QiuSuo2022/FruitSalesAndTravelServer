@@ -3,6 +3,7 @@ package com.guet.qiusuo.fruittravel.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitRecVO;
+import com.guet.qiusuo.fruittravel.bean.vo.FruitUrlVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
@@ -11,15 +12,12 @@ import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.Fruit;
-import com.guet.qiusuo.fruittravel.model.ImageFile;
-import org.mybatis.dynamic.sql.SortSpecification;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,10 +36,17 @@ public class FruitService {
 
     private ImageFileMapper imageFileMapper;
 
+    private UploadImgService uploadImgService;
+    @Autowired
+    public void setUploadImgService(UploadImgService uploadImgService) {
+        this.uploadImgService = uploadImgService;
+    }
+
     @Autowired
     public void setImageFileMapper(ImageFileMapper imageFileMapper) {
         this.imageFileMapper = imageFileMapper;
     }
+
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
     @Autowired
@@ -93,6 +98,7 @@ public class FruitService {
         PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitList);
         pageList.setPageInfo(new PageInfo<>(fruitList));
+        LOG.info("获取水果列表成功");
         return pageList;
     }
 
@@ -144,7 +150,7 @@ public class FruitService {
         if(i == 0){
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
-        LOG.info("水果{}添加成功",fruit.getFruitName());
+        LOG.info("添加水果{}成功,id={}",fruit.getFruitName(),fruit.getId());
         return true;
     }
 
@@ -171,6 +177,7 @@ public class FruitService {
         if (i == 0){
             throw new SystemException(ErrorCode.DELETE_ERROR);
         }
+        LOG.info("删除水果{}成功,id={}",check.getFruitName(),fruitId);
     }
 
     /**
@@ -185,13 +192,34 @@ public class FruitService {
         if (i == 0){
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        LOG.info("更新水果{}成功,id={}",fruit.getFruitName(),fruit.getId());
         return true;
     }
 
+    /**
+     * 根据水果id获取水果
+     * @param fruitId
+     * @return
+     */
     public Fruit getFruit(String fruitId){
         Optional<Fruit> optionalFruit =  fruitMapper.selectByPrimaryKey(fruitId);
         Fruit fruit = optionalFruit.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_FRUIT));
-        return fruit;
+        FruitUrlVO fruitUrlVO = new FruitUrlVO();
+        fruitUrlVO.setId(fruit.getId());
+        fruitUrlVO.setFruitName(fruit.getFruitName());
+        fruitUrlVO.setFruitPrice(fruit.getFruitPrice());
+        fruitUrlVO.setDeliveryCost(fruit.getDeliveryCost());
+        fruitUrlVO.setDeparturePoint(fruit.getDeparturePoint());
+        fruitUrlVO.setDescription(fruit.getDescription());
+        fruitUrlVO.setStatus(fruit.getStatus());
+        fruitUrlVO.setUpdateTime(fruit.getUpdateTime());
+        fruitUrlVO.setUpdateUserId(fruit.getUpdateUserId());
+        fruitUrlVO.setCreateTime(fruit.getCreateTime());
+        fruitUrlVO.setCreateUserId(fruit.getCreateUserId());
+        fruitUrlVO.setImgUrl(uploadImgService.getUrlByProdId(fruitId).get(0));
+        LOG.info("获取水果成功,id={}",fruitId);
+        return fruitUrlVO;
+
     }
     /**
      * 查询全部Fruit
@@ -204,20 +232,13 @@ public class FruitService {
             return null;
         }
         for (FruitVO fruitVO:fruitVOList) {
-            Optional<ImageFile> imageFile = imageFileMapper.selectByPrimaryKey(fruitVO.getId());
-            ImageFile imageFile1 = imageFile.orElse(null);
-            if (imageFile1 == null){
-                fruitVO.setImageUrl("https://img1.baidu.com/it/u=3220255444,3049275992&fm=253&fmt=auto&app=138&f=JPEG?w=691&h=500");
-                continue;
-            }
-            String productId = imageFile1.getProductId();
-            if (productId.equals(fruitVO.getId())){
-                fruitVO.setImageUrl(imageFile1.getImageUrl());
-            }
+            List<String> urlByProdId = uploadImgService.getUrlByProdId(fruitVO.getId());
+            fruitVO.setImageUrl(urlByProdId.get(0));
         }
         PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitVOList);
         pageList.setPageInfo(new PageInfo<>(fruitVOList));
+        LOG.info("查找所有水果成功");
         return pageList;
     }
 
@@ -278,6 +299,7 @@ public class FruitService {
         fruitVO.setCreateTime(fruit.getCreateTime());
         fruitVO.setUpdateTime(fruit.getUpdateTime());
         fruitVO.setCreateUserId(fruit.getUpdateUserId());
+        fruitVO.setImageUrl(uploadImgService.getUrlByProdId(fruit.getId()).get(0));
 
         fruitVO.setStock(childFruitService.getChildFruit(fruitId).getStock());
         fruitVO.setChildFruitName(childFruitService.getChildFruit(fruitId).getFruitName());
@@ -288,6 +310,9 @@ public class FruitService {
         PageHelper.startPage(page,pageSize);
         List<FruitVO> fruitList;
         fruitList = fruitMapper.FruitRecommend();
+        for (FruitVO vo:fruitList) {
+            vo.setImageUrl(uploadImgService.getUrlByProdId(vo.getId()).get(0));
+        }
         PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitList);
         pageList.setPageInfo(new PageInfo<>(fruitList));
@@ -299,10 +324,7 @@ public class FruitService {
      */
     public PageList<FruitRecVO> getFruitRec(Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
-        List<FruitRecVO> fruitRecList = fruitMapper.FruitRec();
-        for (FruitRecVO f:fruitRecList
-             ) {f.setSales(100);
-        }
+        List<FruitRecVO> fruitRecList = fruitMapper.getFruitRec();
         PageList<FruitRecVO> pageList = new PageList<>();
         pageList.setList(fruitRecList);
         pageList.setPageInfo(new PageInfo<>(fruitRecList));
