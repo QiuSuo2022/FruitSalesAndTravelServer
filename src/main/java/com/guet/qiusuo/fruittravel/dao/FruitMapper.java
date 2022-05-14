@@ -327,7 +327,7 @@ public interface FruitMapper {
             "GROUP BY tbl_child_fruit.fruit_name",
             "ORDER BY child_fruit_lowest_price*0.25 + grades*0.25 + sales*0.5"
     })
-    @Results(id = "FruitRec", value = {
+    @Results(id = "getFruitRec", value = {
             @Result(column = "fruit_id", property = "fruitId", jdbcType = JdbcType.VARCHAR),
             @Result(column = "child_fruit_id", property = "childFruitId", jdbcType = JdbcType.VARCHAR),
             @Result(column = "child_fruit_name", property = "childFruitName", jdbcType = JdbcType.VARCHAR),
@@ -335,7 +335,7 @@ public interface FruitMapper {
             @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER),
             @Result(column = "image_url", property = "imageUrl", jdbcType = JdbcType.INTEGER)
     })
-    List<FruitRecVO> FruitRec();
+    List<FruitRecVO> getFruitRec();
     @Select({
             "SELECT fruit_name,fruit_price,departure_point,delivery_cost,tbl_fruit.`create_time`,SUM(amount) AS sales",
             "FROM tbl_fruit LEFT JOIN tbl_goods ON tbl_fruit.`id` = tbl_goods.`fruit_id`",
