@@ -8,14 +8,12 @@ import com.guet.qiusuo.fruittravel.dao.TicketDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.TicketMapper;
 import com.guet.qiusuo.fruittravel.model.Ticket;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
-import org.mybatis.dynamic.sql.select.join.EqualTo;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -99,6 +97,7 @@ public class TicketService {
         if (i == 0){
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
+        LOG.info("修改景点门票成功,id={}",ticket.getId());
     }
 
     /**
@@ -123,11 +122,34 @@ public class TicketService {
                                     .and(TicketDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                                     .build().render(RenderingStrategies.MYBATIS3));
         if(ticketList.isEmpty()) {
-            //throw new SystemException(ErrorCode.NO_FOUND_TICKET);
-            return null;
+            LOG.info("没有此类门票!");
+            throw new SystemException(ErrorCode.NO_FOUND_TICKET);
         }
         else {
             return ticketList;
         }
     }
+
+    /**
+     * 根据景区id以及门票类型获取当前门票
+     * @param scenicId
+     * @param type
+     * @return
+     */
+    public Ticket getTicketByType(String scenicId,Short type){
+        List<Ticket> ticketsType = ticketMapper.selectMany(select(
+                TicketDynamicSqlSupport.price
+        )
+                .from(TicketDynamicSqlSupport.ticket)
+                .where(TicketDynamicSqlSupport.scenicId, isEqualTo(scenicId))
+                .and(TicketDynamicSqlSupport.type, isEqualTo(type))
+                .and(TicketDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        if (ticketsType.isEmpty()){
+            LOG.info("没有此种门票类型");
+            throw new SystemException(ErrorCode.NO_FOUND_TICKET);
+        }
+        return ticketsType.get(0);
+    }
+
 }

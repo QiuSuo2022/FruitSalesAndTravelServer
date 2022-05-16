@@ -437,7 +437,6 @@ public interface ScenicMapper {
             @Result(column = "scenic_name", property = "scenicName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "ticket_price", property = "ticketPrice", jdbcType = JdbcType.VARCHAR),
             @Result(column = "sales", property = "sales", jdbcType = JdbcType.INTEGER),
-            @Result(column = "image_url", property = "imageUrl", jdbcType = JdbcType.INTEGER)
     })
     List<ScenicRecVO> getScenicRec();
 }

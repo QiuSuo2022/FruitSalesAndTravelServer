@@ -76,7 +76,7 @@ public class ImageController {
     }
 
 
-    @ApiOperation(value = "获取图片url",notes = "图片类型(imgType) 0:水果/水果子项/景区图 1:评价图 2:轮播图")
+    @ApiOperation(value = "获取多个图片url",notes = "图片类型(imgType) 0:水果/水果子项/景区图 1:评价图 2:轮播图")
     @GetMapping(value = "/getImg")
     public List<ImageFile> getImg(@RequestParam String productId, @RequestParam short imgType){
         return uploadImgService.getImages(productId,imgType);

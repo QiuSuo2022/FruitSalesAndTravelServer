@@ -16,4 +16,7 @@ public class FruitEvaluateVO extends Evaluate {
 
     @ApiModelProperty(value = "水果追评详细")
     private List<EvaluateVO> fruitReevaluate;
+
+    @ApiModelProperty(value = "评论图片")
+    private List<String> EvalImageUrl;
 }

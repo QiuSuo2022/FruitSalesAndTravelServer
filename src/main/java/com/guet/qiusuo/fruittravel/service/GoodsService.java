@@ -37,27 +37,8 @@ public class GoodsService {
 
     @Autowired
     public void setGoodsMapper(GoodsMapper goodsMapper) { this.goodsMapper = goodsMapper; }
-
-    public Goods selectGoodsByOrderId(String orderId) {
-        List<Goods> goodsList = goodsMapper.selectMany(select(
-                GoodsDynamicSqlSupport.fruitId,
-                GoodsDynamicSqlSupport.scenicId,
-                GoodsDynamicSqlSupport.name,
-                GoodsDynamicSqlSupport.price,
-                GoodsDynamicSqlSupport.amount
-        )
-                        .from(GoodsDynamicSqlSupport.goods)
-                        .where(GoodsDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                        .and(GoodsDynamicSqlSupport.orderId,isEqualTo(orderId))
-                        .build().render(RenderingStrategies.MYBATIS3));
-        if (goodsList.isEmpty()) {
-            throw new SystemException(ErrorCode.NO_FOUND_GOODS);
-        }
-        return goodsList.get(0);
-    }
-
     /**
-     * 添加商品
+     * 添加订单商品
      */
     @Transactional(rollbackFor = Exception.class)
     public Goods addGood(Cart cart, String orderId) {
@@ -68,7 +49,8 @@ public class GoodsService {
         good.setOrderId(orderId);
         good.setName(c.getFruitName());
         good.setPrice(c.getFruitPrice());
-        good.setFruitId(c.getFruitId());
+        //水果子项id
+        good.setFruitId(c.getId());
         good.setScenicId(null);
         good.setAmount(cart.getQuantity());
         good.setPayStatus(SystemConstants.UNPAID);
@@ -86,18 +68,20 @@ public class GoodsService {
     }
 
     /**
-     * 删除商品
+     * 逻辑删除订单商品
      * @param orderId
      */
     public void deleteGoods(String orderId) {
-        Optional<Goods> optionalGoods = goodsMapper.selectByPrimaryKey(orderId);
-        Goods goods = optionalGoods.orElseThrow(() -> new SystemException(ErrorCode.NO_FOUND_GOODS));
-        goods.setStatus(SystemConstants.STATUS_NEGATIVE);
-        goods.setUpdateUserId(UserContextHolder.getUserId());
-        goods.setUpdateTime(System.currentTimeMillis());
-        int i = goodsMapper.updateByPrimaryKeySelective(goods);
-        if (i == 0) {
-            throw new SystemException(ErrorCode.DELETE_ERROR);
+        List<Goods> goods = getGoods(orderId);
+        for (Goods g:goods) {
+            g.setStatus(SystemConstants.STATUS_NEGATIVE);
+            g.setUpdateUserId(UserContextHolder.getUserId());
+            g.setUpdateTime(System.currentTimeMillis());
+            int i = goodsMapper.updateByPrimaryKeySelective(g);
+            if (i == 0) {
+                throw new SystemException(ErrorCode.DELETE_ERROR);
+            }
+            LOG.info("删除订单商品:{}成功",g.getName());
         }
     }
 
@@ -119,14 +103,13 @@ public class GoodsService {
      * @param orderId
      * @return
      */
-    public List<Goods> searchAllGoods(String orderId) {
+    public List<Goods> getGoods(String orderId) {
         return goodsMapper.selectMany(select(
                 GoodsDynamicSqlSupport.id,
                 GoodsDynamicSqlSupport.orderId,
                 GoodsDynamicSqlSupport.name,
                 GoodsDynamicSqlSupport.price,
                 GoodsDynamicSqlSupport.fruitId,
-                GoodsDynamicSqlSupport.scenicId,
                 GoodsDynamicSqlSupport.amount,
                 GoodsDynamicSqlSupport.status,
                 GoodsDynamicSqlSupport.createTime,

@@ -45,7 +45,7 @@ public class UploadImgService {
     }
 
     public List<ImageFile> uploadImages(MultipartFile[] files){
-        ArrayList<ImageFile> list = null;
+        ArrayList<ImageFile> list = new ArrayList<>();
         int i = 0;
         //多个图片上传,返回的img对象存入list
         for (MultipartFile f:files) {
@@ -134,7 +134,7 @@ public class UploadImgService {
      * @return
      */
     public List<String> getUrlByProdId(String productId){
-        List<String> list = null;
+        ArrayList<String> list = new ArrayList<>();
         List<ImageFile>  imgList= imageFileMapper.selectMany(select(
                 ImageFileDynamicSqlSupport.id,
                 ImageFileDynamicSqlSupport.imageUrl

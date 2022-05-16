@@ -80,7 +80,7 @@ public class EvaluateService {
 
         //增加主评成功时将订单设定为已评价(已完成)
         orderFormService.finishOrder(orderId, evaluate.getId());
-        LOG.info("id={}的订单已完成",orderId);
+        LOG.info("订单已完成,id={}",orderId);
     }
 
     /**

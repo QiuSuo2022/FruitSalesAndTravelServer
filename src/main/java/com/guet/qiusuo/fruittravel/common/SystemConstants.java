@@ -87,11 +87,12 @@ public class SystemConstants {
     /**
      * 支付状态
      */
-    public static final short UNPAID = 0;
-    public static final short PAID = 1;
-    public static final short UNFINISHED = 2;
-    public static final short FINISHED = 3;
-    public static final short REFUND = 4;
+    public static final short UNPAID = 0;//待付款
+    public static final short PAID = 1;//待发货
+    public static final short UNFINISHED = 2;//待收货
+    public static final short WAIT_FOR_EVAL = 3;//待评价
+    public static final short FINISHED = 4;//已完成
+    public static final short REFUND = 4;//售后
 
 
     /**

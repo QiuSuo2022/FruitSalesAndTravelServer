@@ -130,7 +130,7 @@ public class FruitController {
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
         FruitAndChildFruitsVO fruitAndChildFruitsVO = new FruitAndChildFruitsVO();
-        fruitAndChildFruitsVO.setFruit(getFruit(fruitId));
+        fruitAndChildFruitsVO.setFruitVO(fruitService.getFruitVOByFruitId(fruitId));
         fruitAndChildFruitsVO.setChildFruits(childFruitService.getChildFruitListByFruitId(fruitId));
         LOG.info("获取id={}的水果以及该水果的子项成功",fruitId);
         return fruitAndChildFruitsVO;

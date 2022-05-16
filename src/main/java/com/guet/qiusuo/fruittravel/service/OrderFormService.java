@@ -7,11 +7,10 @@ import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.ChildFruitMapper;
+import com.guet.qiusuo.fruittravel.dao.OrderFormDynamicSqlSupport;
 import com.guet.qiusuo.fruittravel.dao.OrderFormMapper;
-import com.guet.qiusuo.fruittravel.model.Cart;
-import com.guet.qiusuo.fruittravel.model.ChildFruit;
-import com.guet.qiusuo.fruittravel.model.Goods;
-import com.guet.qiusuo.fruittravel.model.OrderForm;
+import com.guet.qiusuo.fruittravel.model.*;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -20,10 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
+import static org.mybatis.dynamic.sql.SqlBuilder.select;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -34,18 +36,18 @@ public class OrderFormService {
     private OrderFormMapper orderFormMapper;
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private GoodsService goodsService;
-    private PayService payService;
 
     private ChildFruitMapper childFruitMapper;
+
+    private TicketService ticketService;
+    @Autowired
+    public void setTicketService(TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
 
     @Autowired
     public void setChildFruitMapper(ChildFruitMapper childFruitMapper) {
         this.childFruitMapper = childFruitMapper;
-    }
-
-    @Autowired
-    public void setPayService(PayService payService) {
-        this.payService = payService;
     }
 
     @Autowired
@@ -56,40 +58,10 @@ public class OrderFormService {
     @Autowired
     public void setGoodsService(GoodsService goodsService) { this.goodsService = goodsService; }
     /**
-     * 创建订单
-     * @param orderForm
-     * @return
+     * 创建水果订单
      */
-    public WxObject createOrderForm(HttpServletRequest request, OrderForm orderForm) throws JSONException {
-        OrderForm check = orderFormMapper.selectByPrimaryKey(orderForm.getId()).orElse(null);
-        if(check != null){
-            LOG.info("订单重复创建");
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("hadCreated",true);
-            WxObject wxObject = new WxObject();
-            wxObject.setJsonObject(jsonObject);
-            return wxObject;
-        }
-        long now = System.currentTimeMillis();
-        orderForm.setId(UUID.randomUUID().toString().replace("-", ""));
-        orderForm.setCreateTime(now);
-        orderForm.setUpdateTime(now);
-        orderForm.setCreateUserId(UserContextHolder.getUserId());
-        orderForm.setUpdateUserId(UserContextHolder.getUserId());
-        orderForm.setPayStatus(SystemConstants.UNPAID);
-        orderForm.setStatus(SystemConstants.STATUS_ACTIVE);
-        int i = orderFormMapper.insert(orderForm);
-        if (i == 0){
-            throw new SystemException(ErrorCode.INSERT_ERROR);
-        }
-        LOG.info("创建系统订单成功");
-        //返回需要创建的Object数据
-        WxObject wxObject = new WxObject();
-        wxObject.setJsonObject(payService.wxPay(request,orderForm));
-        return wxObject;
-    }
 
-    public OrderForm createFruitOrder(List<Cart> CartList,String address){
+    public OrderAndProductVO createFruitOrder(List<Cart> CartList,String address){
         OrderForm fruitOrder = new OrderForm();
         fruitOrder.setId(UUID.randomUUID().toString().replace("-",""));
         fruitOrder.setAddress(address);
@@ -132,9 +104,39 @@ public class OrderFormService {
         OrderAndProductVO vo = new OrderAndProductVO();
         vo.setOrderForm(fruitOrder);
         vo.setGoods(goodList);
-        return fruitOrder;
+        vo.setThisTicket(null);
+        return vo;
     }
 
+    /**
+     * 创建景区订单
+     * 景区订单中address表示门票类型(1成人 2儿童 3老人)  express表示数量
+     */
+    public OrderAndProductVO createScenicOrder(OrderForm scenicOrder) {
+        long now = System.currentTimeMillis();
+        //计算费用
+        Short type = Short.valueOf(scenicOrder.getAddress());
+        Ticket thisTicket = ticketService.getTicketByType(scenicOrder.getScenicId(), type);
+        Integer amount = Integer.getInteger(scenicOrder.getExpress());
+        Integer price = thisTicket.getPrice();
+        int fee = amount*price;
+        //景区订单表信息
+        scenicOrder.setId(UUID.randomUUID().toString().replace("-",""));
+        scenicOrder.setFee(fee);
+        scenicOrder.setHasEvaluate(SystemConstants.UNEVAL);
+        scenicOrder.setStatus(SystemConstants.STATUS_ACTIVE);
+        scenicOrder.setPayStatus(SystemConstants.UNPAID);
+        scenicOrder.setCreateUserId(UserContextHolder.getUserId());
+        scenicOrder.setCreateTime(now);
+        scenicOrder.setUpdateUserId(UserContextHolder.getUserId());
+        scenicOrder.setUpdateTime(now);
+        LOG.info("创建景区订单成功,id={}",scenicOrder.getId());
+        OrderAndProductVO vo = new OrderAndProductVO();
+        vo.setOrderForm(scenicOrder);
+        vo.setGoods(null);
+        vo.setThisTicket(thisTicket);
+        return vo;
+    }
     /**
      * 更改订单完成状态
      * @param orderId
@@ -206,17 +208,125 @@ public class OrderFormService {
 
 
     /**
-     * 查找订单
+     * 根据订单id查找订单
      * @param orderFormId
      * @return
      */
-    public OrderForm getOrderForm(String orderFormId){
+    public OrderAndProductVO getOrderVOFormById(String orderFormId){
         Optional<OrderForm> orderFormOptional = orderFormMapper.selectByPrimaryKey(orderFormId);
         OrderForm orderForm = orderFormOptional.orElseThrow(()->new SystemException(ErrorCode.NO_FOUND_ORDER_FOMR));
-        LOG.info("查找订单{}成功",orderFormId);
-        return orderForm;
+        OrderAndProductVO res = new OrderAndProductVO();
+        res.setOrderForm(orderForm);
+        //水果订单
+        if (orderForm.getScenicId() == null){
+            List<Goods> goods = goodsService.getGoods(orderFormId);
+            res.setGoods(goods);
+            res.setThisTicket(null);
+        }else {
+        //景区订单
+            res.setThisTicket(ticketService.getTicketByType(orderFormId,Short.valueOf(orderForm.getAddress())));
+            res.setThisTicket(null);
+            res.setGoods(null);
+        }
+        return res;
     }
 
+    /**
+     * 根据订单状态与用户id获取全部订单
+     * @param payStatus
+     * @return
+     */
+    public List<OrderAndProductVO> getOrderVOsByType_User(Short payStatus) {
+        List<OrderForm> orderForms = orderFormMapper.selectMany(select(
+                OrderFormDynamicSqlSupport.id,
+                OrderFormDynamicSqlSupport.scenicId,
+                OrderFormDynamicSqlSupport.address,
+                OrderFormDynamicSqlSupport.express,
+                OrderFormDynamicSqlSupport.fee,
+                OrderFormDynamicSqlSupport.payStatus,
+                OrderFormDynamicSqlSupport.hasEvaluate,
+                OrderFormDynamicSqlSupport.bindEvaluateId,
+                OrderFormDynamicSqlSupport.status,
+                OrderFormDynamicSqlSupport.payTime,
+                OrderFormDynamicSqlSupport.createTime,
+                OrderFormDynamicSqlSupport.updateTime,
+                OrderFormDynamicSqlSupport.createUserId,
+                OrderFormDynamicSqlSupport.updateUserId
+        )
+                .from(OrderFormDynamicSqlSupport.orderForm)
+                .where(OrderFormDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(OrderFormDynamicSqlSupport.payStatus, isEqualTo(payStatus))
+                .and(OrderFormDynamicSqlSupport.createUserId, isEqualTo(UserContextHolder.getUserId()))
+                .build().render(RenderingStrategies.MYBATIS3));
+        List<OrderAndProductVO> list = new ArrayList<>();
+        for (OrderForm o:orderForms) {
+            OrderAndProductVO orderVO = getOrderVOFormById(o.getId());
+            list.add(orderVO);
+        }
+        return list;
+    }
+
+    /**
+     * 用户获取全部订单
+     * @return
+     */
+    public List<OrderAndProductVO> getAllOrderVO_User() {
+        List<OrderForm> orderForms = orderFormMapper.selectMany(select(
+                OrderFormDynamicSqlSupport.id,
+                OrderFormDynamicSqlSupport.scenicId,
+                OrderFormDynamicSqlSupport.address,
+                OrderFormDynamicSqlSupport.express,
+                OrderFormDynamicSqlSupport.fee,
+                OrderFormDynamicSqlSupport.payStatus,
+                OrderFormDynamicSqlSupport.hasEvaluate,
+                OrderFormDynamicSqlSupport.bindEvaluateId,
+                OrderFormDynamicSqlSupport.status,
+                OrderFormDynamicSqlSupport.payTime,
+                OrderFormDynamicSqlSupport.createTime,
+                OrderFormDynamicSqlSupport.updateTime,
+                OrderFormDynamicSqlSupport.createUserId,
+                OrderFormDynamicSqlSupport.updateUserId
+        )
+                .from(OrderFormDynamicSqlSupport.orderForm)
+                .where(OrderFormDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(OrderFormDynamicSqlSupport.createUserId, isEqualTo(UserContextHolder.getUserId()))
+                .build().render(RenderingStrategies.MYBATIS3));
+        List<OrderAndProductVO> list = new ArrayList<>();
+        for (OrderForm o:orderForms) {
+            OrderAndProductVO orderVO = getOrderVOFormById(o.getId());
+            list.add(orderVO);
+        }
+        return list;
+    }
+
+    public List<OrderAndProductVO> getAllOrderVOsByAdmin() {
+        UserContextHolder.validAdmin();
+        List<OrderForm> orderForms = orderFormMapper.selectMany(select(
+                OrderFormDynamicSqlSupport.id,
+                OrderFormDynamicSqlSupport.scenicId,
+                OrderFormDynamicSqlSupport.address,
+                OrderFormDynamicSqlSupport.express,
+                OrderFormDynamicSqlSupport.fee,
+                OrderFormDynamicSqlSupport.payStatus,
+                OrderFormDynamicSqlSupport.hasEvaluate,
+                OrderFormDynamicSqlSupport.bindEvaluateId,
+                OrderFormDynamicSqlSupport.status,
+                OrderFormDynamicSqlSupport.payTime,
+                OrderFormDynamicSqlSupport.createTime,
+                OrderFormDynamicSqlSupport.updateTime,
+                OrderFormDynamicSqlSupport.createUserId,
+                OrderFormDynamicSqlSupport.updateUserId
+        )
+                .from(OrderFormDynamicSqlSupport.orderForm)
+                .where(OrderFormDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        List<OrderAndProductVO> list = new ArrayList<>();
+        for (OrderForm o:orderForms) {
+            OrderAndProductVO orderVO = getOrderVOFormById(o.getId());
+            list.add(orderVO);
+        }
+        return list;
+    }
     /**
      * 获取数据库中订单支付状态
      * @param orderFormId
@@ -231,7 +341,7 @@ public class OrderFormService {
     }
 
     /**
-     * 假支付
+     * 支付
      * @param orderId
      */
     public boolean fakePay(String orderId){
@@ -246,7 +356,7 @@ public class OrderFormService {
         long now = System.currentTimeMillis();
         orderForm.setPayStatus(SystemConstants.PAID);
         orderForm.setPayTime(now);
-        LOG.info("假支付成功!");
+        LOG.info("支付成功!");
 
         int i = orderFormMapper.updateByPrimaryKey(orderForm);
         if (i == 0){
@@ -256,7 +366,7 @@ public class OrderFormService {
     }
 
     /**
-     * 假退款
+     * 退款
      * @param orderId
      */
     public boolean fakeRefund(String orderId){
@@ -272,7 +382,39 @@ public class OrderFormService {
         if (i == 0){
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
-        LOG.info("假退款成功!");
+        LOG.info("退款成功!");
         return true;
     }
+    /*
+    public WxObject createOrderForm(HttpServletRequest request, OrderForm orderForm) throws JSONException {
+        OrderForm check = orderFormMapper.selectByPrimaryKey(orderForm.getId()).orElse(null);
+        if(check != null){
+            LOG.info("订单重复创建");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("hadCreated",true);
+            WxObject wxObject = new WxObject();
+            wxObject.setJsonObject(jsonObject);
+            return wxObject;
+        }
+        long now = System.currentTimeMillis();
+        orderForm.setId(UUID.randomUUID().toString().replace("-", ""));
+        orderForm.setCreateTime(now);
+        orderForm.setUpdateTime(now);
+        orderForm.setCreateUserId(UserContextHolder.getUserId());
+        orderForm.setUpdateUserId(UserContextHolder.getUserId());
+        orderForm.setPayStatus(SystemConstants.UNPAID);
+        orderForm.setStatus(SystemConstants.STATUS_ACTIVE);
+        int i = orderFormMapper.insert(orderForm);
+        if (i == 0){
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
+        LOG.info("创建系统订单成功");
+        //返回需要创建的Object数据
+        WxObject wxObject = new WxObject();
+        wxObject.setJsonObject(payService.wxPay(request,orderForm));
+        return wxObject;
+    }
+*/
+
+
 }

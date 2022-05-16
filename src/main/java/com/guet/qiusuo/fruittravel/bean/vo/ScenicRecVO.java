@@ -3,6 +3,8 @@ package com.guet.qiusuo.fruittravel.bean.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ScenicRecVO {
 

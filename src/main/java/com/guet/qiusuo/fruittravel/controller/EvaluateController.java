@@ -22,10 +22,9 @@ import java.util.List;
 public class EvaluateController {
     private EvaluateService evaluateService;
     @Autowired
-    public void setFruitEvaluateService(EvaluateService evaluateService){
+    public void setEvaluateService(EvaluateService evaluateService) {
         this.evaluateService = evaluateService;
     }
-
     @ApiOperation(value = "增加主评",notes = "0-评价水果 1评价景区 2-对评价的评论;需要提供订单id将订单状态设定为已评价(已完成)")
     @PostMapping("/addEvaluate")
     public void addFruitEvaluate(@RequestBody Evaluate evaluate,@RequestParam String orderId) {

@@ -34,19 +34,11 @@ public class FruitService {
 
     private ChildFruitService childFruitService;
 
-    private ImageFileMapper imageFileMapper;
-
     private UploadImgService uploadImgService;
     @Autowired
     public void setUploadImgService(UploadImgService uploadImgService) {
         this.uploadImgService = uploadImgService;
     }
-
-    @Autowired
-    public void setImageFileMapper(ImageFileMapper imageFileMapper) {
-        this.imageFileMapper = imageFileMapper;
-    }
-
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
     @Autowired
@@ -232,8 +224,10 @@ public class FruitService {
             return null;
         }
         for (FruitVO fruitVO:fruitVOList) {
-            List<String> urlByProdId = uploadImgService.getUrlByProdId(fruitVO.getId());
-            fruitVO.setImageUrl(urlByProdId.get(0));
+            List<String> fruitUrls = uploadImgService.getUrlByProdId(fruitVO.getId());
+            fruitVO.setFruitImageUrl(fruitUrls);
+            List<String> childFUrls = uploadImgService.getUrlByProdId(fruitVO.getChildFruitId());
+            fruitVO.setChildFImageUrl(childFUrls);
         }
         PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitVOList);
@@ -299,7 +293,11 @@ public class FruitService {
         fruitVO.setCreateTime(fruit.getCreateTime());
         fruitVO.setUpdateTime(fruit.getUpdateTime());
         fruitVO.setCreateUserId(fruit.getUpdateUserId());
-        fruitVO.setImageUrl(uploadImgService.getUrlByProdId(fruit.getId()).get(0));
+        //查找图片url
+        List<String> fruitUrls = uploadImgService.getUrlByProdId(fruitVO.getId());
+        fruitVO.setFruitImageUrl(fruitUrls);
+        List<String> childFUrls = uploadImgService.getUrlByProdId(fruitVO.getChildFruitId());
+        fruitVO.setChildFImageUrl(childFUrls);
 
         fruitVO.setStock(childFruitService.getChildFruit(fruitId).getStock());
         fruitVO.setChildFruitName(childFruitService.getChildFruit(fruitId).getFruitName());
@@ -308,11 +306,15 @@ public class FruitService {
 
     public PageList<FruitVO> getFruitRecommendList(Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize);
-        List<FruitVO> fruitList;
-        fruitList = fruitMapper.FruitRecommend();
-        for (FruitVO vo:fruitList) {
-            vo.setImageUrl(uploadImgService.getUrlByProdId(vo.getId()).get(0));
+        List<FruitVO> fruitList = fruitMapper.FruitRecommend();
+
+        for (FruitVO fruitVO:fruitList) {
+            List<String> fruitUrls = uploadImgService.getUrlByProdId(fruitVO.getId());
+            fruitVO.setFruitImageUrl(fruitUrls);
+            List<String> childFUrls = uploadImgService.getUrlByProdId(fruitVO.getChildFruitId());
+            fruitVO.setChildFImageUrl(childFUrls);
         }
+
         PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitList);
         pageList.setPageInfo(new PageInfo<>(fruitList));

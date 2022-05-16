@@ -2,21 +2,18 @@ package com.guet.qiusuo.fruittravel.controller;
 
 
 import com.guet.qiusuo.fruittravel.bean.vo.OrderAndProductVO;
-import com.guet.qiusuo.fruittravel.bean.vo.WxObject;
-import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
-import com.guet.qiusuo.fruittravel.model.Goods;
+import com.guet.qiusuo.fruittravel.dao.ChildFruitMapper;
+import com.guet.qiusuo.fruittravel.model.Cart;
 import com.guet.qiusuo.fruittravel.model.OrderForm;
 import com.guet.qiusuo.fruittravel.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 @Api(tags = "下单与支付")
@@ -24,59 +21,32 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/OrderForm")
 public class OrderFormController {
 
-    private PayService payService;
-
     private OrderFormService orderFormService;
-
-    private ScenicService scenicService;
-
-    private FruitService fruitService;
-
-    private GoodsService goodsService;
-
-    @Autowired
-    public void setFruitService(FruitService fruitService) {
-        this.fruitService = fruitService;
-    }
-
-    @Autowired
-    public void setScenicService(ScenicService scenicService) { this.scenicService = scenicService; }
 
     @Autowired
     public void setOrderFormService(OrderFormService orderFormService) {
         this.orderFormService = orderFormService;
     }
 
-    @Autowired
-    public void setPayService(PayService payService) {
-        this.payService = payService;
-    }
 
-    @Autowired
-    public void setGoodsService(GoodsService goodsService) { this.goodsService = goodsService; }
-    /**
-     * 用户未取消支付订单情况下:
-     * @param request
-     * @param order
-     * @return
-     * @throws JSONException
-     */
-    @ApiOperation(value = "创建预付订单,返回请求wx支付的Object")
-    @PostMapping("/createOrder")
-    public WxObject createOrder (HttpServletRequest request, @RequestBody OrderForm order) throws JSONException {
-        if (order == null){
-            throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
-        }
-        return orderFormService.createOrderForm(request,order);
-    }
-
-    @ApiOperation(value = "提交假订单: fee - 总付款金额  price - 商品单价 amount - 商品数目")
+    @ApiOperation(value = "创建订单: order不填则表示是水果订单,反之则是景区订单,两者只需填一种")
     @PostMapping("/createFakeOrder")
-    public OrderForm createFakeOrder (@RequestBody OrderForm order){
-        if (order == null){
+    public OrderAndProductVO createFakeOrder (@RequestBody(required = false) OrderForm order,
+                                      @RequestBody(required = false) List<Cart> CartList,
+                                      @RequestBody(required = false) String address){
+        if (order == null && CartList == null){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
-        return orderFormService.createFakeOrder(order);
+        OrderAndProductVO res = new OrderAndProductVO();
+        /**如果order为空,表示当前订单为水果订单**/
+        if (order == null){
+            res =  orderFormService.createFruitOrder(CartList,address);
+        }
+        /**如果list为空,表示当前订单为景区订单**/
+        if (CartList == null){
+            res =  orderFormService.createScenicOrder(order);
+        }
+        return res;
     }
 
     @ApiOperation(value = "删除订单")
@@ -85,29 +55,21 @@ public class OrderFormController {
         orderFormService.deleteOrderForm(orderFormId);
     }
 
-    @ApiOperation(value = "获取订单信息")
+    @ApiOperation(value = "根据订单id获取订单信息")
     @PostMapping("/getOrderInfo")
-    public OrderForm getOrderInfo(@RequestParam String orderFormId){
-        return orderFormService.getOrderForm(orderFormId);
+    public OrderAndProductVO getOrderInfo(@RequestParam String orderFormId){
+        return orderFormService.getOrderVOFormById(orderFormId);
     }
 
-    @ApiOperation(value = "获取订单以及商品信息")
-    @PostMapping("/getOrderAndProduct")
-    public OrderAndProductVO getOrderAndProduct(@RequestParam String orderFormId) throws JSONException {
-        OrderAndProductVO object = new OrderAndProductVO();
-        OrderForm orderForm = orderFormService.getOrderForm(orderFormId);
-        Goods goods = goodsService.selectGoodsByOrderId(orderFormId);
-        object.setOrderForm(orderForm);
-        if (goods.getScenicId().equals(SystemConstants.nullFlag)){
-            //如果是水果订单
-            object.setFruit(fruitService.getFruit(goods.getFruitId()));
-            object.setScenic(null);
-        }else if (goods.getFruitId().equals(SystemConstants.nullFlag)){
-            //如果是景区订单
-            object.setScenic(scenicService.getScenicVOByScenicId(goods.getScenicId()));
-            object.setFruit(null);
-        }
-        return object;
+    @ApiOperation(value = "根据订单状态获取订单信息")
+    @GetMapping("/getInfoByType")
+    public List<OrderAndProductVO> getOrderVOsByType_User(@RequestParam Short type){
+        return orderFormService.getOrderVOsByType_User(type);
+    }
+    @ApiOperation(value = "获取当前用户所有订单以及商品信息")
+    @PostMapping("/getAllOrder")
+    public List<OrderAndProductVO> getAllOrderVO_User(){
+        return orderFormService.getAllOrderVO_User();
     }
 
     @ApiOperation(value = "查询数据库中订单支付状态")
@@ -128,20 +90,22 @@ public class OrderFormController {
         return orderFormService.fakeRefund(orderId);
     }
 
-    @ApiOperation(value = "设置订单完成状态",notes = "订单状态:未支付-0 已支付-1 待发货-2 已发货-3 已完成-4 已退款-5")
-    @PostMapping("/setOrderStatus")
-    public boolean payStatus(@RequestParam String orderId,@RequestParam Short orderStatus){
+    @ApiOperation(value = "设置订单状态",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 售后-4")
+    @PostMapping("/updateOrderStatus")
+    public boolean UpdateOrderStatus(@RequestParam String orderId,@RequestParam Short orderStatus){
         return orderFormService.setOrderStatus(orderId,orderStatus);
     }
 
-    /**
-     * wx支付回调接口
-     * @param request
-     * @param response
-     * @throws Exception
-     */
-    @PostMapping("/notify")
-    public void wxNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        payService.wxNotify(request,response);
+    @ApiOperation(value = "管理员根据状态获取所有订单",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
+    @PostMapping("/getOrdersByAdmin")
+    public List<OrderAndProductVO> getOrderVOsByType_Admin(@RequestParam Short orderStatus){
+        return orderFormService.getOrderVOsByType_User(orderStatus);
     }
+
+    @ApiOperation(value = "管理员获取全部状态的订单",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
+    @PostMapping("/getAllOrdersByAdmin")
+    public List<OrderAndProductVO> getAllOrderVO_Admin(){
+        return orderFormService.getAllOrderVO_User();
+    }
+
 }

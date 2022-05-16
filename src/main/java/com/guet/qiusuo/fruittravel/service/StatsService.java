@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.service;
 
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicUrlVO;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.ChildFruit;
@@ -150,7 +151,7 @@ public class StatsService {
      * @return
      */
     public HashMap<String,Long> getTopSaleScenic(short ago){
-        List<Scenic> scenicList = scenicService.getAllScenic();
+        List<ScenicUrlVO> scenicList = scenicService.getAllScenic();
         HashMap<String,Long> max = new HashMap<String,Long>(1);
         Map.Entry<String,Long> map = getAllScenicSalesMapByAgo(ago).get(scenicList.size());
         max.put(map.getKey(),map.getValue());
@@ -189,7 +190,7 @@ public class StatsService {
      */
     private List<Map.Entry<String,Long>> getAllScenicEvaluationMapByAgo(short ago,short evaluationType){
         //获取景区种类   一景区对应n张门票即n个评论
-        List<Scenic> scenic = scenicService.getAllScenic();
+        List<ScenicUrlVO> scenic = scenicService.getAllScenic();
         Map<String,Long> map = new HashMap<String, Long>(scenic.size());
         switch (evaluationType){
             case SystemConstants.GOOD_EVALUATION:
@@ -292,7 +293,7 @@ public class StatsService {
      */
     private List<Map.Entry<String,Long>> getAllScenicSalesMapByAgo(short ago){
         //获取景区种类, 一个景区对应多个订单即销量
-        List<Scenic> scenicList = scenicService.getAllScenic();
+        List<ScenicUrlVO> scenicList = scenicService.getAllScenic();
         Map<String,Long> map = new HashMap<String, Long>(scenicList.size()+1);
             for (int i = 0;i < scenicList.size(); i++) {
                 map.put(scenicList.get(i).getScenicName(),
@@ -410,7 +411,7 @@ public class StatsService {
                 .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
-                //.and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
+//                .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
                 .build().render(RenderingStrategies.MYBATIS3));
         if (ans == null) {
             return 0L;

@@ -233,7 +233,9 @@ public class ScenicService {
             scenicVO.setUpdateTime(scenic.getUpdateTime());
             scenicVO.setCreateUserId(scenic.getCreateUserId());
             scenicVO.setUpdateUserId(scenic.getUpdateUserId());
-            scenicVO.setImgUrl(uploadImgService.getUrlByProdId(scenicVO.getId()).get(0));
+
+            scenicVO.setImgUrl(uploadImgService.getUrlByProdId(scenicVO.getId()));
+
             ArrayList<TicketArray> arrays = new ArrayList<>();
             List<Ticket> tickets = ticketService.searchTicket(scenic.getId());
             if(tickets == null) {
@@ -298,7 +300,7 @@ public class ScenicService {
         scenicVO.setCreateTime(scenic.getCreateTime());
         scenicVO.setUpdateTime(scenic.getUpdateTime());
         scenicVO.setCreateUserId(scenic.getUpdateUserId());
-        scenicVO.setImgUrl(uploadImgService.getUrlByProdId(scenicVO.getId()).get(0));
+        scenicVO.setImgUrl(uploadImgService.getUrlByProdId(scenicVO.getId()));
         if(ticketService.searchTicket(scenic_id) == null) {
             scenicVO.setTicketList(null);
         }
@@ -335,12 +337,12 @@ public class ScenicService {
                         .build().render(RenderingStrategies.MYBATIS3)
         );
         //加入到vo类中,为了附加图片url
-        List<ScenicUrlVO> list = null;
+        ArrayList<ScenicUrlVO> list = new ArrayList<>();
         for (Scenic s:l) {
             ScenicUrlVO scenicUrlVO = new ScenicUrlVO();
             scenicUrlVO.setId(s.getId());
             scenicUrlVO.setScenicName(s.getScenicName());
-            scenicUrlVO.setImgUrl(uploadImgService.getUrlByProdId(s.getId()).get(0));
+            scenicUrlVO.setImgUrl(uploadImgService.getUrlByProdId(s.getId()));
             scenicUrlVO.setLocation(s.getLocation());
             scenicUrlVO.setDescription(s.getDescription());
             scenicUrlVO.setType(s.getType());

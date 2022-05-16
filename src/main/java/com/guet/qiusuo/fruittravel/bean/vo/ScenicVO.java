@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,8 +17,8 @@ public class ScenicVO extends Scenic {
 
     private ArrayList<TicketArray> ticketList;
 
-    @ApiModelProperty(value = "水果图片")
-    private String imgUrl;
+    @ApiModelProperty(value = "景区图片")
+    private List<String> imgUrl;
 
 }
 
