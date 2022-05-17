@@ -1,5 +1,6 @@
 package com.guet.qiusuo.fruittravel.controller;
 
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicUrlVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
@@ -61,17 +62,17 @@ public class ScenicController {
             @ApiImplicitParam(name = "pageSize",value = "每页的数量",dataType = "int", dataTypeClass = Integer.class, required = true)
     })
     @GetMapping("/scenicList")
-    public PageList<Scenic> getScenicList(@RequestParam(required = false) String id,
-                                          @RequestParam(required = false) String scenicName,
-                                          @RequestParam(required = false) String location,
-                                          @RequestParam(required = false) String nameLike,
-                                          @RequestParam(required = false) Short type,
-                                          @RequestParam(required = false) String description,
-                                          @RequestParam(required = false) String openingHours,
-                                          @RequestParam(required = false) Short orderByType,
-                                          @RequestParam(required = false,defaultValue =
+    public PageList<ScenicUrlVO> getScenicList(@RequestParam(required = false) String id,
+                                               @RequestParam(required = false) String scenicName,
+                                               @RequestParam(required = false) String location,
+                                               @RequestParam(required = false) String nameLike,
+                                               @RequestParam(required = false) Short type,
+                                               @RequestParam(required = false) String description,
+                                               @RequestParam(required = false) String openingHours,
+                                               @RequestParam(required = false) Short orderByType,
+                                               @RequestParam(required = false,defaultValue =
                                                   SystemConstants.DEFAULT_PAGE) Integer page,
-                                          @RequestParam(required = false,defaultValue =
+                                               @RequestParam(required = false,defaultValue =
                                                   SystemConstants.DEFAULT_PAGE_SIZE) Integer pageSize){
 
         if(nameLike != null && nameLike.trim().isEmpty()) {

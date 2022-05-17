@@ -47,7 +47,7 @@ public class ScenicService {
         this.ticketService = ticketService;
     }
 
-    public PageList<Scenic> getScenicList(String id,String scenicName,String location,String nameLike,Short type,String description,
+    public PageList<ScenicUrlVO> getScenicList(String id,String scenicName,String location,String nameLike,Short type,String description,
                                           String openingHours,Short orderByType, Integer page,Integer pageSize) {
         if (nameLike == null || nameLike.length() == 0) {
             nameLike = "";
@@ -85,10 +85,28 @@ public class ScenicService {
         else {
             throw new SystemException(ErrorCode.ORDERBYTYPE_ERROR);
         }
+        //将Scenic与图片url封装为ScenicUrlVO
+        ArrayList<ScenicUrlVO> scenicUrlVOs = new ArrayList<>();
 
-        PageList<Scenic> pageList = new PageList<>();
-        pageList.setList(scenicList);
-        pageList.setPageInfo(new PageInfo<>(scenicList));
+        for (Scenic s:scenicList) {
+            ScenicUrlVO scenicUrlVO = new ScenicUrlVO();
+            scenicUrlVO.setId(s.getId());
+            scenicUrlVO.setScenicName(s.getScenicName());
+            scenicUrlVO.setLocation(s.getLocation());
+            scenicUrlVO.setOpeningHours(s.getOpeningHours());
+            scenicUrlVO.setDescription(s.getDescription());
+            scenicUrlVO.setType(s.getType());
+            scenicUrlVO.setStatus(s.getStatus());
+            scenicUrlVO.setCreateTime(s.getCreateTime());
+            scenicUrlVO.setUpdateTime(s.getUpdateTime());
+            scenicUrlVO.setCreateUserId(s.getCreateUserId());
+            scenicUrlVO.setUpdateUserId(s.getUpdateUserId());
+            scenicUrlVO.setImgUrl(uploadImgService.getUrlByProdId(s.getId()));
+            scenicUrlVOs.add(scenicUrlVO);
+        }
+        PageList<ScenicUrlVO> pageList = new PageList<>();
+        pageList.setList(scenicUrlVOs);
+        pageList.setPageInfo(new PageInfo<>(scenicUrlVOs));
         LOG.info("获取景区列表成功");
         return pageList;
     }

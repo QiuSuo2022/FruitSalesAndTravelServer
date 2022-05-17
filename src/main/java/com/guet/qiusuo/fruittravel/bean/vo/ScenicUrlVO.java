@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class ScenicUrlVO extends Scenic {
 
-    @ApiModelProperty(value = "水果图片")
+    @ApiModelProperty(value = "景区图片")
     private List<String> imgUrl;
 
 }
