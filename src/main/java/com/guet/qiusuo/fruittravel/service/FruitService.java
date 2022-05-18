@@ -11,6 +11,7 @@ import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.*;
+import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -119,7 +120,7 @@ public class FruitService {
      * @param fruit
      */
 
-    public boolean addFruit(Fruit fruit){
+    public Fruit addFruit(Fruit fruit){
         long now = System.currentTimeMillis();
         UserContextHolder.validAdmin();
         if (!getFruitByName(fruit.getFruitName()).isEmpty()) {
@@ -143,7 +144,7 @@ public class FruitService {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
         LOG.info("添加水果{}成功,id={}",fruit.getFruitName(),fruit.getId());
-        return true;
+        return fruit;
     }
 
 
@@ -298,9 +299,12 @@ public class FruitService {
         fruitVO.setFruitImageUrl(fruitUrls);
         List<String> childFUrls = uploadImgService.getUrlByProdId(fruitVO.getChildFruitId());
         fruitVO.setChildFImageUrl(childFUrls);
-
-        fruitVO.setStock(childFruitService.getChildFruit(fruitId).getStock());
-        fruitVO.setChildFruitName(childFruitService.getChildFruit(fruitId).getFruitName());
+        List<ChildFruit> childFruitListByFruitId = childFruitService.getChildFruitListByFruitId(fruitId);
+        int stock = 0;
+        for (ChildFruit c:childFruitListByFruitId) {
+            stock=+c.getStock();
+        }
+        fruitVO.setStock(stock);
         return fruitVO;
     }
 

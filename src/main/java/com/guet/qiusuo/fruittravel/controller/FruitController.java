@@ -42,7 +42,7 @@ public class FruitController {
 
     @ApiOperation(value = "添加水果")
     @PostMapping
-    public boolean addFruit(@RequestBody Fruit fruit){
+    public Fruit addFruit(@RequestBody Fruit fruit){
         return fruitService.addFruit(fruit);
     }
 
@@ -130,7 +130,7 @@ public class FruitController {
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
         FruitAndChildFruitsVO fruitAndChildFruitsVO = new FruitAndChildFruitsVO();
-        fruitAndChildFruitsVO.setFruitVO(fruitService.getFruitVOByFruitId(fruitId));
+        fruitAndChildFruitsVO.setFruit(fruitService.getFruit(fruitId));
         fruitAndChildFruitsVO.setChildFruits(childFruitService.getChildFruitListByFruitId(fruitId));
         LOG.info("获取id={}的水果以及该水果的子项成功",fruitId);
         return fruitAndChildFruitsVO;
