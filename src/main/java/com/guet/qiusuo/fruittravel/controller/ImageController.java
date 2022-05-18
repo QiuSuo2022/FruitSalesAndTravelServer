@@ -1,11 +1,14 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 
+import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.ImageFileMapper;
+import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.ImageFile;
+import com.guet.qiusuo.fruittravel.service.ChildFruitService;
 import com.guet.qiusuo.fruittravel.service.UploadImgService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +35,13 @@ public class ImageController {
 
     ImageFileMapper imageFileMapper;
 
+    private ChildFruitService childFruitService;
+
+    @Autowired
+    public void setChildFruitService(ChildFruitService childFruitService) {
+        this.childFruitService = childFruitService;
+    }
+
     @Autowired
     public void setImageFileMapper(ImageFileMapper imageFileMapper) {
         this.imageFileMapper = imageFileMapper;
@@ -53,13 +63,14 @@ public class ImageController {
         return uploadImgService.uploadImages(files);
     }
 
-    @ApiOperation(value = "根据图片url绑定产品",notes = "图片类别: 0:水果/水果子项/景区图, 1:评价图, 2:轮播图")
+    @ApiOperation(value = "根据图片url绑定产品",notes = "图片类别: 0:水果/景区图, 1:评价图, 2:轮播图 3:水果子项图")
     @PostMapping(value = "/bind")
-    public void bindImg(@RequestParam String productId,@RequestParam String imgId,@RequestParam short imgType){
+    public void bindImg(@RequestParam String productId,@RequestParam List<String> imgIds,@RequestParam short imgType){
         UserContextHolder.validAdmin();
-        if (productId == null || imgId == null){
+        if (productId == null || imgIds == null || imgIds.isEmpty()){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
+        for (String imgId:imgIds) {
         Optional<ImageFile> imageFileOptional = imageFileMapper.selectByPrimaryKey(imgId);
         ImageFile imageFile = imageFileOptional.orElse(null);
         if (imageFile == null){
@@ -67,22 +78,27 @@ public class ImageController {
         }
         imageFile.setProductId(productId);
         imageFile.setType(imgType);
+        if (imgType == SystemConstants.IMG_CHILD){
+            ChildFruit childFruit = childFruitService.getChildFruit(productId);
+            childFruit.setImageUrl(imageFile.getImageUrl());
+        }
         int i = imageFileMapper.updateByPrimaryKey(imageFile);
         if (i == 0){
             LOG.info("绑定图片失败");
             throw new SystemException(ErrorCode.UPDATE_ERROR);
         }
         LOG.info("绑定图片成功");
+        }
     }
 
 
-    @ApiOperation(value = "获取多个图片url",notes = "图片类型(imgType) 0:水果/水果子项/景区图 1:评价图 2:轮播图")
+    @ApiOperation(value = "获取多个图片url",notes = "图片类别: 0:水果/景区图, 1:评价图, 2:轮播图 3:水果子项图")
     @GetMapping(value = "/getImg")
     public List<ImageFile> getImg(@RequestParam String productId, @RequestParam short imgType){
         return uploadImgService.getImages(productId,imgType);
     }
 
-    @ApiOperation(value = "获取用户评论某项产品的图片url",notes = "图片类型(imgType) 0:水果/水果子项/景区图 1:评价图 2:轮播图")
+    @ApiOperation(value = "获取用户评论某项产品的图片url",notes = "图片类别: 0:水果/景区图, 1:评价图, 2:轮播图 3:水果子项图")
     @GetMapping(value = "/getImgByUserId")
     public List<ImageFile> getImg(@RequestParam String productId){
         return uploadImgService.getImagesById(productId);
