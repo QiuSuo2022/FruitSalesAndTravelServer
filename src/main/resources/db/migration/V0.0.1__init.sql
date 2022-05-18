@@ -306,6 +306,5 @@ CREATE TABLE tbl_goods
     CONSTRAINT tbl_goods_create_user_id_fk FOREIGN KEY (create_user_id) REFERENCES tbl_user (id),
     CONSTRAINT tbl_goods_update_user_id_fk FOREIGN KEY (update_user_id) REFERENCES tbl_user (id),
     CONSTRAINT tbl_goods_order_id_fk FOREIGN KEY(order_id) REFERENCES tbl_order_form (id),
-    CONSTRAINT tbl_goods_fruit_id_fk FOREIGN KEY(fruit_id) REFERENCES tbl_fruit (id),
-    CONSTRAINT tbl_goods_scenic_id_fk FOREIGN KEY (scenic_id) REFERENCES tbl_scenic(id)
+    CONSTRAINT tbl_goods_fruit_id_fk FOREIGN KEY(fruit_id) REFERENCES tbl_child_fruit (id)
 ) COMMENT '商品表';
