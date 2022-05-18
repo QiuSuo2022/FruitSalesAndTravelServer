@@ -1,7 +1,9 @@
 package com.guet.qiusuo.fruittravel.controller;
 
 
+import com.guet.qiusuo.fruittravel.bean.vo.FruitOrderVO;
 import com.guet.qiusuo.fruittravel.bean.vo.OrderAndProductVO;
+import com.guet.qiusuo.fruittravel.bean.vo.OrderVO;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.dao.ChildFruitMapper;
@@ -29,22 +31,23 @@ public class OrderFormController {
     }
 
 
-    @ApiOperation(value = "创建订单: order不填则表示是水果订单,反之则是景区订单,两者只需填一种")
+    @ApiOperation(value = "创建订单",tags = "景区订单中address表示门票类型(1成人 2儿童 3老人)  express表示数量")
     @PostMapping("/createFakeOrder")
-    public OrderAndProductVO createFakeOrder (@RequestBody(required = false) OrderForm order,
-                                      @RequestBody(required = false) List<Cart> CartList,
-                                      @RequestBody(required = false) String address){
-        if (order == null && CartList == null){
+    public OrderAndProductVO createFakeOrder (@RequestBody OrderVO orderVO){
+        if (orderVO == null){
+            throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        if (orderVO.getScenicOrder() != null && orderVO.getFruitOrder()!= null){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
         OrderAndProductVO res = new OrderAndProductVO();
-        /**如果order为空,表示当前订单为水果订单**/
-        if (order == null){
-            res =  orderFormService.createFruitOrder(CartList,address);
+        /**如果ScenicOrder为空,表示当前订单为水果订单**/
+        if (orderVO.getScenicOrder() == null){
+            res =  orderFormService.createFruitOrder(orderVO.getFruitOrder());
         }
         /**如果list为空,表示当前订单为景区订单**/
-        if (CartList == null){
-            res =  orderFormService.createScenicOrder(order);
+        if (orderVO.getFruitOrder() == null){
+            res =  orderFormService.createScenicOrder(orderVO.getScenicOrder());
         }
         return res;
     }

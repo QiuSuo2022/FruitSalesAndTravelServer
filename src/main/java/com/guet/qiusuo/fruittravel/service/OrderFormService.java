@@ -1,7 +1,7 @@
 package com.guet.qiusuo.fruittravel.service;
 
+import com.guet.qiusuo.fruittravel.bean.vo.FruitOrderVO;
 import com.guet.qiusuo.fruittravel.bean.vo.OrderAndProductVO;
-import com.guet.qiusuo.fruittravel.bean.vo.WxObject;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
@@ -13,12 +13,9 @@ import com.guet.qiusuo.fruittravel.model.*;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,15 +58,34 @@ public class OrderFormService {
      * 创建水果订单
      */
 
-    public OrderAndProductVO createFruitOrder(List<Cart> CartList,String address){
+    public OrderAndProductVO createFruitOrder(FruitOrderVO fruitOrderVO){
         OrderForm fruitOrder = new OrderForm();
         fruitOrder.setId(UUID.randomUUID().toString().replace("-",""));
-        fruitOrder.setAddress(address);
+        fruitOrder.setAddress(fruitOrderVO.getAddress());
+        fruitOrder.setPayStatus(SystemConstants.UNPAID);
+        fruitOrder.setStatus(SystemConstants.STATUS_ACTIVE);
+        fruitOrder.setBindEvaluateId(null);
+        fruitOrder.setScenicId(null);
+        fruitOrder.setHasEvaluate(SystemConstants.UNEVAL);
+        fruitOrder.setExpress(null);
+        long now = System.currentTimeMillis();
+        fruitOrder.setCreateTime(now);
+        fruitOrder.setUpdateTime(now);
+        fruitOrder.setCreateUserId(UserContextHolder.getUserId());
+        fruitOrder.setUpdateUserId(UserContextHolder.getUserId());
+        //信息插入数据库
+        int i = orderFormMapper.insertSelective(fruitOrder);
+        if (i == 0){
+            throw new SystemException(ErrorCode.INSERT_ERROR);
+        }
         //统计总价
         int fee = 0;
-        List<Goods> goodList = null;
-        for (Cart cart:CartList) {
-            /***循环创建goods表***/
+        ArrayList<Goods> goodList = new ArrayList<>();
+        /***循环创建goods表***/
+        for (Cart cart:fruitOrderVO.getCartList()) {
+            if (cart.getId() == null){
+                cart.setId(UUID.randomUUID().toString().replace("-",""));
+            }
             Goods goods = goodsService.addGood(cart, fruitOrder.getId());
             if (goods != null) {
                 goodList.add(goods);
@@ -82,21 +98,10 @@ public class OrderFormService {
             //单价乘以数量
             fee += childFruit.getFruitPrice() * cart.getQuantity();
         }
-        //信息插入数据库
-        fruitOrder.setFee(fee);
-        fruitOrder.setPayStatus(SystemConstants.UNPAID);
-        fruitOrder.setStatus(SystemConstants.STATUS_ACTIVE);
-        fruitOrder.setBindEvaluateId(null);
-        fruitOrder.setHasEvaluate(SystemConstants.UNEVAL);
-        fruitOrder.setExpress(null);
-        long now = System.currentTimeMillis();
-        fruitOrder.setCreateTime(now);
-        fruitOrder.setUpdateTime(now);
-        fruitOrder.setCreateUserId(UserContextHolder.getUserId());
-        fruitOrder.setUpdateUserId(UserContextHolder.getUserId());
 
-        int i = orderFormMapper.insert(fruitOrder);
-        if (i == 0){
+        fruitOrder.setFee(fee);
+        int j = orderFormMapper.updateByPrimaryKey(fruitOrder);
+        if (j == 0){
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
 
@@ -117,9 +122,10 @@ public class OrderFormService {
         //计算费用
         Short type = Short.valueOf(scenicOrder.getAddress());
         Ticket thisTicket = ticketService.getTicketByType(scenicOrder.getScenicId(), type);
-        Integer amount = Integer.getInteger(scenicOrder.getExpress());
+        Integer amount = Integer.valueOf(scenicOrder.getExpress());
         Integer price = thisTicket.getPrice();
         int fee = amount*price;
+        LOG.info("当前票价为{}",fee);
         //景区订单表信息
         scenicOrder.setId(UUID.randomUUID().toString().replace("-",""));
         scenicOrder.setFee(fee);
