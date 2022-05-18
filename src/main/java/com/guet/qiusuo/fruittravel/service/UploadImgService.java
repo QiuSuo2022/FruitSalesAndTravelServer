@@ -123,7 +123,7 @@ public class UploadImgService {
                 .build().render(RenderingStrategies.MYBATIS3));
 
         if (imgList.isEmpty()){
-            throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
+            return null;
         }
         return imgList;
     }
@@ -144,7 +144,7 @@ public class UploadImgService {
                 .and(ImageFileDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .build().render(RenderingStrategies.MYBATIS3));
         if (imgList.isEmpty()){
-            throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
+            return null;
         }
         for (ImageFile img:imgList) {
             list.add(img.getImageUrl());
@@ -169,7 +169,7 @@ public class UploadImgService {
                 .build().render(RenderingStrategies.MYBATIS3));
 
         if (imgList.isEmpty()){
-            throw new SystemException(ErrorCode.NO_FOUND_IMAGE_ERROR);
+           return null;
         }
         return imgList;
     }
