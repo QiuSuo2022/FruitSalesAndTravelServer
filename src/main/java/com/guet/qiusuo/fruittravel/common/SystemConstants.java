@@ -113,6 +113,7 @@ public class SystemConstants {
     public static final short IMG_COMMON = 0;
     public static final short IMG_EVAL = 1;
     public static final short IMG_SHOW= 2;
+    public static final short IMG_CHILD= 3;
 
     /**
      * 评价状态
