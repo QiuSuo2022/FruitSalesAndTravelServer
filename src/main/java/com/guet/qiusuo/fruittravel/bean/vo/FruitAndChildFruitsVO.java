@@ -10,7 +10,7 @@ import java.util.List;
 public class FruitAndChildFruitsVO  {
 
     @ApiModelProperty(value = "水果")
-    private FruitVO fruitVO;
+    private Fruit fruit;
 
     @ApiModelProperty(value = "该水果的子项")
     private List<ChildFruit> childFruits;
