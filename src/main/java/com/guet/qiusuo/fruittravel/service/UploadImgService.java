@@ -57,10 +57,10 @@ public class UploadImgService {
     }
 
     private ImageFile uploadImgUtil(MultipartFile file){
-        String NGINX_URL = "http://" + LOCAL_IP + ":" + port + "/";
+        String NGINX_URL = "http://" + REMOTE_IP + ":" + port + "/";
         String originalFilename = file.getOriginalFilename() ;
         String uuFileName = UUID.randomUUID().toString();
-        String filePath = LOCAL_BASEPATH;
+        String filePath = REMOTE_BASEPATH;
         String fileName = uuFileName + originalFilename ;
         String url = NGINX_URL+"images/"+fileName;
         //存储图片信息
