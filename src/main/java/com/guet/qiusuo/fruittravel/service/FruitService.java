@@ -211,7 +211,7 @@ public class FruitService {
         fruitUrlVO.setUpdateUserId(fruit.getUpdateUserId());
         fruitUrlVO.setCreateTime(fruit.getCreateTime());
         fruitUrlVO.setCreateUserId(fruit.getCreateUserId());
-        fruitUrlVO.setImgUrl(uploadImgService.getUrlByProdId(fruitId).get(0));
+        fruitUrlVO.setImgUrl(uploadImgService.getUrlByProdId(fruitId));
         LOG.info("获取水果成功,id={}",fruitId);
         return fruitUrlVO;
 

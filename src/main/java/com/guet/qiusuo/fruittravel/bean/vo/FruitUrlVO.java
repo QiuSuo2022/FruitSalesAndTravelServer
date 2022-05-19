@@ -5,10 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class FruitUrlVO extends Fruit {
 
     @ApiModelProperty(value = "水果图片")
-    private String imgUrl;
+    private List<String> imgUrl;
 }

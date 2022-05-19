@@ -8,6 +8,6 @@ import java.util.List;
 
 @Data
 public class SearchVO {
-    List<Fruit> fruit;
-    List<Scenic> scenic;
+    List<FruitUrlVO> fruit;
+    List<ScenicUrlVO> scenic;
 }
