@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitRecVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitUrlVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
+import com.guet.qiusuo.fruittravel.bean.vo.ScenicUrlVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -328,13 +330,15 @@ public class FruitService {
     /**
      * 获取水果推荐列表
      */
-    public PageList<FruitRecVO> getFruitRec(Integer page, Integer pageSize) {
-        PageHelper.startPage(page,pageSize);
-        List<FruitRecVO> fruitRecList = fruitMapper.getFruitRec();
-        PageList<FruitRecVO> pageList = new PageList<>();
-        pageList.setList(fruitRecList);
-        pageList.setPageInfo(new PageInfo<>(fruitRecList));
-        return pageList;
+    public List<ChildFruit> getFruitRec() {
+        List<ChildFruit> res = new ArrayList<>();
+        List<ChildFruit> allChildFruits = childFruitService.getAllChildFruits();
+        if (allChildFruits.size() > 6) {
+            for (int i = 0; i < 6; i++) {
+                res.add(allChildFruits.get(i));
+            }
+            return res;
+        }else return allChildFruits;
     }
 }
 

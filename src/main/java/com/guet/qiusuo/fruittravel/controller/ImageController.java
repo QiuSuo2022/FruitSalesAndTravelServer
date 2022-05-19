@@ -81,6 +81,7 @@ public class ImageController {
         if (imgType == SystemConstants.IMG_CHILD){
             ChildFruit childFruit = childFruitService.getChildFruit(productId);
             childFruit.setImageUrl(imageFile.getImageUrl());
+            childFruitService.updateChildFruit(childFruit);
         }
         int i = imageFileMapper.updateByPrimaryKey(imageFile);
         if (i == 0){

@@ -428,7 +428,7 @@ public interface ScenicMapper {
     List<Scenic> selectScenicSortByPricesDESC(@Param("nameLike") String nameLike);
 
     @Select({
-            "SELECT tbl_scenic.`id` AS scenic_id,tbl_scenic.scenic_name",
+            "SELECT tbl_scenic.`id` AS scenic_id,tbl_scenic.scenic_name FROM tbl_scenic",
             "where tbl_scenic.status = 1",
             "order by rand() limit 5"
     })

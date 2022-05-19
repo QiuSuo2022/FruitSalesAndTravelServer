@@ -379,17 +379,14 @@ public class ScenicService {
     /**
      * 获取景区推荐列表
      */
-    public PageList<ScenicRecVO> getScenicRec(Integer page, Integer pageSize) {
-        PageHelper.startPage(page,pageSize);
-        List<ScenicRecVO> scenicRec = scenicMapper.getScenicRec();
-        for (ScenicRecVO s:scenicRec) {
-            s.setImageUrl(uploadImgService.getUrlByProdId(s.getScenicId()).get(0));
-            List<Ticket> tickets = ticketService.searchTicket(s.getScenicName());s.setSales(100);
-            s.setTicketPrice(tickets.get(0).getPrice());
-        }
-        PageList<ScenicRecVO> pageList = new PageList<>();
-        pageList.setList(scenicRec);
-        pageList.setPageInfo(new PageInfo<>(scenicRec));
-        return pageList;
+    public List<ScenicUrlVO> getScenicRec() {
+        List<ScenicUrlVO> res = new ArrayList<>(10);
+        List<ScenicUrlVO> allScenic = getAllScenic();
+        if (allScenic.size() > 6) {
+            for (int i = 0; i < 6; i++) {
+                res.add(allScenic.get(i));
+            }
+            return res;
+        }else return allScenic;
     }
 }
