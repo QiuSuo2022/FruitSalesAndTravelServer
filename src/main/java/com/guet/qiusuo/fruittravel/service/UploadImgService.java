@@ -114,7 +114,8 @@ public class UploadImgService {
     public List<ImageFile> getImages(String productId,short imgType){
         List<ImageFile>  imgList= imageFileMapper.selectMany(select(
                 ImageFileDynamicSqlSupport.id,
-                ImageFileDynamicSqlSupport.imageUrl
+                ImageFileDynamicSqlSupport.imageUrl,
+                ImageFileDynamicSqlSupport.productId
         )
                 .from(ImageFileDynamicSqlSupport.imageFile)
                 .where(ImageFileDynamicSqlSupport.productId, isEqualTo(productId))
