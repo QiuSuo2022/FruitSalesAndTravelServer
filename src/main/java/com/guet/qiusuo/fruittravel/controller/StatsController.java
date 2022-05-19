@@ -48,7 +48,7 @@ public class StatsController {
         }
     }
 
-    @ApiOperation(value = "获取一种水果一周/月/年的销量")
+    @ApiOperation(value = "获取一种水果一周=1/月=2/年=3的销量")
     @GetMapping("/getOneFruitSales")
     public long getOneFruitSalesByFruitId(@RequestParam String fruitId,@RequestParam short ago){
         UserContextHolder.validAdmin();
@@ -59,7 +59,7 @@ public class StatsController {
         }
     }
 
-    @ApiOperation(value = "获取所有水果一周/月/年的销量的报表数据")
+    @ApiOperation(value = "获取所有水果一周=1/月=2/年=3的销量的报表数据")
     @GetMapping("/getAllFruitSalesData")
     public List<Map.Entry<String, Long>> getAllFruitSalesData(@RequestParam short ago){
         UserContextHolder.validAdmin();
@@ -70,7 +70,7 @@ public class StatsController {
         }
     }
 
-    @ApiOperation(value = "获取所有水果一周/月/年的评价的报表")
+    @ApiOperation(value = "获取所有水果一周=1/月=2/年=3的评价的报表")
     @GetMapping("/getAllFruitEvalData")
     public List<Map.Entry<String, Long>> getAllFruitEvalData(@RequestParam short ago, @RequestParam short evaluationType){
         UserContextHolder.validAdmin();

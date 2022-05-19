@@ -3,9 +3,7 @@ package com.guet.qiusuo.fruittravel.service;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicUrlVO;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.dao.*;
-import com.guet.qiusuo.fruittravel.model.ChildFruit;
-import com.guet.qiusuo.fruittravel.model.Fruit;
-import com.guet.qiusuo.fruittravel.model.Scenic;
+import com.guet.qiusuo.fruittravel.model.*;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +80,7 @@ public class StatsService {
                 amount = getSalesByFruitIdSql(fruitId,yearAgo);break;
             default:LOG.info("错误参数!");break;
         }
+        LOG.info("获取成功");
         return amount;
     }
 
@@ -102,6 +101,7 @@ public class StatsService {
                 amount = getSalesByScenicIdSql(id,yearAgo);break;
             default:LOG.info("错误参数!");break;
         }
+        LOG.info("获取成功");
         return amount;
     }
 
@@ -165,8 +165,8 @@ public class StatsService {
      */
     public HashMap<String,Long> getTopSaleFruit(short ago){
         List<ChildFruit> childFruitsList = childFruitService.getAllChildFruits();
-        HashMap<String,Long> max = new HashMap<String,Long>(1);
-        Map.Entry<String,Long> map = getAllFruitsSalesByAgo(ago).get(childFruitsList.size());
+        HashMap<String,Long> max = new HashMap<String,Long>();
+        Map.Entry<String,Long> map = getAllFruitsSalesByAgo(ago).get(getAllFruitsSalesByAgo(ago).size()-1);
         max.put(map.getKey(),map.getValue());
         return max;
     }
@@ -387,17 +387,47 @@ public class StatsService {
      * @return
      */
     private Long getSalesByFruitIdSql(String fruitId,long past) {
-        //fruitId获取fruit, 根据fruitId检索已经支付的订单
-        Long ans = goodsMapper.count(countFrom(GoodsDynamicSqlSupport.goods)
-                .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
-                .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
-                .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
-                //.and(OrderFormDynamicSqlSupport.fruitId,isEqualTo(fruitId))
+        long count = 0L;
+        //检索特定日期时间内已经支付的订单
+        List<OrderForm> orderForms = orderFormMapper.selectMany(select(
+                OrderFormDynamicSqlSupport.id,
+                OrderFormDynamicSqlSupport.payTime,
+                OrderFormDynamicSqlSupport.createUserId,
+                OrderFormDynamicSqlSupport.createTime
+        )
+                .from(OrderFormDynamicSqlSupport.orderForm)
+                .where(OrderFormDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(OrderFormDynamicSqlSupport.payTime, isBetween(past).and(now))
+                .and(OrderFormDynamicSqlSupport.scenicId, isNull())
+                .and(OrderFormDynamicSqlSupport.payStatus, isNotEqualTo(SystemConstants.UNPAID))
                 .build().render(RenderingStrategies.MYBATIS3));
-        if (ans == null) {
-            return 0L;
+        //遍历每个订单
+        for (OrderForm o:orderForms) {
+            //根据订单号查找商品goods
+            List<Goods> goodsList = goodsMapper.selectMany(select(
+                    GoodsDynamicSqlSupport.id,
+                    GoodsDynamicSqlSupport.orderId,
+                    GoodsDynamicSqlSupport.fruitId,
+                    GoodsDynamicSqlSupport.amount
+            )
+                    .from(GoodsDynamicSqlSupport.goods)
+                    .where(GoodsDynamicSqlSupport.orderId, isEqualTo(o.getId()))
+                    .and(GoodsDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                    .build().render(RenderingStrategies.MYBATIS3));
+            //遍历每个goods的ChildFruitId寻找对应this.fruitId的商品
+            for (Goods g:goodsList) {
+                //goods的水果子项id
+                String childFruitId = g.getFruitId();
+                //根据水果子项id获取水果id
+                String fruitId2 = childFruitService.getChildFruit(childFruitId).getFruitId();
+                //如果fruitId对应
+                if (fruitId2.equals(fruitId) && g.getAmount() != null){
+                    //叠加
+                    count+=g.getAmount();
+                }
+            }
         }
-        return ans;
+        return count;
     }
 
     /**
@@ -411,7 +441,7 @@ public class StatsService {
                 .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
                 .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime,isBetween(past).and(now))
-//                .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
+                .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(scenicId))
                 .build().render(RenderingStrategies.MYBATIS3));
         if (ans == null) {
             return 0L;
