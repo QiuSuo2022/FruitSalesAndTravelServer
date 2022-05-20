@@ -30,6 +30,13 @@ public class ScenicService {
 
     private ScenicMapper scenicMapper;
 
+    private GoodsService goodsService;
+    private OrderFormMapper orderFormMapper;
+    @Autowired
+    public void setOrderFormMapper(OrderFormMapper orderFormMapper) {
+        this.orderFormMapper = orderFormMapper;
+    }
+
     private TicketService ticketService;
     @Autowired
     public void setUploadImgService(UploadImgService uploadImgService) {
@@ -343,6 +350,7 @@ public class ScenicService {
      * @return
      */
     public List<ScenicUrlVO> getAllScenic(){
+        long now = System.currentTimeMillis();
         //从数据库中选取
         List<Scenic> l = scenicMapper.selectScenic(select(
                 ScenicDynamicSqlSupport.id,
@@ -370,6 +378,16 @@ public class ScenicService {
             scenicUrlVO.setUpdateUserId(s.getUpdateUserId());
             scenicUrlVO.setCreateTime(s.getCreateTime());
             scenicUrlVO.setCreateUserId(s.getCreateUserId());
+            Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
+                    .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
+                    .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                    .and(OrderFormDynamicSqlSupport.payTime,isBetween(SystemConstants.MONTH_MILLIS).and(now))
+                    .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(s.getId()))
+                    .build().render(RenderingStrategies.MYBATIS3));
+            if (ans == null) {
+                ans = 0L;
+            }
+            scenicUrlVO.setSales(Integer.valueOf(ans.toString()));
             list.add(scenicUrlVO);
         }
         return list;
@@ -380,13 +398,11 @@ public class ScenicService {
      * 获取景区推荐列表
      */
     public List<ScenicUrlVO> getScenicRec() {
-        List<ScenicUrlVO> res = new ArrayList<>(10);
+        List<ScenicUrlVO> res = new ArrayList<>();
         List<ScenicUrlVO> allScenic = getAllScenic();
-        if (allScenic.size() > 6) {
             for (int i = 0; i < 6; i++) {
                 res.add(allScenic.get(i));
             }
             return res;
-        }else return allScenic;
     }
 }

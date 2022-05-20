@@ -122,4 +122,19 @@ public class GoodsService {
                         .and(GoodsDynamicSqlSupport.orderId,isEqualTo(orderId))
                         .build().render(RenderingStrategies.MYBATIS3));
     }
+
+    public Integer getSaleByChildFruitId(String childFruitId){
+        List<Goods> list = goodsMapper.selectMany(select(
+                GoodsDynamicSqlSupport.amount
+        )
+                .from(GoodsDynamicSqlSupport.goods)
+                .where(GoodsDynamicSqlSupport.fruitId, isEqualTo(childFruitId))
+                .and(GoodsDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .build().render(RenderingStrategies.MYBATIS3));
+        int res = 0;
+        for (Goods g:list) {
+            res += g.getAmount();
+        }
+        return res;
+    }
 }

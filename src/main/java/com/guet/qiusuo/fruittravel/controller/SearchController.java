@@ -119,7 +119,7 @@ public class SearchController {
             fruitUrlVO.setStatus(s.getStatus());
             fruitUrlVOList.add(fruitUrlVO);
         }
-        res.setScenic(scenicUrlList);
+        res.setFruit(fruitUrlVOList);
         return res;
     }
 }

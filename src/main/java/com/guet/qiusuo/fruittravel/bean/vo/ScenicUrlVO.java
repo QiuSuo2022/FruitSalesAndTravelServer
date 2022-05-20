@@ -13,5 +13,6 @@ public class ScenicUrlVO extends Scenic {
 
     @ApiModelProperty(value = "景区图片")
     private List<String> imgUrl;
+    private Integer Sales;
 
 }

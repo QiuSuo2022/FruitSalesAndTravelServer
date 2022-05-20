@@ -36,7 +36,7 @@ public class RecommendController {
 
     @ApiOperation("获取水果推荐列表")
     @GetMapping("/fruitRec")
-    public List<ChildFruit> getFruitRec(){
+    public List<FruitRecVO> getFruitRec(){
         return fruitService.getFruitRec();
     }
 

@@ -152,6 +152,11 @@ public class ChildFruitService {
                 ChildFruitDynamicSqlSupport.fruitName,
                 ChildFruitDynamicSqlSupport.status,
                 ChildFruitDynamicSqlSupport.updateTime,
+                ChildFruitDynamicSqlSupport.fruitPrice,
+                ChildFruitDynamicSqlSupport.stock,
+                ChildFruitDynamicSqlSupport.createUserId,
+                ChildFruitDynamicSqlSupport.updateUserId,
+                ChildFruitDynamicSqlSupport.createTime,
                 ChildFruitDynamicSqlSupport.imageUrl)
                 .from(ChildFruitDynamicSqlSupport.childFruit)
                 .where(ChildFruitDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))

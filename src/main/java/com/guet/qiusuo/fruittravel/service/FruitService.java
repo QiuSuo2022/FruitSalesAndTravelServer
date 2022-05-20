@@ -38,6 +38,13 @@ public class FruitService {
     private ChildFruitService childFruitService;
 
     private UploadImgService uploadImgService;
+
+    private GoodsService goodsService;
+    @Autowired
+    public void setGoodsService(GoodsService goodsService) {
+        this.goodsService = goodsService;
+    }
+
     @Autowired
     public void setUploadImgService(UploadImgService uploadImgService) {
         this.uploadImgService = uploadImgService;
@@ -330,15 +337,25 @@ public class FruitService {
     /**
      * 获取水果推荐列表
      */
-    public List<ChildFruit> getFruitRec() {
-        List<ChildFruit> res = new ArrayList<>();
+    public List<FruitRecVO> getFruitRec() {
+        List<FruitRecVO> res = new ArrayList<>();
         List<ChildFruit> allChildFruits = childFruitService.getAllChildFruits();
-        if (allChildFruits.size() > 6) {
             for (int i = 0; i < 6; i++) {
-                res.add(allChildFruits.get(i));
+                FruitRecVO fruitRecVO = new FruitRecVO();
+                 fruitRecVO.setId(allChildFruits.get(i).getId());
+                 fruitRecVO.setFruitId(allChildFruits.get(i).getFruitId());
+                 fruitRecVO.setFruitName(allChildFruits.get(i).getFruitName());
+                 fruitRecVO.setFruitPrice(allChildFruits.get(i).getFruitPrice());
+                 fruitRecVO.setStock(allChildFruits.get(i).getStock());
+                 fruitRecVO.setImageUrl(allChildFruits.get(i).getImageUrl());
+                 fruitRecVO.setStatus(allChildFruits.get(i).getStatus());
+                 fruitRecVO.setCreateTime(allChildFruits.get(i).getCreateTime());
+                 fruitRecVO.setCreateUserId(allChildFruits.get(i).getCreateUserId());
+                 fruitRecVO.setUpdateTime(allChildFruits.get(i).getUpdateTime());
+                 fruitRecVO.setUpdateUserId(allChildFruits.get(i).getUpdateUserId());
+                 fruitRecVO.setSales(goodsService.getSaleByChildFruitId(allChildFruits.get(i).getFruitId()));
             }
             return res;
-        }else return allChildFruits;
     }
 }
 

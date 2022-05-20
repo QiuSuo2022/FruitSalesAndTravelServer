@@ -231,7 +231,6 @@ public class OrderFormService {
         }else {
         //景区订单
             res.setThisTicket(ticketService.getTicketByType(orderFormId,Short.valueOf(orderForm.getAddress())));
-            res.setThisTicket(null);
             res.setGoods(null);
         }
         return res;

@@ -123,11 +123,8 @@ public class TicketService {
                                     .build().render(RenderingStrategies.MYBATIS3));
         if(ticketList.isEmpty()) {
             LOG.info("没有此类门票!");
-            throw new SystemException(ErrorCode.NO_FOUND_TICKET);
         }
-        else {
             return ticketList;
-        }
     }
 
     /**
@@ -147,7 +144,6 @@ public class TicketService {
                 .build().render(RenderingStrategies.MYBATIS3));
         if (ticketsType.isEmpty()){
             LOG.info("没有此种门票类型");
-            throw new SystemException(ErrorCode.NO_FOUND_TICKET);
         }
         return ticketsType.get(0);
     }
