@@ -40,9 +40,16 @@ public class FruitService {
     private UploadImgService uploadImgService;
 
     private GoodsService goodsService;
+
+    private StatsService statsService;
     @Autowired
     public void setGoodsService(GoodsService goodsService) {
         this.goodsService = goodsService;
+    }
+
+    @Autowired
+    public void setStatsService(StatsService statsService) {
+        this.statsService = statsService;
     }
 
     @Autowired
@@ -74,25 +81,46 @@ public class FruitService {
         List<FruitVO> fruitList;
         if(orderByType.equals(SystemConstants.PRICE_ASC)) {
             fruitList = fruitMapper.selectFruitSortByPriceASC(nameLike);
+            for(FruitVO fruitVO : fruitList) {
+                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+            }
         }
         else if(orderByType.equals(SystemConstants.PRICE_DESC)) {
             fruitList = fruitMapper.selectFruitSortByPriceDESC(nameLike);
+            for(FruitVO fruitVO : fruitList) {
+                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+            }
         }
         else if(orderByType.equals(SystemConstants.SALE_ASC)) {
             fruitList = fruitMapper.selectFruitSortBySalesASC(nameLike);
+            for(FruitVO fruitVO : fruitList) {
+                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+            }
         }
         else if(orderByType.equals(SystemConstants.SALE_DESC)) {
             fruitList = fruitMapper.selectFruitSortBySalesDESC(nameLike);
+            for(FruitVO fruitVO : fruitList) {
+                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+            }
         }
         else if(orderByType.equals(SystemConstants.GRADE_ASC)) {
             fruitList = fruitMapper.selectFruitSortByGradeASC(nameLike);
+            for(FruitVO fruitVO : fruitList) {
+                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+            }
         }
         else if(orderByType.equals(SystemConstants.GRADE_DESC)) {
             fruitList = fruitMapper.selectFruitSortByGradeDESC(nameLike);
+            for(FruitVO fruitVO : fruitList) {
+                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+            }
         }
         //综合排序,先按照加权平均计算,销量权重占0.5,价格和评分各占0.25
         else if(orderByType.equals(SystemConstants.SORT_ALL)) {
             fruitList = fruitMapper.selectFruitSort(nameLike);
+            for(FruitVO fruitVO : fruitList) {
+                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+            }
         }
         else {
             throw new SystemException(ErrorCode.ORDERBYTYPE_ERROR);
