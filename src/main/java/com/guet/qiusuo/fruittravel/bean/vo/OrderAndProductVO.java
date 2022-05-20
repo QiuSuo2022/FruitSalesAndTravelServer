@@ -15,11 +15,13 @@ public class OrderAndProductVO {
     private OrderForm orderForm;
 
     @ApiModelProperty(value = "水果商品信息")
-    private List<Goods> goods;
+    private List<GoodsVO> goodsVOS;
 
 //    @ApiModelProperty(value = "景区信息")
 //    private ScenicVO scenicVO;
 
     @ApiModelProperty(value = "当前门票类型信息")
     private Ticket thisTicket;
+
+    private String imgUrl;
 }

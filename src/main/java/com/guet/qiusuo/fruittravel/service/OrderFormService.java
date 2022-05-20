@@ -1,6 +1,7 @@
 package com.guet.qiusuo.fruittravel.service;
 
 import com.guet.qiusuo.fruittravel.bean.vo.FruitOrderVO;
+import com.guet.qiusuo.fruittravel.bean.vo.GoodsVO;
 import com.guet.qiusuo.fruittravel.bean.vo.OrderAndProductVO;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -35,6 +36,14 @@ public class OrderFormService {
     private GoodsService goodsService;
 
     private ChildFruitMapper childFruitMapper;
+
+    private UploadImgService uploadImgService;
+    @Autowired
+
+    public void setUploadImgService(UploadImgService uploadImgService) {
+        this.uploadImgService = uploadImgService;
+    }
+
 
     private TicketService ticketService;
     @Autowired
@@ -80,15 +89,15 @@ public class OrderFormService {
         }
         //统计总价
         int fee = 0;
-        ArrayList<Goods> goodList = new ArrayList<>();
+        List<GoodsVO> goodsArrayList = new ArrayList<>();
         /***循环创建goods表***/
         for (Cart cart:fruitOrderVO.getCartList()) {
             if (cart.getId() == null){
                 cart.setId(UUID.randomUUID().toString().replace("-",""));
             }
-            Goods goods = goodsService.addGood(cart, fruitOrder.getId());
-            if (goods != null) {
-                goodList.add(goods);
+            GoodsVO goodsVO = goodsService.addGood(cart, fruitOrder.getId());
+            if (goodsVO != null) {
+                goodsArrayList.add(goodsVO);
             }
 
             ChildFruit childFruit = childFruitMapper.selectByPrimaryKey(cart.getChildFruitId()).orElse(null);
@@ -107,7 +116,7 @@ public class OrderFormService {
         LOG.info("创建id={}的订单以及商品映射成功",fruitOrder.getId());
         OrderAndProductVO vo = new OrderAndProductVO();
         vo.setOrderForm(fruitOrder);
-        vo.setGoods(goodList);
+        vo.setGoodsVOS(goodsArrayList);
         vo.setThisTicket(null);
         vo.setOrderForm(fruitOrder);
         return vo;
@@ -139,7 +148,7 @@ public class OrderFormService {
         LOG.info("创建景区订单成功,id={}",scenicOrder.getId());
         OrderAndProductVO vo = new OrderAndProductVO();
         vo.setOrderForm(scenicOrder);
-        vo.setGoods(null);
+        vo.setGoodsVOS(null);
         vo.setThisTicket(thisTicket);
         vo.setOrderForm(scenicOrder);
         return vo;
@@ -226,13 +235,13 @@ public class OrderFormService {
         res.setOrderForm(orderForm);
         //水果订单
         if (orderForm.getScenicId() == null){
-            List<Goods> goods = goodsService.getGoods(orderFormId);
-            res.setGoods(goods);
+            List<GoodsVO> goods = goodsService.getGoodsVO(orderFormId);
+            res.setGoodsVOS(goods);
             res.setThisTicket(null);
         }else {
         //景区订单
             res.setThisTicket(ticketService.getTicketByType(orderFormId,Short.valueOf(orderForm.getAddress())));
-            res.setGoods(null);
+            res.setGoodsVOS(null);
         }
         return res;
     }
