@@ -238,7 +238,7 @@ public class OrderFormService {
     }
 
     /**
-     * 根据订单状态与用户id获取全部订单
+     * 用户根据订单状态与用户id获取全部订单
      * @param payStatus
      * @return
      */
@@ -305,7 +305,7 @@ public class OrderFormService {
         return list;
     }
 
-    public List<OrderAndProductVO> getAllOrderVOsByAdmin() {
+    public List<OrderAndProductVO> getAllOrderVO_Admin() {
         UserContextHolder.validAdmin();
         List<OrderForm> orderForms = orderFormMapper.selectMany(select(
                 OrderFormDynamicSqlSupport.id,
@@ -333,19 +333,47 @@ public class OrderFormService {
         }
         return list;
     }
+    public List<OrderAndProductVO> getOrderVOsByType_Admin(Short payStatus) {
+        List<OrderForm> orderForms = orderFormMapper.selectMany(select(
+                OrderFormDynamicSqlSupport.id,
+                OrderFormDynamicSqlSupport.scenicId,
+                OrderFormDynamicSqlSupport.address,
+                OrderFormDynamicSqlSupport.express,
+                OrderFormDynamicSqlSupport.fee,
+                OrderFormDynamicSqlSupport.payStatus,
+                OrderFormDynamicSqlSupport.hasEvaluate,
+                OrderFormDynamicSqlSupport.bindEvaluateId,
+                OrderFormDynamicSqlSupport.status,
+                OrderFormDynamicSqlSupport.payTime,
+                OrderFormDynamicSqlSupport.createTime,
+                OrderFormDynamicSqlSupport.updateTime,
+                OrderFormDynamicSqlSupport.createUserId,
+                OrderFormDynamicSqlSupport.updateUserId
+        )
+                .from(OrderFormDynamicSqlSupport.orderForm)
+                .where(OrderFormDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(OrderFormDynamicSqlSupport.payStatus, isEqualTo(payStatus))
+                .build().render(RenderingStrategies.MYBATIS3));
+        List<OrderAndProductVO> list = new ArrayList<>();
+        for (OrderForm o : orderForms) {
+            OrderAndProductVO orderVO = getOrderVOFormById(o.getId());
+            list.add(orderVO);
+        }
+        return list;
+    }
     /**
      * 获取数据库中订单支付状态
      * @param orderFormId
      * @return
      */
-    public short getPaymentStatus(String orderFormId){
-        OrderForm orderForm = orderFormMapper.selectByPrimaryKey(orderFormId).orElse(null);
+    public Short getPaymentStatus(String orderFormId){
+        Optional<OrderForm> optionalOrderForm = orderFormMapper.selectByPrimaryKey(orderFormId);
+        OrderForm orderForm = optionalOrderForm.orElse(null);
         if (orderForm == null){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
         return orderForm.getPayStatus();
     }
-
     /**
      * 支付
      * @param orderId
@@ -371,26 +399,7 @@ public class OrderFormService {
         return true;
     }
 
-    /**
-     * 退款
-     * @param orderId
-     */
-    public boolean fakeRefund(String orderId){
-        OrderForm orderForm = orderFormMapper.selectByPrimaryKey(orderId).orElse(null);
-        if (orderForm == null){
-            throw new SystemException(ErrorCode.PARAM_ERROR);
-        }
-        if (orderForm.getPayStatus().equals(SystemConstants.UNPAID)){
-            throw new SystemException(ErrorCode.UNPAID_ERROR);
-        }
-        orderForm.setPayStatus(SystemConstants.REFUND);
-        int i = orderFormMapper.updateByPrimaryKey(orderForm);
-        if (i == 0){
-            throw new SystemException(ErrorCode.UPDATE_ERROR);
-        }
-        LOG.info("退款成功!");
-        return true;
-    }
+
     /*
     public WxObject createOrderForm(HttpServletRequest request, OrderForm orderForm) throws JSONException {
         OrderForm check = orderFormMapper.selectByPrimaryKey(orderForm.getId()).orElse(null);

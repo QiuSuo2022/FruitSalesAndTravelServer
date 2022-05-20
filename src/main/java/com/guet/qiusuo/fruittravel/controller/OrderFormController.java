@@ -64,12 +64,12 @@ public class OrderFormController {
         return orderFormService.getOrderVOFormById(orderFormId);
     }
 
-    @ApiOperation(value = "根据订单状态获取订单信息")
+    @ApiOperation(value = "用户根据订单状态获取订单信息")
     @GetMapping("/getInfoByType")
     public List<OrderAndProductVO> getOrderVOsByType_User(@RequestParam Short type){
         return orderFormService.getOrderVOsByType_User(type);
     }
-    @ApiOperation(value = "获取当前用户所有订单以及商品信息")
+    @ApiOperation(value = "用户获取所有订单以及商品信息")
     @PostMapping("/getAllOrder")
     public List<OrderAndProductVO> getAllOrderVO_User(){
         return orderFormService.getAllOrderVO_User();
@@ -102,13 +102,13 @@ public class OrderFormController {
     @ApiOperation(value = "管理员根据状态获取所有订单",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
     @PostMapping("/getOrdersByAdmin")
     public List<OrderAndProductVO> getOrderVOsByType_Admin(@RequestParam Short orderStatus){
-        return orderFormService.getOrderVOsByType_User(orderStatus);
+        return orderFormService.getOrderVOsByType_Admin(orderStatus);
     }
 
     @ApiOperation(value = "管理员获取全部状态的订单",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
     @PostMapping("/getAllOrdersByAdmin")
     public List<OrderAndProductVO> getAllOrderVO_Admin(){
-        return orderFormService.getAllOrderVO_User();
+        return orderFormService.getAllOrderVO_Admin();
     }
 
 }
