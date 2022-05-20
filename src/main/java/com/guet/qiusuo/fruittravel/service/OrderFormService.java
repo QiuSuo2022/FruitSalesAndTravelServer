@@ -151,6 +151,7 @@ public class OrderFormService {
         vo.setGoodsVOS(null);
         vo.setThisTicket(thisTicket);
         vo.setOrderForm(scenicOrder);
+        vo.setImgUrl(uploadImgService.getUrlByProdId(scenicOrder.getScenicId()).get(0));
         return vo;
     }
     /**
