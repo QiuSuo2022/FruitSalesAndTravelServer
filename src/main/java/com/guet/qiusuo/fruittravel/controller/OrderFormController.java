@@ -4,6 +4,7 @@ package com.guet.qiusuo.fruittravel.controller;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitOrderVO;
 import com.guet.qiusuo.fruittravel.bean.vo.OrderAndProductVO;
 import com.guet.qiusuo.fruittravel.bean.vo.OrderVO;
+import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
 import com.guet.qiusuo.fruittravel.config.SystemException;
 import com.guet.qiusuo.fruittravel.dao.ChildFruitMapper;
@@ -93,12 +94,17 @@ public class OrderFormController {
         return orderFormService.fakeRefund(orderId);
     }
 
-    @ApiOperation(value = "设置订单状态",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
+    @ApiOperation(value = "设置订单状态 - 订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
     @PostMapping("/updateOrderStatus")
     public boolean UpdateOrderStatus(@RequestParam("orderId") String orderId,@RequestParam("orderStatus") Integer orderStatus){
         return orderFormService.setOrderStatus(orderId,Short.valueOf(orderStatus.toString()));
     }
 
+    @ApiOperation(value = "发货接口")
+    @PostMapping("/faHuo")
+    public boolean UpdateOrderStatus(@RequestParam("orderId") String orderId){
+        return orderFormService.setOrderStatus(orderId, SystemConstants.UNFINISHED);
+    }
     @ApiOperation(value = "管理员根据状态获取所有订单",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
     @PostMapping("/getOrdersByAdmin")
     public List<OrderAndProductVO> getOrderVOsByType_Admin(@RequestParam Short orderStatus){
