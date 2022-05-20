@@ -363,7 +363,7 @@ public class FruitService {
     public List<FruitRecVO> getFruitRec() {
         List<FruitRecVO> res = new ArrayList<>();
         List<ChildFruit> allChildFruits = childFruitService.getAllChildFruits();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 6; i++) {
                 FruitRecVO fruitRecVO = new FruitRecVO();
                  fruitRecVO.setId(allChildFruits.get(i).getId());
                  fruitRecVO.setFruitId(allChildFruits.get(i).getFruitId());
