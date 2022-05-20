@@ -48,11 +48,6 @@ public class FruitService {
     }
 
     @Autowired
-    public void setStatsService(StatsService statsService) {
-        this.statsService = statsService;
-    }
-
-    @Autowired
     public void setUploadImgService(UploadImgService uploadImgService) {
         this.uploadImgService = uploadImgService;
     }
