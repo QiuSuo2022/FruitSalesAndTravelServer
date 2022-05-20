@@ -95,8 +95,8 @@ public class OrderFormController {
 
     @ApiOperation(value = "设置订单状态",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
     @PostMapping("/updateOrderStatus")
-    public boolean UpdateOrderStatus(@RequestParam("orderId") String orderId,@RequestParam("orderStatus") Short orderStatus){
-        return orderFormService.setOrderStatus(orderId,orderStatus);
+    public boolean UpdateOrderStatus(@RequestParam("orderId") String orderId,@RequestParam("orderStatus") Integer orderStatus){
+        return orderFormService.setOrderStatus(orderId,Short.valueOf(orderStatus.toString()));
     }
 
     @ApiOperation(value = "管理员根据状态获取所有订单",notes = "订单状态:待付款-0 待发货-1 待收货-2 待评价-3 已完成-4 售后-5")
