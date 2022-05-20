@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitRecVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitUrlVO;
 import com.guet.qiusuo.fruittravel.bean.vo.FruitVO;
-import com.guet.qiusuo.fruittravel.bean.vo.ScenicUrlVO;
 import com.guet.qiusuo.fruittravel.common.PageList;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
 import com.guet.qiusuo.fruittravel.config.ErrorCode;
@@ -14,6 +13,8 @@ import com.guet.qiusuo.fruittravel.config.UserContextHolder;
 import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.ChildFruit;
 import com.guet.qiusuo.fruittravel.model.Fruit;
+import com.guet.qiusuo.fruittravel.model.Goods;
+import com.guet.qiusuo.fruittravel.model.OrderForm;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,17 @@ public class FruitService {
 
     private GoodsService goodsService;
 
-    private StatsService statsService;
+    private OrderFormMapper orderFormMapper;
+    private GoodsMapper goodsMapper;
+    @Autowired
+    public void setOrderFormMapper(OrderFormMapper orderFormMapper) {
+        this.orderFormMapper = orderFormMapper;
+    }
+    @Autowired
+    public void setGoodsMapper(GoodsMapper goodsMapper) {
+        this.goodsMapper = goodsMapper;
+    }
+
     @Autowired
     public void setGoodsService(GoodsService goodsService) {
         this.goodsService = goodsService;
@@ -77,44 +88,44 @@ public class FruitService {
         if(orderByType.equals(SystemConstants.PRICE_ASC)) {
             fruitList = fruitMapper.selectFruitSortByPriceASC(nameLike);
             for(FruitVO fruitVO : fruitList) {
-                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+                fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH)));
             }
         }
         else if(orderByType.equals(SystemConstants.PRICE_DESC)) {
             fruitList = fruitMapper.selectFruitSortByPriceDESC(nameLike);
             for(FruitVO fruitVO : fruitList) {
-                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+                fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH)));
             }
         }
         else if(orderByType.equals(SystemConstants.SALE_ASC)) {
             fruitList = fruitMapper.selectFruitSortBySalesASC(nameLike);
             for(FruitVO fruitVO : fruitList) {
-                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+                fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH_MILLIS)));
             }
         }
         else if(orderByType.equals(SystemConstants.SALE_DESC)) {
             fruitList = fruitMapper.selectFruitSortBySalesDESC(nameLike);
             for(FruitVO fruitVO : fruitList) {
-                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+                fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH_MILLIS)));
             }
         }
         else if(orderByType.equals(SystemConstants.GRADE_ASC)) {
             fruitList = fruitMapper.selectFruitSortByGradeASC(nameLike);
             for(FruitVO fruitVO : fruitList) {
-                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+                fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH_MILLIS)));
             }
         }
         else if(orderByType.equals(SystemConstants.GRADE_DESC)) {
             fruitList = fruitMapper.selectFruitSortByGradeDESC(nameLike);
             for(FruitVO fruitVO : fruitList) {
-                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+                fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH_MILLIS)));
             }
         }
         //综合排序,先按照加权平均计算,销量权重占0.5,价格和评分各占0.25
         else if(orderByType.equals(SystemConstants.SORT_ALL)) {
             fruitList = fruitMapper.selectFruitSort(nameLike);
             for(FruitVO fruitVO : fruitList) {
-                fruitVO.setSales((int)statsService.getSingleSalesByFruitId(fruitVO.getId(),SystemConstants.MONTH));
+                fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH_MILLIS)));
             }
         }
         else {
@@ -261,6 +272,7 @@ public class FruitService {
             fruitVO.setFruitImageUrl(fruitUrls);
             List<String> childFUrls = uploadImgService.getUrlByProdId(fruitVO.getChildFruitId());
             fruitVO.setChildFImageUrl(childFUrls);
+            fruitVO.setSales(Math.toIntExact(getSalesByFruitIdSql(fruitVO.getId(), SystemConstants.MONTH_MILLIS)));
         }
         PageList<FruitVO> pageList = new PageList<>();
         pageList.setList(fruitVOList);
@@ -381,6 +393,51 @@ public class FruitService {
             }
             return res;
     }
+    private Long getSalesByFruitIdSql(String fruitId,long past) {
+        Long now = System.currentTimeMillis();
+        long count = 0L;
+        //检索特定日期时间内已经支付的订单
+        List<OrderForm> orderForms = orderFormMapper.selectMany(select(
+                OrderFormDynamicSqlSupport.id,
+                OrderFormDynamicSqlSupport.payTime,
+                OrderFormDynamicSqlSupport.createUserId,
+                OrderFormDynamicSqlSupport.createTime
+        )
+                .from(OrderFormDynamicSqlSupport.orderForm)
+                .where(OrderFormDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                .and(OrderFormDynamicSqlSupport.payTime, isBetween(past).and(now))
+                .and(OrderFormDynamicSqlSupport.scenicId, isNull())
+                .and(OrderFormDynamicSqlSupport.payStatus, isNotEqualTo(SystemConstants.UNPAID))
+                .build().render(RenderingStrategies.MYBATIS3));
+        //遍历每个订单
+        for (OrderForm o:orderForms) {
+            //根据订单号查找商品goods
+            List<Goods> goodsList = goodsMapper.selectMany(select(
+                    GoodsDynamicSqlSupport.id,
+                    GoodsDynamicSqlSupport.orderId,
+                    GoodsDynamicSqlSupport.fruitId,
+                    GoodsDynamicSqlSupport.amount
+            )
+                    .from(GoodsDynamicSqlSupport.goods)
+                    .where(GoodsDynamicSqlSupport.orderId, isEqualTo(o.getId()))
+                    .and(GoodsDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
+                    .build().render(RenderingStrategies.MYBATIS3));
+            //遍历每个goods的ChildFruitId寻找对应this.fruitId的商品
+            for (Goods g:goodsList) {
+                //goods的水果子项id
+                String childFruitId = g.getFruitId();
+                //根据水果子项id获取水果id
+                String fruitId2 = childFruitService.getChildFruit(childFruitId).getFruitId();
+                //如果fruitId对应
+                if (fruitId2.equals(fruitId) && g.getAmount() != null){
+                    //叠加
+                    count+=g.getAmount();
+                }
+            }
+        }
+        return count;
+    }
+
 }
 
 
