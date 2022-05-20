@@ -376,7 +376,7 @@ public class FruitService {
                  fruitRecVO.setCreateUserId(allChildFruits.get(i).getCreateUserId());
                  fruitRecVO.setUpdateTime(allChildFruits.get(i).getUpdateTime());
                  fruitRecVO.setUpdateUserId(allChildFruits.get(i).getUpdateUserId());
-                 fruitRecVO.setSales(goodsService.getSaleByChildFruitId(allChildFruits.get(i).getFruitId()));
+                 fruitRecVO.setSales(goodsService.getSaleByChildFruitId(allChildFruits.get(i).getId()));
                  res.add(fruitRecVO);
             }
             return res;
