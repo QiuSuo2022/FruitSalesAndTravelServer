@@ -152,7 +152,7 @@ public class OrderFormService {
      */
     public boolean setOrderStatus(String orderId, Short orderStatus){
         OrderForm order = orderFormMapper.selectByPrimaryKey(orderId).orElse(null);
-        if(order != null){
+        if(order == null){
             LOG.info("不存在该订单号!");
             throw new SystemException(ErrorCode.PARAM_ERROR);
         }
