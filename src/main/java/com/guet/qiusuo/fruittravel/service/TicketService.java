@@ -71,7 +71,7 @@ public class TicketService {
                         .where(TicketDynamicSqlSupport.id,isEqualTo(ticketId))
                         .and(TicketDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
                         .build().render(RenderingStrategies.MYBATIS3));
-        if(ticketList.isEmpty()) {
+        if(ticketList == null) {
             throw new SystemException(ErrorCode.NO_FOUND_TICKET);
         }
         Ticket ticket = ticketList.get(0);
@@ -121,7 +121,7 @@ public class TicketService {
                                     .where(TicketDynamicSqlSupport.scenicId, isEqualTo(scenicId))
                                     .and(TicketDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                                     .build().render(RenderingStrategies.MYBATIS3));
-        if(ticketList.isEmpty()) {
+        if(ticketList==null) {
             LOG.info("没有此类门票!");
         }
             return ticketList;
