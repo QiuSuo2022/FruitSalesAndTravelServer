@@ -31,7 +31,7 @@ public class OrderFormController {
     }
 
 
-    @ApiOperation(value = "创建订单",tags = "景区订单中address表示门票类型(1成人 2儿童 3老人)  express表示数量")
+    @ApiOperation(value = "创建订单 - 景区订单中address表示门票类型(1成人 2儿童 3老人)  express表示数量")
     @PostMapping("/createFakeOrder")
     public OrderAndProductVO createFakeOrder (@RequestBody OrderVO orderVO){
         if (orderVO == null){

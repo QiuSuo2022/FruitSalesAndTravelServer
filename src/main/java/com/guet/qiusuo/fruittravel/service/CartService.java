@@ -86,7 +86,7 @@ public class CartService {
      * 添加水果种类进购物车
      * @param cart
      */
-    public void addCart(Cart cart){
+    public Cart addCart(Cart cart){
         String userId = UserContextHolder.getUserId();
         boolean flag = false;
         if (cart == null){
@@ -136,6 +136,7 @@ public class CartService {
             }
             LOG.info("添加水果子项{}进入购物车成功",cart.getChildFruitId());
         }
+        return cart;
     }
 
     /**

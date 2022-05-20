@@ -25,8 +25,8 @@ public class CartController {
 
     @ApiOperation(value = "添加购物车水果项")
     @PostMapping
-    public void addCart(@RequestBody Cart cart){
-        cartService.addCart(cart);
+    public Cart addCart(@RequestBody Cart cart){
+        return  cartService.addCart(cart);
     }
 
     @ApiOperation(value = "删除购物车水果项")
