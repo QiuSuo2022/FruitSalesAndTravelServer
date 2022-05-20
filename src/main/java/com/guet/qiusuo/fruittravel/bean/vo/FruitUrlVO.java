@@ -13,4 +13,5 @@ public class FruitUrlVO extends Fruit {
 
     @ApiModelProperty(value = "水果图片")
     private List<String> imgUrl;
+    private Integer Sales;
 }

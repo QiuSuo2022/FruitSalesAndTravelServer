@@ -4,12 +4,10 @@ import com.guet.qiusuo.fruittravel.bean.vo.FruitUrlVO;
 import com.guet.qiusuo.fruittravel.bean.vo.ScenicUrlVO;
 import com.guet.qiusuo.fruittravel.bean.vo.SearchVO;
 import com.guet.qiusuo.fruittravel.common.SystemConstants;
-import com.guet.qiusuo.fruittravel.dao.FruitDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.FruitMapper;
-import com.guet.qiusuo.fruittravel.dao.ScenicDynamicSqlSupport;
-import com.guet.qiusuo.fruittravel.dao.ScenicMapper;
+import com.guet.qiusuo.fruittravel.dao.*;
 import com.guet.qiusuo.fruittravel.model.Fruit;
 import com.guet.qiusuo.fruittravel.model.Scenic;
+import com.guet.qiusuo.fruittravel.service.StatsService;
 import com.guet.qiusuo.fruittravel.service.UploadImgService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,9 +28,21 @@ import static org.slf4j.LoggerFactory.getLogger;
 @RestController
 @RequestMapping("/search")
 public class SearchController {
+    Long now = System.currentTimeMillis();
     private static final Logger LOG = getLogger(lookup().lookupClass());
-
+    private OrderFormMapper orderFormMapper;
     private UploadImgService uploadImgService;
+
+    private StatsService statsService;
+    @Autowired
+    public void setStatsService(StatsService statsService) {
+        this.statsService = statsService;
+    }
+
+    @Autowired
+    public void setOrderFormMapper(OrderFormMapper orderFormMapper) {
+        this.orderFormMapper = orderFormMapper;
+    }
 
     @Autowired
     public void setUploadImgService(UploadImgService uploadImgService) {
@@ -84,6 +94,16 @@ public class SearchController {
             scenicUrlVO.setOpeningHours(s.getOpeningHours());
             scenicUrlVO.setLocation(s.getLocation());
             scenicUrlVO.setStatus(s.getStatus());
+            Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
+                    .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
+                    .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
+                    .and(OrderFormDynamicSqlSupport.payTime,isBetween(SystemConstants.MONTH_MILLIS).and(now))
+                    .and(OrderFormDynamicSqlSupport.scenicId,isEqualTo(s.getId()))
+                    .build().render(RenderingStrategies.MYBATIS3));
+            if (ans == null) {
+                ans = 0L;
+            }
+            scenicUrlVO.setSales(Integer.valueOf(ans.toString()));
             scenicUrlList.add(scenicUrlVO);
         }
         res.setScenic(scenicUrlList);
@@ -117,6 +137,7 @@ public class SearchController {
             fruitUrlVO.setDescription(s.getDescription());
             fruitUrlVO.setDeliveryCost(s.getDeliveryCost());
             fruitUrlVO.setStatus(s.getStatus());
+            fruitUrlVO.setSales((int) statsService.getSingleSalesByFruitId(s.getId(), (short) 1));
             fruitUrlVOList.add(fruitUrlVO);
         }
         res.setFruit(fruitUrlVOList);
