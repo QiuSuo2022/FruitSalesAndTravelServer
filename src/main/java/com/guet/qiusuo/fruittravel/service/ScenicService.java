@@ -356,7 +356,8 @@ public class ScenicService {
                 ScenicDynamicSqlSupport.id,
                 ScenicDynamicSqlSupport.scenicName,
                 ScenicDynamicSqlSupport.type,
-                ScenicDynamicSqlSupport.updateTime
+                ScenicDynamicSqlSupport.updateTime,
+                ScenicDynamicSqlSupport.description
                 )
                         .from(ScenicDynamicSqlSupport.scenic)
                         .where(ScenicDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))
@@ -378,6 +379,7 @@ public class ScenicService {
             scenicUrlVO.setUpdateUserId(s.getUpdateUserId());
             scenicUrlVO.setCreateTime(s.getCreateTime());
             scenicUrlVO.setCreateUserId(s.getCreateUserId());
+            scenicUrlVO.setDescription(s.getDescription());
             Long ans = orderFormMapper.count(countFrom(OrderFormDynamicSqlSupport.orderForm)
                     .where(OrderFormDynamicSqlSupport.payStatus,isNotEqualTo(SystemConstants.UNPAID))
                     .and(OrderFormDynamicSqlSupport.status,isEqualTo(SystemConstants.STATUS_ACTIVE))

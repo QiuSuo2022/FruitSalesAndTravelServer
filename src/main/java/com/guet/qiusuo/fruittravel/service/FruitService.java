@@ -340,7 +340,7 @@ public class FruitService {
     public List<FruitRecVO> getFruitRec() {
         List<FruitRecVO> res = new ArrayList<>();
         List<ChildFruit> allChildFruits = childFruitService.getAllChildFruits();
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 4; i++) {
                 FruitRecVO fruitRecVO = new FruitRecVO();
                  fruitRecVO.setId(allChildFruits.get(i).getId());
                  fruitRecVO.setFruitId(allChildFruits.get(i).getFruitId());
@@ -354,6 +354,7 @@ public class FruitService {
                  fruitRecVO.setUpdateTime(allChildFruits.get(i).getUpdateTime());
                  fruitRecVO.setUpdateUserId(allChildFruits.get(i).getUpdateUserId());
                  fruitRecVO.setSales(goodsService.getSaleByChildFruitId(allChildFruits.get(i).getFruitId()));
+                 res.add(fruitRecVO);
             }
             return res;
     }

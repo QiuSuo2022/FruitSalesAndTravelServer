@@ -104,12 +104,12 @@ public class OrderFormService {
         if (j == 0){
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
-
         LOG.info("创建id={}的订单以及商品映射成功",fruitOrder.getId());
         OrderAndProductVO vo = new OrderAndProductVO();
         vo.setOrderForm(fruitOrder);
         vo.setGoods(goodList);
         vo.setThisTicket(null);
+        vo.setOrderForm(fruitOrder);
         return vo;
     }
 
@@ -141,6 +141,7 @@ public class OrderFormService {
         vo.setOrderForm(scenicOrder);
         vo.setGoods(null);
         vo.setThisTicket(thisTicket);
+        vo.setOrderForm(scenicOrder);
         return vo;
     }
     /**
