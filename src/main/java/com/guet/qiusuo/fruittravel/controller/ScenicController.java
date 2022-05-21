@@ -27,7 +27,7 @@ public class ScenicController {
 
     @ApiOperation(value = "添加景点",notes = "景区类型, 1-文化古迹, 2-园林花园, 3-古镇古村, 4-城堡教堂'")
     @PostMapping
-    public void addScenic(@RequestBody Scenic scenic) {scenicService.addScenic(scenic);}
+    public String addScenic(@RequestBody Scenic scenic) {return scenicService.addScenic(scenic).getId();}
 
     @ApiOperation(value = "删除景点")
     @DeleteMapping

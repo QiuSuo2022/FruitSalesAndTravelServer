@@ -148,7 +148,7 @@ public class ScenicService {
      *
      * @param scenic
      */
-    public void addScenic(Scenic scenic) {
+    public Scenic addScenic(Scenic scenic) {
         UserContextHolder.validAdmin();
         if (!getScenicByName(scenic.getScenicName()).isEmpty()) {
             //已经存在该景点
@@ -173,6 +173,7 @@ public class ScenicService {
             throw new SystemException(ErrorCode.INSERT_ERROR);
         }
         LOG.info("景点{}添加成功", scenic.getScenicName());
+        return scenic;
     }
 
     /**
