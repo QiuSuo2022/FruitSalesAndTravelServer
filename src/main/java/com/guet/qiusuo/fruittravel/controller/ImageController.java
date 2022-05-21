@@ -54,23 +54,23 @@ public class ImageController {
 
     @ApiOperation(value = "上传多个图片")
     @PostMapping(value = "/upload")
-    public List<ImageFile> uploadImg(@RequestParam MultipartFile[] files)  {
+    public ImageFile uploadImg(@RequestParam MultipartFile[] files)  {
         UserContextHolder.validAdmin();
         if (files.length == 0) {
             LOG.info("图片文件异常!");
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
-        return uploadImgService.uploadImages(files);
+        return uploadImgService.uploadImages(files).get(0);
     }
 
     @ApiOperation(value = "根据图片url绑定产品",notes = "图片类别: 0:水果/景区图, 1:评价图, 2:轮播图 3:水果子项图")
     @PostMapping(value = "/bind")
-    public void bindImg(@RequestParam String productId,@RequestParam List<String> imgIds,@RequestParam short imgType){
+    public void bindImg(@RequestParam String productId,@RequestParam String imgId,@RequestParam short imgType){
         UserContextHolder.validAdmin();
-        if (productId == null || imgIds == null || imgIds.isEmpty()){
+        if (productId == null || imgId == null || imgId.isEmpty()){
             throw new SystemException(ErrorCode.PARAM_NULL_ERROR);
         }
-        for (String imgId:imgIds) {
+//        for (String imgId:imgIds) {
         Optional<ImageFile> imageFileOptional = imageFileMapper.selectByPrimaryKey(imgId);
         ImageFile imageFile = imageFileOptional.orElse(null);
         if (imageFile == null){
@@ -90,7 +90,7 @@ public class ImageController {
         }
         LOG.info("绑定图片成功");
         }
-    }
+//    }
 
 
     @ApiOperation(value = "获取多个图片url",notes = "图片类别: 0:水果/景区图, 1:评价图, 2:轮播图 3:水果子项图")
