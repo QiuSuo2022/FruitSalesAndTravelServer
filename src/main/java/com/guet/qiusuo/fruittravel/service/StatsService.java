@@ -398,7 +398,6 @@ public class StatsService {
                 .from(OrderFormDynamicSqlSupport.orderForm)
                 .where(OrderFormDynamicSqlSupport.status, isEqualTo(SystemConstants.STATUS_ACTIVE))
                 .and(OrderFormDynamicSqlSupport.payTime, isBetween(past).and(now))
-                .and(OrderFormDynamicSqlSupport.scenicId, isNull())
                 .and(OrderFormDynamicSqlSupport.payStatus, isNotEqualTo(SystemConstants.UNPAID))
                 .build().render(RenderingStrategies.MYBATIS3));
         //遍历每个订单
